@@ -1,0 +1,37 @@
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Wardrobe</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+            <button routerLink="/garments/new" type="button" class="btn btn-sm btn-outline-primary">Lägg till
+                ny</button>
+        </div>
+    </div>
+</div>
+
+<p *ngIf="!garments"><em>Loading...</em></p>
+<p *ngIf="garments?.length === 0"><em>No garments found.</em></p>
+
+<div class="table-responsive">
+    <table class="table table-hover text-start">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Description</th>
+                <th scope="col">Color</th>
+                <th scope="col">Size</th>
+                <th scope="col">Date Added</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody *ngIf="garments">
+            <tr *ngFor="let garment of garments" (click)="onRowClick(garment.id)">
+                <td>{{ garment.id }}</td>
+                <td>{{ garment.description }}</td>
+                <td>{{ garment.color }}</td>
+                <td>{{ garment.size }}</td>
+                <td>{{ garment.date_added | date: 'shortDate' }}</td>
+                <td><button (click)="onDelete(garment.id)" class="btn btn-danger btn-sm">Delete</button></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
