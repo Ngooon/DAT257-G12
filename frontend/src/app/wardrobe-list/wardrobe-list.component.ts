@@ -5,10 +5,12 @@ import { Router } from '@angular/router';
 
 interface Garment {
   id: number;
-  description: string;
+  wardrobe: string;
+  name: string;
   color: string;
   size: string;
-  date_added: string;
+  brand: string;
+  category: string;
 }
 
 @Component({
@@ -29,7 +31,7 @@ export class WardrobeListComponent implements OnInit {
   }
 
   getGarments() {
-    this.http.get<Garment[]>('/api/garments').subscribe(
+    this.http.get<Garment[]>('http://127.0.0.1:8000/garments/').subscribe(
       (result) => {
         this.garments = result;
       },
@@ -37,16 +39,16 @@ export class WardrobeListComponent implements OnInit {
         console.error(error);
       }
     );
-    this.garments = [
-      { id: 1, description: 'T-shirt', color: 'Red', size: 'M', date_added: '2023-10-01' },
-      { id: 2, description: 'Jeans', color: 'Blue', size: 'L', date_added: '2023-10-02' },
-      { id: 3, description: 'Jacket', color: 'Black', size: 'XL', date_added: '2023-10-03' },
-      { id: 4, description: 'Sweater', color: 'Green', size: 'S', date_added: '2023-10-04' },
-    ];
+    // this.garments = [
+    //   { id: 1, description: 'T-shirt', color: 'Red', size: 'M', date_added: '2023-10-01' },
+    //   { id: 2, description: 'Jeans', color: 'Blue', size: 'L', date_added: '2023-10-02' },
+    //   { id: 3, description: 'Jacket', color: 'Black', size: 'XL', date_added: '2023-10-03' },
+    //   { id: 4, description: 'Sweater', color: 'Green', size: 'S', date_added: '2023-10-04' },
+    // ];
   }
 
   onRowClick(garmentId: number) {
-    this.router.navigate(['/garments', garmentId]);
+    this.router.navigate(['/garment', garmentId]);
   }
 
   onDelete(garmentId: number) {
@@ -58,5 +60,9 @@ export class WardrobeListComponent implements OnInit {
         console.error(error);
       }
     );
+  }
+
+  onEdit(garmentId: number) {
+    this.router.navigate(['/garments/edit', garmentId]);
   }
 }
