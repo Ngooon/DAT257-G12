@@ -19,10 +19,16 @@ class GarmentSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Garment
         fields = [
-            "url",
             "id",
             "name",
             "size",
             "color",
             "wardrobe",
+            "brand",
+            "category",
         ]
+
+class WardrobeSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Wardrobe
+        fields = ['id', 'name']

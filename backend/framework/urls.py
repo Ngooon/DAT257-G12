@@ -1,15 +1,10 @@
-from django.urls import include, path
-from rest_framework import routers
+from django.urls import path
+from framework.quickstart.views import get_garments, create_garment, update_garment, delete_garment
 
-from framework.quickstart import views
 
-router = routers.DefaultRouter()
-router.register(r'users', views.UserViewSet)
-router.register(r'groups', views.GroupViewSet)
-
-# Wire up our API using automatic URL routing.
-# Additionally, we include login URLs for the browsable API.
 urlpatterns = [
-    path('', include(router.urls)),
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
+    path('garments/', get_garments, name='get_garment'),
+    path('garments/', create_garment, name='create_garment'),
+    path('garments/<int:pk>/', update_garment, name='update_garment'),
+    path('garments/<int:pk>/', delete_garment, name='delete_garment'),
 ]
