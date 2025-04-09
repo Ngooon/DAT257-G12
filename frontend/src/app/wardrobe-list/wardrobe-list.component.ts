@@ -29,14 +29,14 @@ export class WardrobeListComponent implements OnInit {
   }
 
   getGarments() {
-    // this.http.get<Garment[]>('/api/garments').subscribe(
-    //   (result) => {
-    //     this.garments = result;
-    //   },
-    //   (error) => {
-    //     console.error(error);
-    //   }
-    // );
+    this.http.get<Garment[]>('/api/garments').subscribe(
+      (result) => {
+        this.garments = result;
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
     this.garments = [
       { id: 1, description: 'T-shirt', color: 'Red', size: 'M', date_added: '2023-10-01' },
       { id: 2, description: 'Jeans', color: 'Blue', size: 'L', date_added: '2023-10-02' },
