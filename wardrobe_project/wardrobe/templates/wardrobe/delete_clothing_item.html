@@ -1,0 +1,14 @@
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <title>Ta bort Klädesplagg</title>
+</head>
+<body>
+    <h1>Är du säker på att du vill ta bort "{{ item.name }}"?</h1>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Bekräfta borttagning</button>
+    </form>
+    <a href="{% url 'wardrobe_list' %}">Avbryt</a>
+</body>
+</html>
