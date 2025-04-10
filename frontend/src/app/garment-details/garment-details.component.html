@@ -2,7 +2,8 @@
     <h1 class="h2">Garment #{{ garment?.id }}</h1>
     <div class="btn-toolbar mb-2 mb-md-0">
         <div class="btn-group me-2">
-            <button routerLink="/garments/edit" type="button" class="btn btn-sm btn-outline-primary">Edit</button>
+            <button routerLink="/garments/edit/{{ garment?.id }}" type="button"
+                class="btn btn-sm btn-outline-primary">Edit</button>
         </div>
     </div>
 </div>
@@ -10,9 +11,24 @@
 <p *ngIf="!garment"><em>Loading...</em></p>
 
 <div *ngIf="garment">
-    <p>Name: {{ garment.name }}</p>
-    <p>Color: {{ garment.color }}</p>
-    <p>Size: {{ garment.size }}</p>
-    <p>Category: {{ garment.category }}</p>
-    <p>Wardrobe: {{ garment.wardrobe }}</p>
+    <div class="p-3 ps-3 pt-2 mb-3 bg-light rounded">
+        <span class="text-muted small">Name</span>
+        <p class="m-0">{{ garment.name }}</p>
+    </div>
+    <div class="p-3 ps-3 pt-2 mb-3 bg-light rounded">
+        <span class="text-muted small">Color</span>
+        <p class="m-0">{{ garment.color }}</p>
+    </div>
+    <div class="p-3 ps-3 pt-2 mb-3 bg-light rounded">
+        <span class="text-muted small">Size</span>
+        <p class="m-0">{{ garment.size }}</p>
+    </div>
+    <div class="p-3 ps-3 pt-2 mb-3 bg-light rounded">
+        <span class="text-muted small">Category</span>
+        <p class="m-0">{{ garment.category }}</p>
+    </div>
+    <div class="p-3 ps-3 pt-2 mb-3 bg-light rounded">
+        <span class="text-muted small">Wardrobe</span>
+        <p class="m-0">{{ garment.wardrobe }}</p>
+    </div>
 </div>

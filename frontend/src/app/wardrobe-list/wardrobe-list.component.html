@@ -19,7 +19,7 @@
                 <th scope="col">Color</th>
                 <th scope="col">Size</th>
                 <th scope="col">Category</th>
-                <!-- <th scope="col">Wardrobe</th> -->
+                <th scope="col">Wardrobe</th>
                 <th scope="col"></th>
             </tr>
         </thead>
@@ -30,12 +30,14 @@
                 <td>{{ garment.color }}</td>
                 <td>{{ garment.size }}</td>
                 <td>{{ garment.category }}</td>
-                <!-- <td>{{ garment.wardrobe }}</td> -->
+                <td>{{ garment.wardrobe }}</td>
                 <td>
-                    <button (click)="onDelete(garment.id)" class="btn btn-outline-danger btn-sm">Delete</button>
-                    <button (click)="onEdit(garment.id)" class="btn btn-outline-primary btn-sm">Edit</button>
-
-
+                    <div class="btn-group">
+                        <button (click)="onDelete(garment.id); $event.stopPropagation()"
+                            class="btn btn-outline-danger btn-sm">Delete</button>
+                        <button (click)="onEdit(garment.id); $event.stopPropagation()"
+                            class="btn btn-outline-primary btn-sm">Edit</button>
+                    </div>
                 </td>
             </tr>
         </tbody>

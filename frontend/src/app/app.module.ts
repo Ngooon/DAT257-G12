@@ -12,6 +12,8 @@ import { registerLocaleData } from '@angular/common';
 import localeSv from '@angular/common/locales/sv';
 import { TestComponent } from './test/test.component';
 import { GarmentDetailsComponent } from './garment-details/garment-details.component';
+import { GarmentFormComponent } from './garment-form/garment-form.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 registerLocaleData(localeSv);
 
@@ -20,12 +22,14 @@ registerLocaleData(localeSv);
         AppComponent,
         WardrobeListComponent,
         TestComponent,
-        GarmentDetailsComponent
+        GarmentDetailsComponent,
+        GarmentFormComponent
     ],
     imports: [
         BrowserModule,
         HttpClientModule,
         AppRoutingModule,
+        ReactiveFormsModule
     ],
     providers: [{ provide: LOCALE_ID, useValue: 'sv-SE' }],
     bootstrap: [AppComponent]
