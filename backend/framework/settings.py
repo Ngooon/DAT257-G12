@@ -18,6 +18,15 @@ ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 CORS_ALLOW_ALL_ORIGINS = True
 
 
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Wardrobe Curator Application",
+    "DESCRIPTION": "A RESTful API for managing a wardrobe collection.",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SECURITY": [],
+}
+
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -30,6 +39,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "framework.quickstart",
     "corsheaders",
+    "drf_spectacular",
 ]
 
 MIDDLEWARE = [
@@ -46,8 +56,9 @@ MIDDLEWARE = [
 ROOT_URLCONF = "framework.urls"
 
 REST_FRAMEWORK = {
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
-    "PAGE_SIZE": 10,
+    # "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    # "PAGE_SIZE": 10,
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 TEMPLATES = [

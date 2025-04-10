@@ -1,0 +1,235 @@
+openapi: 3.0.3
+info:
+  title: Wardrobe Curator Application
+  version: 0.0.0
+  description: This is the planed schema for the wardrobe curator application.
+paths:
+  /api/garments/:
+    get:
+      operationId: api_garments_list
+      description: API endpoint for garments.
+      tags:
+        - api
+      security:
+        - cookieAuth: []
+        - basicAuth: []
+        - {}
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Garment"
+          description: ""
+    post:
+      operationId: api_garments_create
+      description: API endpoint for garments.
+      tags:
+        - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Garment"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/Garment"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/Garment"
+        required: true
+      security:
+        - cookieAuth: []
+        - basicAuth: []
+        - {}
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Garment"
+          description: ""
+  /api/garments/{id}/:
+    get:
+      operationId: api_garments_retrieve
+      description: API endpoint for garments.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: A unique integer value identifying this garment.
+          required: true
+      tags:
+        - api
+      security:
+        - cookieAuth: []
+        - basicAuth: []
+        - {}
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Garment"
+          description: ""
+    put:
+      operationId: api_garments_update
+      description: API endpoint for garments.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: A unique integer value identifying this garment.
+          required: true
+      tags:
+        - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Garment"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/Garment"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/Garment"
+        required: true
+      security:
+        - cookieAuth: []
+        - basicAuth: []
+        - {}
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Garment"
+          description: ""
+    patch:
+      operationId: api_garments_partial_update
+      description: API endpoint for garments.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: A unique integer value identifying this garment.
+          required: true
+      tags:
+        - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PatchedGarment"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/PatchedGarment"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/PatchedGarment"
+      security:
+        - cookieAuth: []
+        - basicAuth: []
+        - {}
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Garment"
+          description: ""
+    delete:
+      operationId: api_garments_destroy
+      description: API endpoint for garments.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: A unique integer value identifying this garment.
+          required: true
+      tags:
+        - api
+      security:
+        - cookieAuth: []
+        - basicAuth: []
+        - {}
+      responses:
+        "204":
+          description: No response body
+components:
+  schemas:
+    Garment:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+        size:
+          type: string
+          nullable: true
+          maxLength: 20
+        color:
+          type: string
+          nullable: true
+          maxLength: 50
+        wardrobe:
+          type: string
+          maxLength: 100
+        brand:
+          type: string
+          nullable: true
+          maxLength: 50
+        category:
+          type: string
+          nullable: true
+          maxLength: 50
+      required:
+        - id
+        - name
+        - wardrobe
+    PatchedGarment:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+        size:
+          type: string
+          nullable: true
+          maxLength: 20
+        color:
+          type: string
+          nullable: true
+          maxLength: 50
+        wardrobe:
+          type: string
+          maxLength: 100
+        brand:
+          type: string
+          nullable: true
+          maxLength: 50
+        category:
+          type: string
+          nullable: true
+          maxLength: 50
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
