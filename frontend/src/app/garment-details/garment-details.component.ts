@@ -33,7 +33,7 @@ export class GarmentDetailsComponent implements OnInit {
   }
 
   getGarment() {
-    this.http.get<Garment>(`http://127.0.0.1:8000/garments/${this.id}`).subscribe(
+    this.http.get<Garment>(`/api/garments/${this.id}/`).subscribe(
       (result) => {
         this.garment = result;
       },
