@@ -2,8 +2,7 @@
     <h1 class="h2">Wardrobe</h1>
     <div class="btn-toolbar mb-2 mb-md-0">
         <div class="btn-group me-2">
-            <button routerLink="/garments/new" type="button" class="btn btn-sm btn-outline-primary">Lägg till
-                ny</button>
+            <button routerLink="/garments/new" type="button" class="btn btn-sm btn-outline-primary">Add new</button>
         </div>
     </div>
 </div>
@@ -19,18 +18,27 @@
                 <th scope="col">Description</th>
                 <th scope="col">Color</th>
                 <th scope="col">Size</th>
-                <th scope="col">Date Added</th>
+                <th scope="col">Category</th>
+                <th scope="col">Wardrobe</th>
                 <th scope="col"></th>
             </tr>
         </thead>
         <tbody *ngIf="garments">
             <tr *ngFor="let garment of garments" (click)="onRowClick(garment.id)">
                 <td>{{ garment.id }}</td>
-                <td>{{ garment.description }}</td>
+                <td>{{ garment.name }}</td>
                 <td>{{ garment.color }}</td>
                 <td>{{ garment.size }}</td>
-                <td>{{ garment.date_added | date: 'shortDate' }}</td>
-                <td><button (click)="onDelete(garment.id)" class="btn btn-danger btn-sm">Delete</button></td>
+                <td>{{ garment.category }}</td>
+                <td>{{ garment.wardrobe }}</td>
+                <td>
+                    <div class="btn-group">
+                        <button (click)="onDelete(garment.id); $event.stopPropagation()"
+                            class="btn btn-outline-danger btn-sm">Delete</button>
+                        <button (click)="onEdit(garment.id); $event.stopPropagation()"
+                            class="btn btn-outline-primary btn-sm">Edit</button>
+                    </div>
+                </td>
             </tr>
         </tbody>
     </table>

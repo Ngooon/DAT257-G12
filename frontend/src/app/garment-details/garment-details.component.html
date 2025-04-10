@@ -1,0 +1,34 @@
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Garment #{{ garment?.id }}</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+            <button routerLink="/garments/edit/{{ garment?.id }}" type="button"
+                class="btn btn-sm btn-outline-primary">Edit</button>
+        </div>
+    </div>
+</div>
+
+<p *ngIf="!garment"><em>Loading...</em></p>
+
+<div *ngIf="garment">
+    <div class="p-3 ps-3 pt-2 mb-3 bg-light rounded">
+        <span class="text-muted small">Name</span>
+        <p class="m-0">{{ garment.name }}</p>
+    </div>
+    <div class="p-3 ps-3 pt-2 mb-3 bg-light rounded">
+        <span class="text-muted small">Color</span>
+        <p class="m-0">{{ garment.color }}</p>
+    </div>
+    <div class="p-3 ps-3 pt-2 mb-3 bg-light rounded">
+        <span class="text-muted small">Size</span>
+        <p class="m-0">{{ garment.size }}</p>
+    </div>
+    <div class="p-3 ps-3 pt-2 mb-3 bg-light rounded">
+        <span class="text-muted small">Category</span>
+        <p class="m-0">{{ garment.category }}</p>
+    </div>
+    <div class="p-3 ps-3 pt-2 mb-3 bg-light rounded">
+        <span class="text-muted small">Wardrobe</span>
+        <p class="m-0">{{ garment.wardrobe }}</p>
+    </div>
+</div>

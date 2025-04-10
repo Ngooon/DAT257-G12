@@ -75,7 +75,11 @@
                             "buildTarget": "wardrobe-curator-application:build:development"
                         }
                     },
-                    "defaultConfiguration": "development"
+                    "defaultConfiguration": "development",
+                    "options": {
+                        "proxyConfig": "src/proxy.conf.js",
+                        "port": 4200
+                    }
                 },
                 "extract-i18n": {
                     "builder": "@angular-devkit/build-angular:extract-i18n"
