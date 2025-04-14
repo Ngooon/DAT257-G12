@@ -14,6 +14,7 @@ import { TestComponent } from './test/test.component';
 import { GarmentDetailsComponent } from './garment-details/garment-details.component';
 import { GarmentFormComponent } from './garment-form/garment-form.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { UsageListComponent } from './usage-list/usage-list.component';
 
 registerLocaleData(localeSv);
 
@@ -23,7 +24,8 @@ registerLocaleData(localeSv);
         WardrobeListComponent,
         TestComponent,
         GarmentDetailsComponent,
-        GarmentFormComponent
+        GarmentFormComponent,
+        UsageListComponent
     ],
     imports: [
         BrowserModule,
