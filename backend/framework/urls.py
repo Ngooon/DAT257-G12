@@ -1,7 +1,7 @@
 from django.urls import path, include
 from django.http import FileResponse
 from rest_framework.routers import DefaultRouter
-from framework.quickstart.views import GarmentViewSet, WardrobeViewSet
+from framework.quickstart.views import GarmentViewSet, WardrobeViewSet, UsageViewSet
 from drf_spectacular.views import (
     SpectacularAPIView,
     SpectacularRedocView,
@@ -10,6 +10,7 @@ from drf_spectacular.views import (
 
 router = DefaultRouter()
 router.register(r"garments", GarmentViewSet, basename="garment")
+router.register(r"usages", UsageViewSet, basename="usage")
 
 
 def static_schema_view(request):
