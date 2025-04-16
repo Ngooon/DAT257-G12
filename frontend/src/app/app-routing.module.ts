@@ -8,11 +8,12 @@ import { UsageListComponent } from './usage-list/usage-list.component';
 
 const routes: Routes = [
     { path: 'wardrobe', component: WardrobeListComponent },
+    { path: 'garments', component: WardrobeListComponent },
     { path: 'test', component: TestComponent },
     { path: 'garments/new', component: GarmentFormComponent },
     { path: 'garments/edit/:id', component: GarmentFormComponent },
     { path: 'garments/:id', component: GarmentDetailsComponent },
-    { path: 'usage', component: UsageListComponent },
+    { path: 'usages', component: UsageListComponent },
 ];
 
 @NgModule({
