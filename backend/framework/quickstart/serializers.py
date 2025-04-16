@@ -38,6 +38,7 @@ class UsageSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Usage
         fields = [
+            "id",
             "garment",
             "time",
             "notes",

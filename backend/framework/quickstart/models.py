@@ -25,6 +25,7 @@ class Garment(models.Model):
     
 
 class Usage(models.Model):
+    id = models.AutoField(primary_key=True)
     garment = models.ForeignKey(Garment, on_delete=models.CASCADE, related_name="usages")
     time = models.DateTimeField(auto_now_add=True)
     notes = models.TextField(null=True, blank=True, help_text="Notes about the usage")
