@@ -32,3 +32,11 @@ class WardrobeSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Wardrobe
         fields = ['id', 'name']
+
+
+class LoginSerializer(serializers.Serializer):
+    """
+    Serializer which accepts an OAuth2 access token and provider.
+    """
+    provider = serializers.CharField(max_length=255, required=True)
+    access_token = serializers.CharField(max_length=4096, required=True, trim_whitespace=True)

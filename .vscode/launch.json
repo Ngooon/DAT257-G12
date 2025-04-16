@@ -30,7 +30,7 @@
             "django": true,
             "justMyCode": true,
             "autoStartBrowser": false,
-            "program": "${workspaceFolder}\\backend\\manage.py",
+            "program": "${workspaceFolder}/backend/manage.py",
         }
     ],
     "compounds": [
