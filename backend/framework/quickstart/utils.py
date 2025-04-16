@@ -1,5 +1,5 @@
 from django.db import models
-from .models import Wardrobe, Garment, Usage
+from .models import Wardrobe, Garment, Usage, Category
 from django.utils.timezone import now, timedelta
 
 
@@ -11,6 +11,17 @@ def flush_wardrobe_data():
 
 
 def create_example_data():
+
+    example_categories = [
+        {"name": "Top"},
+        {"name": "Bottom"},
+        {"name": "Outerwear"},
+        {"name": "Accessory"},
+        {"name": "Footwear"},
+    ]
+
+    for category_data in example_categories:
+        Category.objects.get_or_create(**category_data)
 
     example_garments = [
         {

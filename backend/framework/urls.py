@@ -1,7 +1,7 @@
 from django.urls import path, include
 from django.http import FileResponse
 from rest_framework.routers import DefaultRouter
-from framework.quickstart.views import GarmentViewSet, WardrobeViewSet, UsageViewSet, GarmentUsageViewSet # LINUS LA TILL 
+from framework.quickstart.views import GarmentViewSet, WardrobeViewSet, UsageViewSet, GarmentUsageViewSet, CategoryViewSet
 from drf_spectacular.views import (
     SpectacularAPIView,
     SpectacularRedocView,
@@ -13,6 +13,7 @@ from rest_framework_nested.routers import NestedSimpleRouter # LINUS LA TILL
 router = DefaultRouter()
 router.register(r"garments", GarmentViewSet, basename="garment")
 router.register(r"usages", UsageViewSet, basename="usage")
+router.register(r"Categories", CategoryViewSet, basename="category")
 
 # LINUS LA TILL
 # Nested router för usages
