@@ -4,8 +4,8 @@ import { Router } from '@angular/router';
 
 interface Usage {
   id: number;
-  date: string;
-  garmentId: number;
+  time: string;
+  garment: number;
   notes: string;
 }
 
@@ -34,20 +34,20 @@ export class UsageListComponent implements OnInit {
         this.usages = [
           {
             id: 1,
-            date: '2023-10-01',
-            garmentId: 1,
+            time: '2023-10-01',
+            garment: 1,
             notes: 'Wore this on a sunny day.'
           },
           {
             id: 2,
-            date: '2023-10-02',
-            garmentId: 2,
+            time: '2023-10-02',
+            garment: 2,
             notes: 'Perfect for a casual outing.'
           },
           {
             id: 3,
-            date: '2023-10-03',
-            garmentId: 3,
+            time: '2023-10-03',
+            garment: 3,
             notes: 'Great for a formal event.'
           }
         ];
