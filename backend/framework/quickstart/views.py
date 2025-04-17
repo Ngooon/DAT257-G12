@@ -39,3 +39,4 @@ class LoginView(APIView):
         access_token = serializer.validated_data["access_token"]
 
         return Response({"message": f"Logged in with {provider}!"}, status=status.HTTP_200_OK)
+    
