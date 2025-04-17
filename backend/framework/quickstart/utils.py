@@ -1,11 +1,13 @@
 from django.db import models
-from .models import Wardrobe, Garment
+from .models import Wardrobe, Garment, Usage
+from django.utils.timezone import now, timedelta
 
 
 def flush_wardrobe_data():
 
     Wardrobe.objects.all().delete()
     Garment.objects.all().delete()
+    Usage.objects.all().delete()
 
 
 def create_example_data():
@@ -95,3 +97,18 @@ def create_example_data():
 
     for data in example_garments:
         Garment.objects.get_or_create(**data)
+
+    garments = Garment.objects.all()
+    example_usages = [
+        {"garment": garments[0], "time": now() - timedelta(days=1), "notes": "Used for a casual outing."},
+        {"garment": garments[1], "time": now() - timedelta(days=2), "notes": "Worn to a meeting."},
+        {"garment": garments[2], "time": now() - timedelta(days=3), "notes": "Perfect for a rainy day."},
+        {"garment": garments[3], "time": now() - timedelta(days=4), "notes": "Worn during a winter walk."},
+        {"garment": garments[4], "time": now() - timedelta(days=5), "notes": "Used for a summer picnic."},
+        {"garment": garments[4], "time": now() - timedelta(days=6), "notes": "Used for a summer walk."},
+    ]
+
+    for usage_data in example_usages:
+        Usage.objects.get_or_create(**usage_data)
+
+

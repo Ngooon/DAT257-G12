@@ -22,3 +22,15 @@ class Garment(models.Model):
 
     def __str__(self):
         return f"{self.name} (Storlek: {self.size}, Färg: {self.color})"
+    
+
+class Usage(models.Model):
+    garment = models.ForeignKey(Garment, on_delete=models.CASCADE, related_name="usages")
+    time = models.DateTimeField(auto_now_add=True)
+    notes = models.TextField(null=True, blank=True, help_text="Notes about the usage")
+
+    class Meta:
+        unique_together = ("garment", "time")  # Ensures unique combination of garment and time
+
+    def __str__(self):
+        return f"{self.garment.name} användes vid {self.time.strftime('%Y-%m-%d %H:%M:%S')}"
