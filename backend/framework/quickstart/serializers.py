@@ -1,6 +1,6 @@
 from django.contrib.auth.models import Group, User
 from rest_framework import serializers
-from framework.quickstart.models import Garment, Wardrobe, Usage
+from framework.quickstart.models import Garment, Wardrobe, Usage, Category
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -33,11 +33,20 @@ class WardrobeSerializer(serializers.HyperlinkedModelSerializer):
         model = Wardrobe
         fields = ['id', 'name']
 
+class CategorySerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Category
+        fields = [
+            "id",
+            "name",
+        ]
+
 
 class UsageSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Usage
         fields = [
+            "id",
             "garment",
             "time",
             "notes",
