@@ -9,12 +9,15 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny
-
+from django.shortcuts import redirect
 
 import requests
 from django.http import HttpResponseRedirect, JsonResponse
 from django.conf import settings
 from urllib.parse import urlencode
+
+import jwt
+from datetime import datetime, timedelta
 
 # Put your Facebook App details in Django settings.py
 FACEBOOK_APP_ID = settings.SOCIAL_AUTH_FACEBOOK_KEY
@@ -64,8 +67,29 @@ def facebook_callback(request):
 
     # Optional: Save user to DB, create session, issue JWT, etc.
     # For now, redirect with their name to the frontend
-    params = urlencode({"name": user_data.get("name", "Unknown")})
-    return HttpResponseRedirect(f"{FRONTEND_REDIRECT}?{params}")
+    token = generate_token(user_data)
+    return redirect(f"http://localhost:4200/?token={token}")
+
+def generate_token(user_data):
+    payload = {
+        "id": user_data["id"],
+        "name": user_data["name"],
+        "email": user_data.get("email", ""),
+        "exp": datetime.utcnow() + timedelta(hours=24)
+    }
+    token = jwt.encode(payload, settings.SECRET_KEY, algorithm="HS256")
+    return token
+
+def protected_view(request):
+    auth_header = request.headers.get('Authorization', '')
+    token = auth_header.replace('Bearer ', '')
+    try:
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
+        return JsonResponse({"message": f"Welcome {payload['name']}!"})
+    except jwt.ExpiredSignatureError:
+        return JsonResponse({"error": "Token expired"}, status=401)
+    except jwt.InvalidTokenError:
+        return JsonResponse({"error": "Invalid token"}, status=401)
 
 class GarmentViewSet(viewsets.ModelViewSet):
     """
@@ -84,15 +108,4 @@ class WardrobeViewSet(viewsets.ModelViewSet):
     queryset = Wardrobe.objects.all()
     serializer_class = WardrobeSerializer
 
-class LoginView(APIView):
-    permission_classes = [AllowAny]
-
-    def post(self, request):
-        serializer = LoginSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        provider = serializer.validated_data["provider"]
-        access_token = serializer.validated_data["access_token"]
-
-        return Response({"message": f"Logged in with {provider}!"}, status=status.HTTP_200_OK)
     

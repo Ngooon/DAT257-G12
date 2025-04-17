@@ -1,7 +1,7 @@
 from django.urls import path, include
 from django.http import FileResponse
 from rest_framework.routers import DefaultRouter
-from framework.quickstart.views import GarmentViewSet, WardrobeViewSet, LoginView
+from framework.quickstart.views import GarmentViewSet, WardrobeViewSet
 from drf_spectacular.views import (
     SpectacularAPIView,
     SpectacularRedocView,
