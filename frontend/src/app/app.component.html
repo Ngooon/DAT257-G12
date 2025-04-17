@@ -181,7 +181,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link d-flex align-items-center gap-2" href="http://localhost:8000/auth/login/facebook/">
+              <a class="nav-link d-flex align-items-center gap-2" href="https://connect.facebook.net/sv_SE/sdk.js#xfbml=1&version=v22.0&appId=1308269126948065">
                 <svg class="bi" aria-hidden="true">
                   <use xlink:href="#door-closed" />
                 </svg>
@@ -191,7 +191,9 @@
           </ul>
         </div>
       </div>
+      <button (click)="loginWithFacebook()">Login with Facebook</button>
     </div>
+    
 
     <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
       <router-outlet></router-outlet>

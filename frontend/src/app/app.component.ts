@@ -8,4 +8,8 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'Wardrobe Curator Application';
+  loginWithFacebook() {
+    window.location.href = 'http://localhost:8000/auth/facebook';
+  }
 }
+

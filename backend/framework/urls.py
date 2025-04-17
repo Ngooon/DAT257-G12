@@ -8,7 +8,7 @@ from drf_spectacular.views import (
     SpectacularSwaggerView,
 )
 from django.urls import path
-
+from .quickstart import views
 
 
 
@@ -42,9 +42,7 @@ urlpatterns = [
     ),
     path("api/", include(router.urls)),
     
-    #Facebook login
-    #path('oauth/login/', LoginViewSet.as_view({'get': 'list', 'post': 'create'})),
-    #path('api/auth/oauth/', include('rest_framework_social_oauth2.urls'))
-    #path('api/auth/facebook-login/', LoginView.as_view(), name='facebook-login'),
     path('auth/', include('social_django.urls', namespace='social')),
+    path('auth/facebook', views.facebook_login, name='facebook_login'),
+    path('auth/facebook/callback', views.facebook_callback, name='facebook_callback'),
 ]
