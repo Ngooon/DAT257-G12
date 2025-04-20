@@ -1,29 +1,21 @@
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">
-      <span *ngIf="usage">Edit usage <span class="opacity-25 small">(#{{ usage.id }})</span></span>
-      <span *ngIf="!usage">Add new usage</span>
-    </h1>
+<form [formGroup]="usageForm" (ngSubmit)="onSubmit()">
+  <div class="form-group form-floating mb-3">
+    <select id="garmentId" formControlName="garmentId" class="form-control">
+      <option [ngValue]="null">Select a Garment</option>
+      <option *ngFor="let garment of garments" [value]="garment.id">{{ garment.id }}</option>
+    </select>
+    <label for="garmentId">Garment</label>
   </div>
-  
-  <form [formGroup]="usageForm" (ngSubmit)="onSubmit()">
-    <div class="form-group form-floating mb-3">
-      <select id="garmentId" formControlName="garmentId" class="form-control" required>
-        <option [ngValue]="null">-</option>
-        <option *ngFor="let garment of garments" [value]="garment.id">{{ garment.name }}</option>
-      </select>
-      <label for="garmentId">Garment</label>
-    </div>
-  
-    <div class="form-group form-floating mb-3">
-      <input type="datetime-local" id="time" formControlName="time" class="form-control" required placeholder="Time" />
-      <label for="time">Time</label>
-    </div>
-  
-    <div class="form-group form-floating mb-3">
-      <textarea id="notes" formControlName="notes" class="form-control" placeholder="Notes"></textarea>
-      <label for="notes">Notes</label>
-    </div>
-  
-    <button type="submit" class="btn btn-primary">Save</button>
-  </form>
-  
+
+  <div class="form-group form-floating mb-3">
+    <input id="time" formControlName="time" class="form-control" required placeholder="Time" />
+    <label for="time">Time</label>
+  </div>
+
+  <div class="form-group form-floating mb-3">
+    <textarea id="notes" formControlName="notes" class="form-control" placeholder="Notes"></textarea>
+    <label for="notes">Notes</label>
+  </div>
+
+  <button type="submit" class="btn btn-primary">Save</button>
+</form>

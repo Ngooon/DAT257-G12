@@ -25,7 +25,7 @@ export class UsageFormComponent implements OnInit {
   usageForm: FormGroup;
   usageId: number | null = null;
   usage: Usage | null = null;
-  garments: Garment[] = [];
+  garments: Garment[] = [];  // Add the garments property
 
   constructor(
     private fb: FormBuilder,
@@ -40,8 +40,10 @@ export class UsageFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Fetch the list of garments
     this.loadGarments();
-
+    
+    // Fetch usage details if we're editing
     this.route.params.subscribe(params => {
       if (params['id']) {
         this.usageId = +params['id'];
@@ -50,17 +52,20 @@ export class UsageFormComponent implements OnInit {
     });
   }
 
+  // Method to load garments
   loadGarments(): void {
     this.http.get<Garment[]>('/api/garments/').subscribe({
-      next: data => {
+      next: (data) => {
         this.garments = data;
       },
-      error: error => {
-        console.error('Failed to load garments', error);
+      error: (err) => {
+        console.error('Error fetching garments', err);
+        alert('Failed to load garments.');
       }
     });
   }
 
+  // Method to load a specific usage by id
   loadUsage(id: number): void {
     this.http.get<Usage>(`/api/usages/${id}/`).subscribe(data => {
       this.usage = data;
@@ -73,12 +78,14 @@ export class UsageFormComponent implements OnInit {
   }
 
   onSubmit(): void {
+    // Map the form value to the format expected by the API
     const usage = {
-      ...this.usageForm.value,
-      id: this.usageId ?? 0
+      garment: this.usageForm.value.garmentId, // Use "garment" instead of "garmentId"
+      notes: this.usageForm.value.notes        // Include the notes
     };
-
+  
     if (this.usageId) {
+      // Update existing usage
       this.http.put(`/api/usages/${this.usageId}/`, usage).subscribe({
         next: () => {
           console.log('Usage updated');
@@ -90,6 +97,7 @@ export class UsageFormComponent implements OnInit {
         }
       });
     } else {
+      // Create new usage
       this.http.post('/api/usages/', usage).subscribe({
         next: () => {
           console.log('Usage created');
@@ -102,4 +110,4 @@ export class UsageFormComponent implements OnInit {
       });
     }
   }
-}
+} 

@@ -5,7 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 interface Usage {
   id: number;
   time: string;
-  garmentId: number;  
+  garment: number;  
   notes: string;
 }
 
