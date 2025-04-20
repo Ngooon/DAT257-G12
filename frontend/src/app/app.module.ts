@@ -36,4 +36,7 @@ registerLocaleData(localeSv);
     providers: [{ provide: LOCALE_ID, useValue: 'sv-SE' }],
     bootstrap: [AppComponent]
 })
+
+
 export class AppModule { }
+

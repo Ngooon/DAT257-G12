@@ -1,13 +1,23 @@
 from django.urls import path, include
 from django.http import FileResponse
 from rest_framework.routers import DefaultRouter
-from framework.quickstart.views import GarmentViewSet, WardrobeViewSet, UsageViewSet, GarmentUsageViewSet, CategoryViewSet
+from framework.quickstart.views import (
+    GarmentViewSet,
+    WardrobeViewSet,
+    UsageViewSet,
+    GarmentUsageViewSet,
+    CategoryViewSet,
+)
 from drf_spectacular.views import (
     SpectacularAPIView,
     SpectacularRedocView,
     SpectacularSwaggerView,
 )
-from rest_framework_nested.routers import NestedSimpleRouter # LINUS LA TILL
+from django.urls import path
+from .quickstart import views
+
+
+from rest_framework_nested.routers import NestedSimpleRouter  # LINUS LA TILL
 
 
 router = DefaultRouter()
@@ -17,9 +27,10 @@ router.register(r"Categories", CategoryViewSet, basename="category")
 
 # LINUS LA TILL
 # Nested router för usages
-garments_router = NestedSimpleRouter(router, r'garments', lookup='garment')
-garments_router.register(r'usages', GarmentUsageViewSet, basename='garment-usages')
-# LINUS LA TILL 
+garments_router = NestedSimpleRouter(router, r"garments", lookup="garment")
+garments_router.register(r"usages", GarmentUsageViewSet, basename="garment-usages")
+# LINUS LA TILL
+
 
 def static_schema_view(request):
     import os
@@ -46,5 +57,8 @@ urlpatterns = [
         name="swagger-ui",
     ),
     path("api/", include(router.urls)),
-    path("api/", include(garments_router.urls)), # LINUS LA TILL 
+    path("api/", include(garments_router.urls)),  # LINUS LA TILL
+    path("auth/", include("social_django.urls", namespace="social")),
+    path("auth/facebook", views.facebook_login, name="facebook_login"),
+    path("auth/facebook/callback", views.facebook_callback, name="facebook_callback"),
 ]
