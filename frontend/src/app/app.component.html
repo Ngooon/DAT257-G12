@@ -33,8 +33,9 @@
   </button>
   <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="bd-theme-text">
     <li>
-      <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light"
-        aria-pressed="false">
+      <button type="button" class="dropdown-item d-flex align-items-center"
+        [ngClass]="{'active': currentTheme === 'light'}" data-bs-theme-value="light" aria-pressed="true"
+        (click)="setTheme('light')">
         <svg class="bi me-2 opacity-50" aria-hidden="true">
           <use href="#sun-fill"></use>
         </svg>
@@ -45,8 +46,9 @@
       </button>
     </li>
     <li>
-      <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark"
-        aria-pressed="false">
+      <button type="button" class="dropdown-item d-flex align-items-center"
+        [ngClass]="{'active': currentTheme === 'dark'}" data-bs-theme-value="dark" aria-pressed="true"
+        (click)="setTheme('dark')">
         <svg class="bi me-2 opacity-50" aria-hidden="true">
           <use href="#moon-stars-fill"></use>
         </svg>
@@ -57,8 +59,9 @@
       </button>
     </li>
     <li>
-      <button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="auto"
-        aria-pressed="true">
+      <button type="button" class="dropdown-item d-flex align-items-center"
+        [ngClass]="{'active': currentTheme === 'auto'}" data-bs-theme-value="auto" aria-pressed="true"
+        (click)="setTheme('auto')">
         <svg class="bi me-2 opacity-50" aria-hidden="true">
           <use href="#circle-half"></use>
         </svg>
