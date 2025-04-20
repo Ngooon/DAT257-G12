@@ -30,7 +30,7 @@ def create_example_data():
             "size": "M",
             "color": "Blue",
             "brand": "Nike",
-            "category": "Top",
+            "category": Category.objects.get(name="Top"),
         },
         {
             "name": "Jeans",
@@ -38,7 +38,7 @@ def create_example_data():
             "size": "L",
             "color": "Black",
             "brand": "Levi's",
-            "category": "Bottom",
+            "category": Category.objects.get(name="Bottom"),
         },
         {
             "name": "Jacket",
@@ -46,7 +46,7 @@ def create_example_data():
             "size": "XL",
             "color": "Green",
             "brand": "Adidas",
-            "category": "Outerwear",
+            "category": Category.objects.get(name="Outerwear"),
         },
         {
             "name": "Sweater",
@@ -54,7 +54,7 @@ def create_example_data():
             "size": "M",
             "color": "Gray",
             "brand": "H&M",
-            "category": "Top",
+            "category": Category.objects.get(name="Top"),
         },
         {
             "name": "Shorts",
@@ -62,7 +62,7 @@ def create_example_data():
             "size": "S",
             "color": "Red",
             "brand": "Puma",
-            "category": "Bottom",
+            "category": Category.objects.get(name="Bottom"),
         },
         {
             "name": "Raincoat",
@@ -70,7 +70,7 @@ def create_example_data():
             "size": "L",
             "color": "Yellow",
             "brand": "Columbia",
-            "category": "Outerwear",
+            "category": Category.objects.get(name="Outerwear"),
         },
         {
             "name": "Scarf",
@@ -78,7 +78,7 @@ def create_example_data():
             "size": None,
             "color": "White",
             "brand": "Gucci",
-            "category": "Accessory",
+            "category": Category.objects.get(name="Accessory"),
         },
         {
             "name": "Hat",
@@ -86,7 +86,7 @@ def create_example_data():
             "size": None,
             "color": "Beige",
             "brand": "Zara",
-            "category": "Accessory",
+            "category": Category.objects.get(name="Accessory"),
         },
         {
             "name": "Sneakers",
@@ -94,7 +94,7 @@ def create_example_data():
             "size": "42",
             "color": "White",
             "brand": "Converse",
-            "category": "Footwear",
+            "category": Category.objects.get(name="Footwear"),
         },
         {
             "name": "Boots",
@@ -102,7 +102,7 @@ def create_example_data():
             "size": "43",
             "color": "Brown",
             "brand": "Timberland",
-            "category": "Footwear",
+            "category": Category.objects.get(name="Footwear"),
         },
     ]
 
@@ -111,15 +111,37 @@ def create_example_data():
 
     garments = Garment.objects.all()
     example_usages = [
-        {"garment": garments[0], "time": now() - timedelta(days=1), "notes": "Used for a casual outing."},
-        {"garment": garments[1], "time": now() - timedelta(days=2), "notes": "Worn to a meeting."},
-        {"garment": garments[2], "time": now() - timedelta(days=3), "notes": "Perfect for a rainy day."},
-        {"garment": garments[3], "time": now() - timedelta(days=4), "notes": "Worn during a winter walk."},
-        {"garment": garments[4], "time": now() - timedelta(days=5), "notes": "Used for a summer picnic."},
-        {"garment": garments[4], "time": now() - timedelta(days=6), "notes": "Used for a summer walk."},
+        {
+            "garment": garments[0],
+            "time": now() - timedelta(days=1),
+            "notes": "Used for a casual outing.",
+        },
+        {
+            "garment": garments[1],
+            "time": now() - timedelta(days=2),
+            "notes": "Worn to a meeting.",
+        },
+        {
+            "garment": garments[2],
+            "time": now() - timedelta(days=3),
+            "notes": "Perfect for a rainy day.",
+        },
+        {
+            "garment": garments[3],
+            "time": now() - timedelta(days=4),
+            "notes": "Worn during a winter walk.",
+        },
+        {
+            "garment": garments[4],
+            "time": now() - timedelta(days=5),
+            "notes": "Used for a summer picnic.",
+        },
+        {
+            "garment": garments[4],
+            "time": now() - timedelta(days=6),
+            "notes": "Used for a summer walk.",
+        },
     ]
 
     for usage_data in example_usages:
         Usage.objects.get_or_create(**usage_data)
-
-

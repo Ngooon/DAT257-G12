@@ -25,7 +25,7 @@
             <tr *ngFor="let usage of usages" (click)="onRowClick(usage.id)">
                 <td>{{ usage.id }}</td>
                 <td>{{ usage.time }}</td>
-                <td>{{ usage.garment }}</td>
+                <td># {{ usage.garmentId }}</td>
                 <td>{{ usage.notes }}</td>
                 <!-- <td>
                     <div class="btn-group">

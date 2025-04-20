@@ -11,7 +11,7 @@ from framework.quickstart.serializers import (
     GarmentSerializer,
     WardrobeSerializer,
     UsageSerializer,
-    CategorySerializer
+    CategorySerializer,
 )
 
 
@@ -23,14 +23,15 @@ class GarmentViewSet(viewsets.ModelViewSet):
     queryset = Garment.objects.all().annotate(usage_count=Count("usages"))
     serializer_class = GarmentSerializer
     filter_backends = [OrderingFilter, DjangoFilterBackend]  # Lägg till OrderingFilter
-    ordering_fields = [ "size", "color", "category","usage_count"]  
-    filterset_fields = ["size","color","category"]
+    ordering_fields = ["size", "color", "category", "usage_count"]
+    filterset_fields = ["size", "color", "category"]
 
 
-class GarmentUsageViewSet(viewsets.ViewSet):  
+class GarmentUsageViewSet(viewsets.ViewSet):
     """
     API endpoint for usages related to a specific garment.
     """
+
     @extend_schema(
         parameters=[
             OpenApiParameter(
@@ -53,17 +54,18 @@ class GarmentUsageViewSet(viewsets.ViewSet):
         """
         usages = Usage.objects.filter(garment_id=garment_pk)
 
-        from_time = request.query_params.get('from_time')
-        to_time = request.query_params.get('to_time')
+        from_time = request.query_params.get("from_time")
+        to_time = request.query_params.get("to_time")
 
         if from_time:
             usages = usages.filter(time__gte=from_time)
         if to_time:
             usages = usages.filter(time__lte=to_time)
 
-        serializer = UsageSerializer(usages, many=True, context={'request': request})  # Lägg till context 
+        serializer = UsageSerializer(
+            usages, many=True, context={"request": request}
+        )  # Lägg till context
         return Response(serializer.data)
-
 
 
 class WardrobeViewSet(viewsets.ModelViewSet):
@@ -74,37 +76,32 @@ class WardrobeViewSet(viewsets.ModelViewSet):
     queryset = Wardrobe.objects.all()
     serializer_class = WardrobeSerializer
 
+
 class CategoryViewSet(viewsets.ModelViewSet):
     """
     API endpoint for usages.
     """
+
     queryset = Category.objects.all()
-    serializer_class = CategorySerializer 
+    serializer_class = CategorySerializer
+
 
 class UsageFilter(django_filters.FilterSet):
-    garment_id = django_filters.NumberFilter(field_name='garment__id')
-    from_time = django_filters.DateTimeFilter(field_name='time', lookup_expr='gte')
-    to_time = django_filters.DateTimeFilter(field_name='time', lookup_expr='lte')
+    garment_id = django_filters.NumberFilter(field_name="garment__id")
+    from_time = django_filters.DateTimeFilter(field_name="time", lookup_expr="gte")
+    to_time = django_filters.DateTimeFilter(field_name="time", lookup_expr="lte")
 
     class Meta:
         model = Usage
-        fields = ['garment_id','from_time', 'to_time']
- 
+        fields = ["garment_id", "from_time", "to_time"]
+
 
 class UsageViewSet(viewsets.ModelViewSet):
     """
     API endpoint for usages.
     """
-    queryset = Usage.objects.all().order_by('-time')
+
+    queryset = Usage.objects.all().order_by("-time")
     serializer_class = UsageSerializer
-    filter_backends = [DjangoFilterBackend] 
+    filter_backends = [DjangoFilterBackend]
     filterset_class = UsageFilter
-
-
-
-
-
-    
-
-
-    

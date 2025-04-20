@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 interface Usage {
   id: number;
   time: string;
-  garment: number;
+  garmentId: number;
   notes: string;
 }
 
@@ -25,9 +25,12 @@ export class UsageListComponent implements OnInit {
   }
 
   getUsages() {
-    this.http.get<Usage[]>('/api/usages/').subscribe({
+    this.http.get<{ id: number; time: string; garment: number; notes: string }[]>('/api/usages/').subscribe({
       next: data => {
-        this.usages = data;
+        this.usages = data.map(usage => ({
+          ...usage,
+          garmentId: usage.garment,
+        }));
       },
       error: error => {
         console.error('Failed to load categories from API, using mock data.', error);
@@ -35,19 +38,19 @@ export class UsageListComponent implements OnInit {
           {
             id: 1,
             time: '2023-10-01',
-            garment: 1,
+            garmentId: 1,
             notes: 'Wore this on a sunny day.'
           },
           {
             id: 2,
             time: '2023-10-02',
-            garment: 2,
+            garmentId: 2,
             notes: 'Perfect for a casual outing.'
           },
           {
             id: 3,
             time: '2023-10-03',
-            garment: 3,
+            garmentId: 3,
             notes: 'Great for a formal event.'
           }
         ];

@@ -15,7 +15,9 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
         fields = ["url", "name"]
 
 
-class GarmentSerializer(serializers.HyperlinkedModelSerializer):
+class GarmentSerializer(serializers.ModelSerializer):
+    category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())
+
     class Meta:
         model = Garment
         fields = [
@@ -28,10 +30,12 @@ class GarmentSerializer(serializers.HyperlinkedModelSerializer):
             "category",
         ]
 
+
 class WardrobeSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Wardrobe
-        fields = ['id', 'name']
+        fields = ["id", "name"]
+
 
 class CategorySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -42,7 +46,9 @@ class CategorySerializer(serializers.HyperlinkedModelSerializer):
         ]
 
 
-class UsageSerializer(serializers.HyperlinkedModelSerializer):
+class UsageSerializer(serializers.ModelSerializer):
+    garment = serializers.PrimaryKeyRelatedField(queryset=Garment.objects.all())
+
     class Meta:
         model = Usage
         fields = [
