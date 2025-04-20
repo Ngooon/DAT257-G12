@@ -1,1 +1,41 @@
-<p>usage-list works!</p>
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Usages</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+            <button routerLink="/usages/new" type="button" class="btn btn-sm btn-outline-primary">Add new</button>
+        </div>
+    </div>
+</div>
+
+<p *ngIf="!usages"><em>Loading...</em></p>
+<p *ngIf="usages?.length === 0"><em>No garments found.</em></p>
+
+<div class="table-responsive">
+    <table class="table table-hover text-start">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Date</th>
+                <th scope="col">Garment</th>
+                <th scope="col">Notes</th>
+                <!-- <th scope="col"></th> -->
+            </tr>
+        </thead>
+        <tbody *ngIf="usages">
+            <tr *ngFor="let usage of usages" (click)="onRowClick(usage.id)">
+                <td>{{ usage.id }}</td>
+                <td>{{ usage.time }}</td>
+                <td># {{ usage.garmentId }}</td>
+                <td>{{ usage.notes }}</td>
+                <!-- <td>
+                    <div class="btn-group">
+                        <button (click)="onDelete(usage.id); $event.stopPropagation()"
+                            class="btn btn-outline-danger btn-sm">Delete</button>
+                        <button (click)="onEdit(usage.id); $event.stopPropagation()"
+                            class="btn btn-outline-primary btn-sm">Edit</button>
+                    </div>
+                </td> -->
+            </tr>
+        </tbody>
+    </table>
+</div>

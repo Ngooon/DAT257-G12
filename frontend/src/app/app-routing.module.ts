@@ -9,13 +9,13 @@ import { UsageDetailsComponent } from './usage-details/usage-details.component';
 
 const routes: Routes = [
     { path: 'wardrobe', component: WardrobeListComponent },
+    { path: 'garments', component: WardrobeListComponent },
     { path: 'test', component: TestComponent },
     { path: 'garments/new', component: GarmentFormComponent },
     { path: 'garments/edit/:id', component: GarmentFormComponent },
     { path: 'garments/:id', component: GarmentDetailsComponent },
-    { path: 'usage', component: UsageListComponent },
-    { path: 'usage/:id', component: UsageDetailsComponent },
-
+    { path: 'usages', component: UsageListComponent },
+    { path: 'usages/:id', component: UsageDetailsComponent },
 ];
 
 @NgModule({

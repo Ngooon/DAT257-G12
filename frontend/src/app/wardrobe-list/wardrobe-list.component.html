@@ -11,35 +11,53 @@
 <p *ngIf="garments?.length === 0"><em>No garments found.</em></p>
 
 <div class="table-responsive">
-    <table class="table table-hover text-start">
-        <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Description</th>
-                <th scope="col">Color</th>
-                <th scope="col">Size</th>
-                <th scope="col">Category</th>
-                <th scope="col">Wardrobe</th>
-                <th scope="col"></th>
-            </tr>
-        </thead>
-        <tbody *ngIf="garments">
-            <tr *ngFor="let garment of garments" (click)="onRowClick(garment.id)">
-                <td>{{ garment.id }}</td>
-                <td>{{ garment.name }}</td>
-                <td>{{ garment.color }}</td>
-                <td>{{ garment.size }}</td>
-                <td>{{ garment.category }}</td>
-                <td>{{ garment.wardrobe }}</td>
-                <td>
-                    <div class="btn-group">
-                        <button (click)="onDelete(garment.id); $event.stopPropagation()"
-                            class="btn btn-outline-danger btn-sm">Delete</button>
-                        <button (click)="onEdit(garment.id); $event.stopPropagation()"
-                            class="btn btn-outline-primary btn-sm">Edit</button>
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    <form [formGroup]="filterForm">
+        <table class="table table-hover text-start">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th>
+                        <input type="text" class="form-control" placeholder="Filter by color" formControlName="color" />
+                    </th>
+                    <th>
+                        <input type="text" class="form-control" placeholder="Filter by size" formControlName="size" />
+                    </th>
+                    <th>
+                        <input type="text" class="form-control" placeholder="Filter by category"
+                            formControlName="category" />
+                    </th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Color</th>
+                    <th scope="col">Size</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Wardrobe</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let garment of filteredGarments" (click)="onRowClick(garment.id)">
+                    <td>{{ garment.id }}</td>
+                    <td>{{ garment.name }}</td>
+                    <td>{{ garment.color }}</td>
+                    <td>{{ garment.size }}</td>
+                    <td>{{ garment.category }}</td>
+                    <td>{{ garment.wardrobe }}</td>
+                    <td>
+                        <div class="btn-group">
+                            <button (click)="onDelete(garment.id); $event.stopPropagation()"
+                                class="btn btn-outline-danger btn-sm">Delete</button>
+                            <button (click)="onEdit(garment.id); $event.stopPropagation()"
+                                class="btn btn-outline-primary btn-sm">Edit</button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
 </div>
