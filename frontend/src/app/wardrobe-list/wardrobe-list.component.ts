@@ -23,8 +23,9 @@ interface Garment {
 export class WardrobeListComponent implements OnInit {
   filterForm: FormGroup;
 
-  garments: Garment[] = []; // Din lista med plagg
-  filteredGarments: Garment[] = []; // Filtrerad lista
+  garments: Garment[] = [];
+  filteredGarments: Garment[] = [];
+  categories: { id: number; name: string }[] = [];
 
   constructor(private router: Router, private http: HttpClient, private fb: FormBuilder) {
     this.filterForm = this.fb.group({});
@@ -35,47 +36,55 @@ export class WardrobeListComponent implements OnInit {
     this.filterForm = this.fb.group({
       color: [''],
       size: [''],
-      category: ['']
+      category: [''],
+      ordering: ['']
     });
 
-    // Lyssna på ändringar i formuläret
-    this.filterForm.valueChanges.subscribe(filters => {
-      this.applyFilters(filters);
-    });
 
-    // Ladda initiala data
+    this.getCategories();
     this.getGarments();
   }
 
-  getGarments() {
+  getCategories() {
+    this.http.get<{ id: number; name: string }[]>('/api/Categories/').subscribe({
+      next: (data) => {
+        this.categories = data;
+      },
+      error: (error) => {
+        console.error('Failed to load categories', error);
+      }
+    });
+  }
+
+  onApplyFilters() {
+    const filters = this.filterForm.value;
+    this.getGarments(filters);
+  }
+
+  getGarments(filters: any = {}) {
     let params = new HttpParams();
-    if (this.filterForm.value.color) {
-      params = params.set('color', this.filterForm.value.color);
+    if (filters.ordering) {
+      params = params.set('ordering', filters.ordering);
     }
-    if (this.filterForm.value.size) {
-      params = params.set('size', this.filterForm.value.size);
+    if (filters.color) {
+      params = params.set('color', filters.color);
     }
-    if (this.filterForm.value.category) {
-      params = params.set('category', this.filterForm.value.category);
+    if (filters.size) {
+      params = params.set('size', filters.size);
     }
+    if (filters.category) {
+      params = params.set('category', filters.category);
+    }
+
 
     this.http.get<any[]>('/api/garments/', { params }).subscribe({
       next: data => {
         this.garments = data;
-        this.filteredGarments = data;
       },
       error: error => {
         console.error('Failed to load garments', error);
       }
     });
-  }
-
-  applyFilters(filters: any): void {
-    this.filteredGarments = this.garments.filter(garment =>
-      (!filters.color || garment.color.includes(filters.color)) &&
-      (!filters.size || garment.size.includes(filters.size)) &&
-      (!filters.category || garment.category.includes(filters.category))
-    );
   }
 
   onRowClick(garmentId: number) {
@@ -90,7 +99,6 @@ export class WardrobeListComponent implements OnInit {
     this.http.delete(`/api/garments/${garmentId}/`).subscribe(
       () => {
         this.garments = this.garments.filter(garment => garment.id !== garmentId);
-        this.filteredGarments = this.filteredGarments.filter(garment => garment.id !== garmentId);
       },
       (error) => {
         console.error(error);

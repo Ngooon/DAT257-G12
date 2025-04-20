@@ -7,16 +7,21 @@
     </div>
 </div>
 
-<p *ngIf="!garments"><em>Loading...</em></p>
-<p *ngIf="garments?.length === 0"><em>No garments found.</em></p>
-
 <div class="table-responsive">
-    <form [formGroup]="filterForm">
+    <form [formGroup]="filterForm" (keydown.enter)="onApplyFilters(); $event.preventDefault()">
         <table class="table table-hover text-start">
             <thead>
                 <tr>
-                    <th></th>
-                    <th></th>
+                    <th colspan="2">
+                        <select class="form-control" formControlName="ordering">
+                            <option value="">-- Order by --</option>
+                            <option value="description">Description</option>
+                            <option value="color">Color</option>
+                            <option value="size">Size</option>
+                            <option value="category">Category</option>
+                            <option value="wardrobe">Wardrobe</option>
+                        </select>
+                    </th>
                     <th>
                         <input type="text" class="form-control" placeholder="Filter by color" formControlName="color" />
                     </th>
@@ -24,10 +29,16 @@
                         <input type="text" class="form-control" placeholder="Filter by size" formControlName="size" />
                     </th>
                     <th>
-                        <input type="text" class="form-control" placeholder="Filter by category"
-                            formControlName="category" />
+                        <select class="form-control" formControlName="category">
+                            <option value="">Select category</option>
+                            <option *ngFor="let category of categories" [value]="category.id">
+                                {{ category.name }}
+                            </option>
+                        </select>
                     </th>
-                    <th></th>
+                    <th>
+                        <button type="button" class="btn btn-primary btn-sm" (click)="onApplyFilters()">Apply</button>
+                    </th>
                     <th></th>
                 </tr>
                 <tr>
@@ -41,7 +52,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let garment of filteredGarments" (click)="onRowClick(garment.id)">
+                <tr *ngFor="let garment of garments" (click)="onRowClick(garment.id)">
                     <td>{{ garment.id }}</td>
                     <td>{{ garment.name }}</td>
                     <td>{{ garment.color }}</td>
@@ -61,3 +72,6 @@
         </table>
     </form>
 </div>
+
+<p *ngIf="!garments"><em>Loading...</em></p>
+<p *ngIf="garments?.length === 0"><em>No garments found.</em></p>
