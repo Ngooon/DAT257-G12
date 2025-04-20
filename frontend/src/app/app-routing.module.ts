@@ -5,6 +5,7 @@ import { TestComponent } from './test/test.component';
 import { GarmentDetailsComponent } from './garment-details/garment-details.component';
 import { GarmentFormComponent } from './garment-form/garment-form.component';
 import { UsageListComponent } from './usage-list/usage-list.component';
+import { UsageDetailsComponent } from './usage-details/usage-details.component';
 
 const routes: Routes = [
     { path: 'wardrobe', component: WardrobeListComponent },
@@ -13,6 +14,8 @@ const routes: Routes = [
     { path: 'garments/edit/:id', component: GarmentFormComponent },
     { path: 'garments/:id', component: GarmentDetailsComponent },
     { path: 'usage', component: UsageListComponent },
+    { path: 'usage/:id', component: UsageDetailsComponent },
+
 ];
 
 @NgModule({

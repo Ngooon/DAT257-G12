@@ -11,6 +11,8 @@ class Command(BaseCommand):
         super().add_arguments(parser)
 
     def handle(self, *args, **options):
+        call_command("makemigrations")
+        call_command("migrate")
         if os.environ.get("RUN_MAIN") != "true":
             self.flush_and_create_data()
         call_command("runserver", *args, **options)
@@ -23,3 +25,4 @@ class Command(BaseCommand):
             flush_wardrobe_data()
             create_example_data()
         self.stdout.write("Database flushed and example data created.")
+
