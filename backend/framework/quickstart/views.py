@@ -1,4 +1,5 @@
 import django_filters
+from django_filters import rest_framework as filters
 from rest_framework import viewsets
 from rest_framework.response import Response
 from django.db.models import Count
@@ -20,6 +21,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from django.shortcuts import redirect
+from django.db.models import F
 
 import requests
 from django.http import HttpResponseRedirect, JsonResponse
@@ -207,13 +209,28 @@ class PaymentMethodViewSet(viewsets.ModelViewSet):
     queryset = PaymentMethod.objects.all()
     serializer_class = PaymentMethodSerializer
 
+
+class ListingFilter(filters.FilterSet):
+    garment_size = filters.CharFilter(field_name="garment__size", lookup_expr="icontains")
+    garment_color = filters.CharFilter(field_name="garment__color", lookup_expr="icontains")
+    garment_category = filters.CharFilter(field_name="garment__category__name", lookup_expr="icontains")
+    min_price = filters.NumberFilter(field_name="price", lookup_expr="gte")
+    max_price = filters.NumberFilter(field_name="price", lookup_expr="lte")
+
+    class Meta:
+        model = Listing
+        fields = ["garment_size", "garment_color", "garment_category", "price", "place", "payment_method", "min_price", "max_price"]
+
 class ListingViewSet(viewsets.ModelViewSet):
     """
     API endpoint for usages.
     """
 
-    queryset = Listing.objects.all()
+    queryset = Listing.objects.all().annotate(
+        garment_size=F("garment__size"),
+        garment_color=F("garment__color"),
+        garment_category=F("garment__category"),)
     serializer_class = ListingSerializer
-    filter_backends = [OrderingFilter, DjangoFilterBackend]  # Lägg till OrderingFilter
-    ordering_fields = ["size", "color", "category"]
-    filterset_fields = ["size", "color", "category"]
+    filter_backends = [OrderingFilter, DjangoFilterBackend] 
+    ordering_fields = ["garment_size", "garment_color", "garment_category", "price", "place", "payment_method"]
+    filterset_class = ListingFilter

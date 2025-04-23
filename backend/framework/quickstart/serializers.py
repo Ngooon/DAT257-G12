@@ -81,6 +81,8 @@ class PaymentMethodSerializer(serializers.ModelSerializer):
             "name",
         ]
 
+
+
 class ListingSerializer(serializers.ModelSerializer):
     garment = serializers.PrimaryKeyRelatedField(queryset=Garment.objects.all())
     payment_method = serializers.PrimaryKeyRelatedField(queryset=PaymentMethod.objects.all())
