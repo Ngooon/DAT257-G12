@@ -38,7 +38,7 @@
     <div class="form-group form-floating mb-3">
         <select id="category" formControlName="category" class="form-control">
             <option [ngValue]="null">-</option>
-            <option *ngFor="let category of categories" [value]="category">{{ category }}</option>
+            <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</option>
         </select>
         <label for="category">Category</label>
     </div>
