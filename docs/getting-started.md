@@ -25,6 +25,8 @@ Install angular with `npm`:
 npm install -g @angular/cli
 ```
 
+_Stop here if you are starting the server with the debugger in VSCode._
+
 Navigate to the frontend directory:
 ```bash
 cd frontend
@@ -58,6 +60,8 @@ Install the required packages:
 ```bash
 pip install -r requirements.txt
 ```
+
+_Stop here if you are starting the server with the debugger in VSCode._
 
 Go to the backend directory:
 ```bash

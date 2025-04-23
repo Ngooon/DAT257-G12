@@ -6,3 +6,8 @@ After the packages are installed, run the following command to create a `require
 ```bash
 pip freeze > backend/requirements.txt
 ```
+
+To install all required packages, run the following command:
+```bash
+pip install -r backend/requirements.txt
+```
