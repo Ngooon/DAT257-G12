@@ -33,8 +33,9 @@
   </button>
   <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="bd-theme-text">
     <li>
-      <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light"
-        aria-pressed="false">
+      <button type="button" class="dropdown-item d-flex align-items-center"
+        [ngClass]="{'active': currentTheme === 'light'}" data-bs-theme-value="light" aria-pressed="true"
+        (click)="setTheme('light')">
         <svg class="bi me-2 opacity-50" aria-hidden="true">
           <use href="#sun-fill"></use>
         </svg>
@@ -45,8 +46,9 @@
       </button>
     </li>
     <li>
-      <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark"
-        aria-pressed="false">
+      <button type="button" class="dropdown-item d-flex align-items-center"
+        [ngClass]="{'active': currentTheme === 'dark'}" data-bs-theme-value="dark" aria-pressed="true"
+        (click)="setTheme('dark')">
         <svg class="bi me-2 opacity-50" aria-hidden="true">
           <use href="#moon-stars-fill"></use>
         </svg>
@@ -57,8 +59,9 @@
       </button>
     </li>
     <li>
-      <button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="auto"
-        aria-pressed="true">
+      <button type="button" class="dropdown-item d-flex align-items-center"
+        [ngClass]="{'active': currentTheme === 'auto'}" data-bs-theme-value="auto" aria-pressed="true"
+        (click)="setTheme('auto')">
         <svg class="bi me-2 opacity-50" aria-hidden="true">
           <use href="#circle-half"></use>
         </svg>
@@ -98,9 +101,13 @@
     <path
       d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
   </symbol>
-  <symbol id="door-closed" viewBox="0 0 16 16">
-    <path d="M3 2a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v13h1.5a.5.5 0 0 1 0 1h-13a.5.5 0 0 1 0-1H3V2zm1 13h8V2H4v13z" />
-    <path d="M9 9a1 1 0 1 0 2 0 1 1 0 0 0-2 0z" />
+  <symbol id="sign-in" viewBox="0 -960 960 960">
+    <path
+      d="M480-120v-80h280v-560H480v-80h280q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H480Zm-80-160-55-58 102-102H120v-80h327L345-622l55-58 200 200-200 200Z" />
+  </symbol>
+  <symbol id="sign-out" viewBox="0 -960 960 960">
+    <path
+      d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z" />
   </symbol>
 </svg>
 
@@ -144,7 +151,7 @@
         <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
           <ul class="nav flex-column">
             <li class="nav-item">
-              <a class="nav-link d-flex align-items-center gap-2 active" aria-current="page" href="/wardrobe">
+              <a class="nav-link d-flex align-items-center gap-2 active" aria-current="page" href="/garments">
                 <svg class="bi" aria-hidden="true">
                   <use xlink:href="#item" />
                 </svg>
@@ -152,11 +159,11 @@
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link d-flex align-items-center gap-2" href="/logging">
+              <a class="nav-link d-flex align-items-center gap-2" href="/usages">
                 <svg class="bi" aria-hidden="true">
                   <use xlink:href="#shelves" />
                 </svg>
-                Logging
+                Usage
               </a>
             </li>
             <li class="nav-item">
@@ -181,9 +188,17 @@
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link d-flex align-items-center gap-2" href="#">
+              <a class="nav-link d-flex align-items-center gap-2" href="#" (click)="loginWithFacebook()">
                 <svg class="bi" aria-hidden="true">
-                  <use xlink:href="#door-closed" />
+                  <use xlink:href="#sign-in" />
+                </svg>
+                Sign in
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link d-flex align-items-center gap-2" href="#" (click)="logout()">
+                <svg class="bi" aria-hidden="true">
+                  <use xlink:href="#sign-out" />
                 </svg>
                 Sign out
               </a>
@@ -192,6 +207,7 @@
         </div>
       </div>
     </div>
+
 
     <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
       <router-outlet></router-outlet>
