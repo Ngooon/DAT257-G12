@@ -1,170 +1,565 @@
 openapi: 3.0.3
 info:
   title: Wardrobe Curator Application
-  version: 0.0.0
-  description: This is the planed schema for the wardrobe curator application.
+  version: 1.0.0
+  description: A RESTful API for managing a wardrobe collection.
 paths:
-  /api/garments/:
+  /api/Categories/:
     get:
-      operationId: api_garments_list
-      description: API endpoint for garments.
+      operationId: api_Categories_list
+      description: API endpoint for usages.
       tags:
-        - api
+      - api
       security:
-        - cookieAuth: []
-        - basicAuth: []
-        - {}
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Garment"
-          description: ""
+                  $ref: '#/components/schemas/Category'
+          description: ''
     post:
-      operationId: api_garments_create
-      description: API endpoint for garments.
+      operationId: api_Categories_create
+      description: API endpoint for usages.
       tags:
-        - api
+      - api
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Garment"
+              $ref: '#/components/schemas/Category'
           application/x-www-form-urlencoded:
             schema:
-              $ref: "#/components/schemas/Garment"
+              $ref: '#/components/schemas/Category'
           multipart/form-data:
             schema:
-              $ref: "#/components/schemas/Garment"
+              $ref: '#/components/schemas/Category'
         required: true
       security:
-        - cookieAuth: []
-        - basicAuth: []
-        - {}
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
       responses:
-        "201":
+        '201':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Garment"
-          description: ""
+                $ref: '#/components/schemas/Category'
+          description: ''
+  /api/Categories/{id}/:
+    get:
+      operationId: api_Categories_retrieve
+      description: API endpoint for usages.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this category.
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+          description: ''
+    put:
+      operationId: api_Categories_update
+      description: API endpoint for usages.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this category.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Category'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Category'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Category'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+          description: ''
+    patch:
+      operationId: api_Categories_partial_update
+      description: API endpoint for usages.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this category.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCategory'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCategory'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCategory'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+          description: ''
+    delete:
+      operationId: api_Categories_destroy
+      description: API endpoint for usages.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this category.
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /api/garments/:
+    get:
+      operationId: api_garments_list
+      description: API endpoint for garments.
+      parameters:
+      - in: query
+        name: category
+        schema:
+          type: integer
+      - in: query
+        name: color
+        schema:
+          type: string
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - in: query
+        name: size
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Garment'
+          description: ''
+    post:
+      operationId: api_garments_create
+      description: API endpoint for garments.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Garment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Garment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Garment'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Garment'
+          description: ''
+  /api/garments/{garment_pk}/usages/:
+    get:
+      operationId: api_garments_usages_retrieve
+      description: List all usages for a specific garment.
+      parameters:
+      - in: query
+        name: from_time
+        schema:
+          type: string
+          format: date-time
+        description: Filter usages from this time (ISO 8601 format, e.g., 2025-04-01T00:00:00Z)
+      - in: path
+        name: garment_pk
+        schema:
+          type: string
+        required: true
+      - in: query
+        name: to_time
+        schema:
+          type: string
+          format: date-time
+        description: Filter usages to this time (ISO 8601 format, e.g., 2025-04-15T23:59:59Z)
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
   /api/garments/{id}/:
     get:
       operationId: api_garments_retrieve
       description: API endpoint for garments.
       parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-          description: A unique integer value identifying this garment.
-          required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this garment.
+        required: true
       tags:
-        - api
+      - api
       security:
-        - cookieAuth: []
-        - basicAuth: []
-        - {}
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Garment"
-          description: ""
+                $ref: '#/components/schemas/Garment'
+          description: ''
     put:
       operationId: api_garments_update
       description: API endpoint for garments.
       parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-          description: A unique integer value identifying this garment.
-          required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this garment.
+        required: true
       tags:
-        - api
+      - api
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Garment"
+              $ref: '#/components/schemas/Garment'
           application/x-www-form-urlencoded:
             schema:
-              $ref: "#/components/schemas/Garment"
+              $ref: '#/components/schemas/Garment'
           multipart/form-data:
             schema:
-              $ref: "#/components/schemas/Garment"
+              $ref: '#/components/schemas/Garment'
         required: true
       security:
-        - cookieAuth: []
-        - basicAuth: []
-        - {}
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Garment"
-          description: ""
+                $ref: '#/components/schemas/Garment'
+          description: ''
     patch:
       operationId: api_garments_partial_update
       description: API endpoint for garments.
       parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-          description: A unique integer value identifying this garment.
-          required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this garment.
+        required: true
       tags:
-        - api
+      - api
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/PatchedGarment"
+              $ref: '#/components/schemas/PatchedGarment'
           application/x-www-form-urlencoded:
             schema:
-              $ref: "#/components/schemas/PatchedGarment"
+              $ref: '#/components/schemas/PatchedGarment'
           multipart/form-data:
             schema:
-              $ref: "#/components/schemas/PatchedGarment"
+              $ref: '#/components/schemas/PatchedGarment'
       security:
-        - cookieAuth: []
-        - basicAuth: []
-        - {}
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Garment"
-          description: ""
+                $ref: '#/components/schemas/Garment'
+          description: ''
     delete:
       operationId: api_garments_destroy
       description: API endpoint for garments.
       parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-          description: A unique integer value identifying this garment.
-          required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this garment.
+        required: true
       tags:
-        - api
+      - api
       security:
-        - cookieAuth: []
-        - basicAuth: []
-        - {}
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
       responses:
-        "204":
+        '204':
+          description: No response body
+  /api/usages/:
+    get:
+      operationId: api_usages_list
+      description: API endpoint for usages.
+      parameters:
+      - in: query
+        name: from_time
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: garment_id
+        schema:
+          type: integer
+      - in: query
+        name: to_time
+        schema:
+          type: string
+          format: date-time
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Usage'
+          description: ''
+    post:
+      operationId: api_usages_create
+      description: API endpoint for usages.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Usage'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Usage'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Usage'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Usage'
+          description: ''
+  /api/usages/{id}/:
+    get:
+      operationId: api_usages_retrieve
+      description: API endpoint for usages.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this usage.
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Usage'
+          description: ''
+    put:
+      operationId: api_usages_update
+      description: API endpoint for usages.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this usage.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Usage'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Usage'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Usage'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Usage'
+          description: ''
+    patch:
+      operationId: api_usages_partial_update
+      description: API endpoint for usages.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this usage.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUsage'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUsage'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUsage'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Usage'
+          description: ''
+    delete:
+      operationId: api_usages_destroy
+      description: API endpoint for usages.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this usage.
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '204':
           description: No response body
 components:
   schemas:
+    Category:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+      required:
+      - id
+      - name
     Garment:
       type: object
       properties:
@@ -190,13 +585,21 @@ components:
           nullable: true
           maxLength: 50
         category:
-          type: string
-          nullable: true
-          maxLength: 50
+          type: integer
       required:
-        - id
-        - name
-        - wardrobe
+      - category
+      - id
+      - name
+      - wardrobe
+    PatchedCategory:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
     PatchedGarment:
       type: object
       properties:
@@ -222,9 +625,43 @@ components:
           nullable: true
           maxLength: 50
         category:
+          type: integer
+    PatchedUsage:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        garment:
+          type: integer
+        time:
+          type: string
+          format: date-time
+          readOnly: true
+        notes:
           type: string
           nullable: true
-          maxLength: 50
+          description: Notes about the usage
+    Usage:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        garment:
+          type: integer
+        time:
+          type: string
+          format: date-time
+          readOnly: true
+        notes:
+          type: string
+          nullable: true
+          description: Notes about the usage
+      required:
+      - garment
+      - id
+      - time
   securitySchemes:
     basicAuth:
       type: http
