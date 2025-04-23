@@ -1,6 +1,6 @@
 from django.contrib.auth.models import Group, User
 from rest_framework import serializers
-from framework.quickstart.models import Garment, Wardrobe, Usage, Category
+from framework.quickstart.models import Garment, Wardrobe, Usage, Category, PaymentMethod, Listing
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -70,3 +70,29 @@ class LoginSerializer(serializers.Serializer):
     access_token = serializers.CharField(
         max_length=4096, required=True, trim_whitespace=True
     )
+
+
+class PaymentMethodSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = PaymentMethod
+        fields = [
+            "id",
+            "name",
+        ]
+
+class ListingSerializer(serializers.ModelSerializer):
+    garment = serializers.PrimaryKeyRelatedField(queryset=Garment.objects.all())
+    payment_method = serializers.PrimaryKeyRelatedField(queryset=PaymentMethod.objects.all())
+
+    class Meta:
+        model = Listing
+        fields = [
+            "id",
+            "garment",
+            "description",
+            "time",
+            "place",
+            "price",
+            "payment_method",
+        ]

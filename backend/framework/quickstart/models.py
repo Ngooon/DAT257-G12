@@ -34,9 +34,6 @@ class Garment(models.Model):
         blank=True,
         related_name="garments",
     )
-    @property
-    def usage_count(self):
-        return self.usages.count()  # Count related Usage objects
 
     def __str__(self):
         return f"{self.name} (Storlek: {self.size}, Färg: {self.color})"
@@ -59,17 +56,27 @@ class Usage(models.Model):
     def __str__(self):
         return f"{self.garment.name} used at {self.time.strftime('%Y-%m-%d %H:%M:%S')}"
     
-    
-    class Listings(models.Model):
-        id = models.AutoField(primary_key=True)
-        garment = models.ForeignKey(
-            Garment, on_delete=models.CASCADE,unique=True ,related_name="listings"
-        )
-        time = models.DateTimeField(auto_now_add=True)
-        price = models.DecimalField(max_digits=10, decimal_places=2, help_text="Price of the garment")
-
-        notes = models.TextField(null=True, blank=True, help_text="Notes about the garment")
-
+class PaymentMethod(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=100)
 
     def __str__(self):
+        return f"Payment method {self.name}"
+    
+class Listing(models.Model):
+    id = models.AutoField(primary_key=True)
+    garment = models.ForeignKey(
+        Garment, on_delete=models.CASCADE,unique=True ,related_name="listings"
+    )
+    description = models.TextField(null=True, blank=True, help_text="Describe the garment")
+    time = models.DateTimeField(auto_now_add=True, null=True)
+    place = models.CharField(max_length=100,null=True, help_text="Place where the garment is listed")
+    price = models.DecimalField(max_digits=10, decimal_places=2, null=True, help_text="Price of the garment")
+    payment_method = models.ForeignKey(
+        PaymentMethod, on_delete=models.SET_NULL, null=True, blank=True, related_name="listings"
+    )
+        
+    def __str__(self):
         return f"{self.garment.name} listed for sale"
+    
+

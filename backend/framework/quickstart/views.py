@@ -6,12 +6,14 @@ from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
-from framework.quickstart.models import Garment, Wardrobe, Usage, Category
+from framework.quickstart.models import Garment, Wardrobe, Usage, Category, PaymentMethod, Listing
 from framework.quickstart.serializers import (
     GarmentSerializer,
     WardrobeSerializer,
     CategorySerializer,
     UsageSerializer,
+    PaymentMethodSerializer,
+    ListingSerializer,
 )
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -111,7 +113,7 @@ class GarmentViewSet(viewsets.ModelViewSet):
     API endpoint for garments.
     """
 
-    queryset = Garment.objects.all()#.annotate(usage_count=Count("usages"))
+    queryset = Garment.objects.all().annotate(usage_count=Count("usages"))
     serializer_class = GarmentSerializer
     filter_backends = [OrderingFilter, DjangoFilterBackend]  # Lägg till OrderingFilter
     ordering_fields = ["size", "color", "category", "usage_count"]
@@ -196,3 +198,22 @@ class UsageViewSet(viewsets.ModelViewSet):
     serializer_class = UsageSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = UsageFilter
+
+class PaymentMethodViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint for usages.
+    """
+
+    queryset = PaymentMethod.objects.all()
+    serializer_class = PaymentMethodSerializer
+
+class ListingViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint for usages.
+    """
+
+    queryset = Listing.objects.all()
+    serializer_class = ListingSerializer
+    filter_backends = [OrderingFilter, DjangoFilterBackend]  # Lägg till OrderingFilter
+    ordering_fields = ["size", "color", "category"]
+    filterset_fields = ["size", "color", "category"]
