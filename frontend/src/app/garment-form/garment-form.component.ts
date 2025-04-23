@@ -14,6 +14,11 @@ interface Garment {
   category: string;
 }
 
+interface Category {
+  id: number;
+  name: string;
+}
+
 @Component({
   selector: 'app-garment-form',
   standalone: false,
@@ -25,7 +30,7 @@ export class GarmentFormComponent implements OnInit {
   garmentForm: FormGroup;
   garmentId: number | null = null;
   garment: Garment | null = null;
-  categories: string[] = [];
+  categories: Category[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -53,13 +58,13 @@ export class GarmentFormComponent implements OnInit {
   }
 
   loadCategories(): void {
-    this.http.get<string[]>('/api/categories/').subscribe({
+    this.http.get<Category[]>('/api/Categories/').subscribe({
       next: data => {
         this.categories = data;
       },
       error: error => {
         console.error('Failed to load categories from API, using mock data.', error);
-        this.categories = ['Shirts', 'Pants', 'Shoes', 'Accessories'];
+        this.categories = ['Shirts', 'Pants', 'Shoes', 'Accessories'].map((name, index) => ({ id: index + 1, name }));
       }
     });
   }
