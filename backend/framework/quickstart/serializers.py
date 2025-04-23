@@ -17,7 +17,8 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
 
 class GarmentSerializer(serializers.ModelSerializer):
     category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())
-
+    usage_count = serializers.IntegerField(source='usages.count', read_only=True) 
+    
     class Meta:
         model = Garment
         fields = [
@@ -28,6 +29,7 @@ class GarmentSerializer(serializers.ModelSerializer):
             "wardrobe",
             "brand",
             "category",
+            "usage_count",
         ]
 
 

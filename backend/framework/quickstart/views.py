@@ -111,7 +111,7 @@ class GarmentViewSet(viewsets.ModelViewSet):
     API endpoint for garments.
     """
 
-    queryset = Garment.objects.all().annotate(usage_count=Count("usages"))
+    queryset = Garment.objects.all()#.annotate(usage_count=Count("usages"))
     serializer_class = GarmentSerializer
     filter_backends = [OrderingFilter, DjangoFilterBackend]  # Lägg till OrderingFilter
     ordering_fields = ["size", "color", "category", "usage_count"]

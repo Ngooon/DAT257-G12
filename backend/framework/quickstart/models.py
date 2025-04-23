@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.timezone import now
 
 
 # Create your models here.
@@ -33,6 +34,9 @@ class Garment(models.Model):
         blank=True,
         related_name="garments",
     )
+    @property
+    def usage_count(self):
+        return self.usages.count()  # Count related Usage objects
 
     def __str__(self):
         return f"{self.name} (Storlek: {self.size}, Färg: {self.color})"
@@ -43,7 +47,7 @@ class Usage(models.Model):
     garment = models.ForeignKey(
         Garment, on_delete=models.CASCADE, related_name="usages"
     )
-    time = models.DateTimeField(auto_now_add=True)
+    time = models.DateTimeField(default=now)
     notes = models.TextField(null=True, blank=True, help_text="Notes about the usage")
 
     class Meta:
@@ -54,3 +58,18 @@ class Usage(models.Model):
 
     def __str__(self):
         return f"{self.garment.name} used at {self.time.strftime('%Y-%m-%d %H:%M:%S')}"
+    
+    
+    class Listings(models.Model):
+        id = models.AutoField(primary_key=True)
+        garment = models.ForeignKey(
+            Garment, on_delete=models.CASCADE,unique=True ,related_name="listings"
+        )
+        time = models.DateTimeField(auto_now_add=True)
+        price = models.DecimalField(max_digits=10, decimal_places=2, help_text="Price of the garment")
+
+        notes = models.TextField(null=True, blank=True, help_text="Notes about the garment")
+
+
+    def __str__(self):
+        return f"{self.garment.name} listed for sale"
