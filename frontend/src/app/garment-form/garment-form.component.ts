@@ -11,12 +11,7 @@ interface Garment {
   color: string;
   size: string;
   brand: string;
-  category: Category;
-}
-
-interface Category {
-  id: number;
-  name: string;
+  category: string;
 }
 
 interface Category {
@@ -69,7 +64,7 @@ export class GarmentFormComponent implements OnInit {
       },
       error: error => {
         console.error('Failed to load categories from API, using mock data.', error);
-        this.categories = ['Shirts', 'Pants', 'Shoes', 'Accessories'];
+        this.categories = ['Shirts', 'Pants', 'Shoes', 'Accessories'].map((name, index) => ({ id: index + 1, name }));
       }
     });
   }
