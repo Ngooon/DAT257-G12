@@ -10,7 +10,8 @@ from framework.quickstart.models import Garment, Wardrobe, Usage, Category
 from framework.quickstart.serializers import (
     GarmentSerializer,
     WardrobeSerializer,
-    LoginSerializer,
+    CategorySerializer,
+    UsageSerializer,
 )
 from rest_framework.views import APIView
 from rest_framework.response import Response
