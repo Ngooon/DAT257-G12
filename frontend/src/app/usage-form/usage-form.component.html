@@ -1,0 +1,21 @@
+<form [formGroup]="usageForm" (ngSubmit)="onSubmit()">
+  <div class="form-group form-floating mb-3">
+    <select id="garmentId" formControlName="garmentId" class="form-control">
+      <option [ngValue]="null">Select a Garment</option>
+      <option *ngFor="let garment of garments" [value]="garment.id">{{ garment.id }}</option>
+    </select>
+    <label for="garmentId">Garment</label>
+  </div>
+
+  <div class="form-group form-floating mb-3">
+    <input id="time" formControlName="time" class="form-control" required placeholder="Time" />
+    <label for="time">Time</label>
+  </div>
+
+  <div class="form-group form-floating mb-3">
+    <textarea id="notes" formControlName="notes" class="form-control" placeholder="Notes"></textarea>
+    <label for="notes">Notes</label>
+  </div>
+
+  <button type="submit" class="btn btn-primary">Save</button>
+</form>

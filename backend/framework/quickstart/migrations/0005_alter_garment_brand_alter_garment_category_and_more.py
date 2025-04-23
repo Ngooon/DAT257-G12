@@ -7,40 +7,60 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('quickstart', '0004_alter_garment_wardrobe'),
+        ("quickstart", "0004_alter_garment_wardrobe"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='garment',
-            name='brand',
+            model_name="garment",
+            name="brand",
             field=models.CharField(blank=True, max_length=50, null=True),
         ),
         migrations.AlterField(
-            model_name='garment',
-            name='category',
+            model_name="garment",
+            name="category",
             field=models.CharField(blank=True, max_length=50, null=True),
         ),
         migrations.AlterField(
-            model_name='garment',
-            name='color',
+            model_name="garment",
+            name="color",
             field=models.CharField(blank=True, max_length=50, null=True),
         ),
         migrations.AlterField(
-            model_name='garment',
-            name='size',
+            model_name="garment",
+            name="size",
             field=models.CharField(blank=True, max_length=20, null=True),
         ),
         migrations.CreateModel(
-            name='Usage',
+            name="Usage",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('time', models.DateTimeField(auto_now_add=True)),
-                ('notes', models.TextField(blank=True, help_text='Notes about the usage', null=True)),
-                ('garment', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='usages', to='quickstart.garment')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("time", models.DateTimeField(auto_now_add=True)),
+                (
+                    "notes",
+                    models.TextField(
+                        blank=True, help_text="Notes about the usage", null=True
+                    ),
+                ),
+                (
+                    "garment",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="usages",
+                        to="quickstart.garment",
+                    ),
+                ),
             ],
             options={
-                'unique_together': {('garment', 'time')},
+                "unique_together": {("garment", "time")},
             },
         ),
     ]

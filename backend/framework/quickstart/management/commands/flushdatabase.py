@@ -25,3 +25,4 @@ class Command(BaseCommand):
             flush_wardrobe_data()
             create_example_data()
         self.stdout.write("Database flushed and example data created.")
+
