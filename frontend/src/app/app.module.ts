@@ -1,4 +1,4 @@
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { LOCALE_ID, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 //import { FormsModule } from '@angular/forms';
@@ -17,6 +17,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { UsageListComponent } from './usage-list/usage-list.component';
 import { UsageDetailsComponent } from './usage-details/usage-details.component';
 import { UsageFormComponent } from './usage-form/usage-form.component';
+import { AuthInterceptor } from './auth.interceptor';
 
 registerLocaleData(localeSv);
 
@@ -37,7 +38,7 @@ registerLocaleData(localeSv);
         AppRoutingModule,
         ReactiveFormsModule
     ],
-    providers: [{ provide: LOCALE_ID, useValue: 'sv-SE' }],
+    providers: [{ provide: LOCALE_ID, useValue: 'sv-SE' },{provide:HTTP_INTERCEPTORS, useClass:AuthInterceptor,multi:true}],
     bootstrap: [AppComponent]
 })
 

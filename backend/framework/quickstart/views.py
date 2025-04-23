@@ -16,13 +16,15 @@ from framework.quickstart.serializers import (
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.shortcuts import redirect
+from rest_framework_simplejwt.tokens import RefreshToken
 
 import requests
 from django.http import HttpResponseRedirect, JsonResponse
 from django.conf import settings
 from urllib.parse import urlencode
+from django.contrib.auth.models import User
 
 import jwt
 from datetime import datetime, timedelta
@@ -79,8 +81,12 @@ def facebook_callback(request):
 
     # Optional: Save user to DB, create session, issue JWT, etc.
     # For now, redirect with their name to the frontend
-    token = generate_token(user_data)
-    return redirect(f"http://localhost:4200/?token={token}")
+
+    token_data = generate_token(user_data)
+    access_token = token_data["access"]  # or pass both if needed
+
+# Redirect to Angular with token
+    return redirect(f"http://localhost:4200/?token={access_token}")
 
 
 def generate_token(user_data):
@@ -90,20 +96,15 @@ def generate_token(user_data):
         "email": user_data.get("email", ""),
         "exp": datetime.utcnow() + timedelta(hours=24),
     }
-    token = jwt.encode(payload, settings.SECRET_KEY, algorithm="HS256")
-    return token
-
-
-def protected_view(request):
-    auth_header = request.headers.get("Authorization", "")
-    token = auth_header.replace("Bearer ", "")
-    try:
-        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
-        return JsonResponse({"message": f"Welcome {payload['name']}!"})
-    except jwt.ExpiredSignatureError:
-        return JsonResponse({"error": "Token expired"}, status=401)
-    except jwt.InvalidTokenError:
-        return JsonResponse({"error": "Invalid token"}, status=401)
+    user, _ = User.objects.get_or_create(first_name=payload["name"],username=payload["id"], email=payload["email"])
+    refresh = RefreshToken.for_user(user)
+    
+    print(refresh.access_token)
+    
+    return {
+        "access": str(refresh.access_token),
+        "refresh": str(refresh),
+    }
 
 
 class GarmentViewSet(viewsets.ModelViewSet):
@@ -111,11 +112,18 @@ class GarmentViewSet(viewsets.ModelViewSet):
     API endpoint for garments.
     """
 
-    queryset = Garment.objects.all().annotate(usage_count=Count("usages"))
+    
     serializer_class = GarmentSerializer
     filter_backends = [OrderingFilter, DjangoFilterBackend]  # Lägg till OrderingFilter
     ordering_fields = ["size", "color", "category", "usage_count"]
     filterset_fields = ["size", "color", "category"]
+    permission_classes= [IsAuthenticated]
+    
+    def get_queryset(self):
+        return Garment.objects.filter(owner=self.request.user).annotate(usage_count=Count("usages"))
+    
+    def perform_create(self,serializer):
+        serializer.save(owner=self.request.user)
 
 
 class GarmentUsageViewSet(viewsets.ViewSet):

@@ -17,7 +17,7 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
 
 class GarmentSerializer(serializers.ModelSerializer):
     category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())
-
+    owner_username=serializers.CharField(source="owner.username", read_only=True)
     class Meta:
         model = Garment
         fields = [
@@ -28,7 +28,10 @@ class GarmentSerializer(serializers.ModelSerializer):
             "wardrobe",
             "brand",
             "category",
+            "owner",
+            "owner_username"
         ]
+        read_only=["owner"]
 
 
 class WardrobeSerializer(serializers.HyperlinkedModelSerializer):

@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 # Create your models here.
@@ -33,6 +34,7 @@ class Garment(models.Model):
         blank=True,
         related_name="garments",
     )
+    owner=models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name="garments")
 
     def __str__(self):
         return f"{self.name} (Storlek: {self.size}, Färg: {self.color})"
