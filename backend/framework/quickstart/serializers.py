@@ -51,6 +51,7 @@ class CategorySerializer(serializers.HyperlinkedModelSerializer):
 
 class UsageSerializer(serializers.ModelSerializer):
     garment = serializers.PrimaryKeyRelatedField(queryset=Garment.objects.all())
+    owner_username = serializers.CharField(source="owner.username", read_only=True)
 
     class Meta:
         model = Usage
@@ -59,7 +60,10 @@ class UsageSerializer(serializers.ModelSerializer):
             "garment",
             "time",
             "notes",
+            "owner",
+            "owner_username",
         ]
+        read_only_fields = ["owner"]
 
 
 class LoginSerializer(serializers.Serializer):

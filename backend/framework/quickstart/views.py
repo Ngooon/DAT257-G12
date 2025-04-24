@@ -130,6 +130,7 @@ class GarmentUsageViewSet(viewsets.ViewSet):
     """
     API endpoint for usages related to a specific garment.
     """
+    permission_classes= [IsAuthenticated]
 
     @extend_schema(
         parameters=[
@@ -151,7 +152,13 @@ class GarmentUsageViewSet(viewsets.ViewSet):
         """
         List all usages for a specific garment.
         """
-        usages = Usage.objects.filter(garment_id=garment_pk)
+
+        try:
+            garment = Garment.objects.get(pk=garment_pk, owner=request.user)
+        except Garment.DoesNotExist:
+            return Response({"detail": "Not found or not your garment."}, status=status.HTTP_404_NOT_FOUND)  #tillagd för ägarskap
+
+        usages = Usage.objects.filter(garment=garment)
 
         from_time = request.query_params.get("from_time")
         to_time = request.query_params.get("to_time")
@@ -165,6 +172,7 @@ class GarmentUsageViewSet(viewsets.ViewSet):
             usages, many=True, context={"request": request}
         )  # Lägg till context
         return Response(serializer.data)
+    
 
 
 class WardrobeViewSet(viewsets.ModelViewSet):
@@ -200,7 +208,15 @@ class UsageViewSet(viewsets.ModelViewSet):
     API endpoint for usages.
     """
 
-    queryset = Usage.objects.all().order_by("-time")
+    permission_classes= [IsAuthenticated]
+
+    #queryset = Usage.objects.all().order_by("-time")
     serializer_class = UsageSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = UsageFilter
+
+    def get_queryset(self):
+        return Usage.objects.filter(owner=self.request.user).order_by("-time")
+    
+    def perform_create(self,serializer):
+        serializer.save(owner=self.request.user)

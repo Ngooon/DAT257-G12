@@ -48,11 +48,14 @@ class Usage(models.Model):
     time = models.DateTimeField(auto_now_add=True)
     notes = models.TextField(null=True, blank=True, help_text="Notes about the usage")
 
+    owner=models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name="usage")
+
     class Meta:
         unique_together = (
             "garment",
             "time",
-        )  # Ensures unique combination of garment and time
+            "owner"
+        )  # Ensures unique combination of garment and time and owner
 
     def __str__(self):
         return f"{self.garment.name} used at {self.time.strftime('%Y-%m-%d %H:%M:%S')}"
