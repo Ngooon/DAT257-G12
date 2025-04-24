@@ -8,6 +8,7 @@ import { UsageListComponent } from './usage-list/usage-list.component';
 import { UsageDetailsComponent } from './usage-details/usage-details.component';
 import { UsageFormComponent } from './usage-form/usage-form.component';
 import { ListingFormComponent } from './listing-form/listing-form.component';
+import { ListingDetailsComponent } from './listing-details/listing-details.component';
 
 const routes: Routes = [
     { path: 'wardrobe', component: WardrobeListComponent },
@@ -22,6 +23,8 @@ const routes: Routes = [
     { path: 'usages/:id', component: UsageDetailsComponent },
     { path: 'listings/new', component: ListingFormComponent },
     { path: 'listings/edit/new', component: ListingFormComponent },
+    { path: 'listings/:id', component: ListingDetailsComponent },
+
 
 ];
 

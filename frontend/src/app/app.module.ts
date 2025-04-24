@@ -18,6 +18,7 @@ import { UsageListComponent } from './usage-list/usage-list.component';
 import { UsageDetailsComponent } from './usage-details/usage-details.component';
 import { UsageFormComponent } from './usage-form/usage-form.component';
 import { ListingFormComponent } from './listing-form/listing-form.component';
+import { ListingDetailsComponent } from './listing-details/listing-details.component';
 
 registerLocaleData(localeSv);
 
@@ -31,7 +32,8 @@ registerLocaleData(localeSv);
         UsageListComponent,
         UsageDetailsComponent,
         UsageFormComponent,
-        ListingFormComponent
+        ListingFormComponent,
+        ListingDetailsComponent
     ],
     imports: [
         BrowserModule,
