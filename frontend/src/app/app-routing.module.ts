@@ -25,7 +25,7 @@ const routes: Routes = [
     { path: 'usages/:id', component: UsageDetailsComponent },
     { path: 'listings', component: ListingListComponent },
     { path: 'listings/new', component: ListingFormComponent },
-    { path: 'listings/edit/new', component: ListingFormComponent },
+    { path: 'listings/edit/:id', component: ListingFormComponent },
     { path: 'listings/:id', component: ListingDetailsComponent },
 
 
