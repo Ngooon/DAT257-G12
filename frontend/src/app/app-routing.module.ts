@@ -7,8 +7,10 @@ import { GarmentFormComponent } from './garment-form/garment-form.component';
 import { UsageListComponent } from './usage-list/usage-list.component';
 import { UsageDetailsComponent } from './usage-details/usage-details.component';
 import { UsageFormComponent } from './usage-form/usage-form.component';
+import { ListingListComponent } from './listing-list/listing-list.component';
 
 const routes: Routes = [
+    { path: '', redirectTo: '/wardrobe', pathMatch: 'full' },
     { path: 'wardrobe', component: WardrobeListComponent },
     { path: 'garments', component: WardrobeListComponent },
     { path: 'test', component: TestComponent },
@@ -19,6 +21,7 @@ const routes: Routes = [
     { path: 'usages/new', component: UsageFormComponent },
     { path: 'usages/edit/:id', component: UsageFormComponent },
     { path: 'usages/:id', component: UsageDetailsComponent },
+    { path: 'listings', component: ListingListComponent },
 ];
 
 @NgModule({

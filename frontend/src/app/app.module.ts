@@ -17,6 +17,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { UsageListComponent } from './usage-list/usage-list.component';
 import { UsageDetailsComponent } from './usage-details/usage-details.component';
 import { UsageFormComponent } from './usage-form/usage-form.component';
+import { ListingListComponent } from './listing-list/listing-list.component';
 
 registerLocaleData(localeSv);
 
@@ -29,7 +30,8 @@ registerLocaleData(localeSv);
         GarmentFormComponent,
         UsageListComponent,
         UsageDetailsComponent,
-        UsageFormComponent
+        UsageFormComponent,
+        ListingListComponent
     ],
     imports: [
         BrowserModule,
