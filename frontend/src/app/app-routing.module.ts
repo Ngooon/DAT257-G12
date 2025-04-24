@@ -7,6 +7,7 @@ import { GarmentFormComponent } from './garment-form/garment-form.component';
 import { UsageListComponent } from './usage-list/usage-list.component';
 import { UsageDetailsComponent } from './usage-details/usage-details.component';
 import { UsageFormComponent } from './usage-form/usage-form.component';
+import { ListingFormComponent } from './listing-form/listing-form.component';
 
 const routes: Routes = [
     { path: 'wardrobe', component: WardrobeListComponent },
@@ -19,6 +20,9 @@ const routes: Routes = [
     { path: 'usages/new', component: UsageFormComponent },
     { path: 'usages/edit/:id', component: UsageFormComponent },
     { path: 'usages/:id', component: UsageDetailsComponent },
+    { path: 'listings/new', component: ListingFormComponent },
+    { path: 'listings/edit/new', component: ListingFormComponent },
+
 ];
 
 @NgModule({
