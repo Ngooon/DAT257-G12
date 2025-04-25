@@ -98,3 +98,19 @@ class ListingSerializer(serializers.ModelSerializer):
             "price",
             "payment_method",
         ]
+
+    def validate(self, data):
+        # Kontrollera om en listing redan existerar för samma garment
+        garment = data.get("garment")
+        if Listing.objects.filter(garment=garment).exists():
+            raise serializers.ValidationError({"garment": "A listing for this garment already exists."})
+
+        # Kontrollera om priset är för högt
+        price = data.get("price")
+        MAX_PRICE = 9999999999  # Exempel på maxpris
+        if price and price > MAX_PRICE:
+            raise serializers.ValidationError({"price": f"Price cannot exceed {MAX_PRICE}."})
+        if price and price < 0:
+            raise serializers.ValidationError({"price": "Price cannot be negative."})
+
+        return data
