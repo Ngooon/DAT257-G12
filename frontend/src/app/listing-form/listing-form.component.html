@@ -1,0 +1,50 @@
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">
+      <span *ngIf="listing">Edit Listing <span class="opacity-25 small">(#{{ listing.id }})</span></span>
+      <span *ngIf="!listing">Add new listing</span>
+    </h1>
+  </div>
+  
+  <form [formGroup]="listingForm" (ngSubmit)="onSubmit()">
+    <div class="form-group form-floating mb-3">
+      <input id="garment" formControlName="garment" class="form-control" required placeholder="Garment ID" />
+      <label for="garment">Garment ID</label>
+    </div>
+  
+    <div class="form-group form-floating mb-3">
+      <input id="description" formControlName="description" class="form-control" required placeholder="Description" />
+      <label for="description">Description</label>
+      <div *ngIf="listingForm.controls['description'].invalid && listingForm.controls['description'].touched" class="text-danger">
+        Description is required.
+      </div>
+    </div>
+  
+    <div class="form-group form-floating mb-3">
+      <input id="time" type="datetime-local" formControlName="time" class="form-control" required placeholder="Time" />
+      <label for="time">Time</label>
+    </div>
+  
+    <div class="form-group form-floating mb-3">
+      <input id="place" formControlName="place" class="form-control" required placeholder="Place" />
+      <label for="place">Place</label>
+    </div>
+  
+    <div class="form-group form-floating mb-3">
+      <input id="price" type="number" formControlName="price" class="form-control" required placeholder="Price" />
+      <label for="price">Price</label>
+      <div *ngIf="listingForm.controls['price'].invalid && listingForm.controls['price'].touched" class="text-danger">
+        Price is required and must be ≥ 0.
+      </div>
+    </div>
+  
+    <div class="form-group form-floating mb-3">
+      <select id="payment_method" formControlName="payment_method" class="form-control">
+        <option [ngValue]="null">-</option>
+        <option *ngFor="let method of paymentMethods" [value]="method.id">{{ method.name }}</option>
+      </select>
+      <label for="payment_method">Payment Method</label>
+    </div>
+  
+    <button type="submit" class="btn btn-primary">Save</button>
+  </form>
+  

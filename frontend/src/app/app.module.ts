@@ -18,6 +18,9 @@ import { UsageListComponent } from './usage-list/usage-list.component';
 import { UsageDetailsComponent } from './usage-details/usage-details.component';
 import { UsageFormComponent } from './usage-form/usage-form.component';
 import { AuthInterceptor } from './auth.interceptor';
+import { ListingListComponent } from './listing-list/listing-list.component';
+import { ListingFormComponent } from './listing-form/listing-form.component';
+import { ListingDetailsComponent } from './listing-details/listing-details.component';
 
 registerLocaleData(localeSv);
 
@@ -30,7 +33,10 @@ registerLocaleData(localeSv);
         GarmentFormComponent,
         UsageListComponent,
         UsageDetailsComponent,
-        UsageFormComponent
+        UsageFormComponent,
+        ListingListComponent,
+        ListingFormComponent,
+        ListingDetailsComponent
     ],
     imports: [
         BrowserModule,
@@ -38,7 +44,7 @@ registerLocaleData(localeSv);
         AppRoutingModule,
         ReactiveFormsModule
     ],
-    providers: [{ provide: LOCALE_ID, useValue: 'sv-SE' },{provide:HTTP_INTERCEPTORS, useClass:AuthInterceptor,multi:true}],
+    providers: [{ provide: LOCALE_ID, useValue: 'sv-SE' }, { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }],
     bootstrap: [AppComponent]
 })
 
