@@ -21,9 +21,16 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
         model = Group
         fields = ["url", "name"]
 
+class CategorySerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Category
+        fields = [
+            "id",
+            "name",
+        ]
 
 class GarmentSerializer(serializers.ModelSerializer):
-    category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())
+    category = CategorySerializer()
     owner_username = serializers.CharField(source="owner.username", read_only=True)
     usage_count = serializers.IntegerField(source="usages.count", read_only=True)
 
@@ -50,17 +57,11 @@ class WardrobeSerializer(serializers.HyperlinkedModelSerializer):
         fields = ["id", "name"]
 
 
-class CategorySerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Category
-        fields = [
-            "id",
-            "name",
-        ]
+
 
 
 class UsageSerializer(serializers.ModelSerializer):
-    garment = serializers.PrimaryKeyRelatedField(queryset=Garment.objects.all())
+    garment = GarmentSerializer()
     owner_username = serializers.CharField(source="owner.username", read_only=True)
 
     class Meta:
@@ -98,10 +99,8 @@ class PaymentMethodSerializer(serializers.ModelSerializer):
 
 
 class ListingSerializer(serializers.ModelSerializer):
-    garment = serializers.PrimaryKeyRelatedField(queryset=Garment.objects.all())
-    payment_method = serializers.PrimaryKeyRelatedField(
-        queryset=PaymentMethod.objects.all()
-    )
+    garment = GarmentSerializer()
+    payment_method = PaymentMethodSerializer()
 
     class Meta:
         model = Listing
