@@ -2,26 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormGroup, FormBuilder } from '@angular/forms';
-
-interface Garment {
-  id: number;
-  wardrobe: string;
-  name: string;
-  color: string;
-  size: string;
-  brand: string;
-  category: string;
-}
-
-interface Listing {
-  id: number;
-  garment: number;
-  description: string;
-  time: string;
-  place: string;
-  price: number;
-  payment_method: string;
-}
+import { Listing } from '../../../interfaces/listing';
 
 @Component({
   selector: 'app-listing-list',

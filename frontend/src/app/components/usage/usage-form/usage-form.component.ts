@@ -2,18 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
-
-interface Usage {
-  id: number;
-  garmentId: number;
-  time: string;
-  notes: string;
-}
-
-interface Garment {
-  id: number;
-  name: string;
-}
+import { Usage } from '../../../interfaces/usage';
+import { Garment } from '../../../interfaces/garment';
+import { generateFriendlyId } from '../../../utils/friendly-id.utils';
 
 @Component({
   selector: 'app-usage-form',
@@ -64,12 +55,19 @@ export class UsageFormComponent implements OnInit {
     });
   }
 
+  getFriendlyGarmentId(garment: Garment): string {
+    if (garment) {
+      return generateFriendlyId(garment);
+    }
+    return '';
+  }
+
   // Method to load a specific usage by id
   loadUsage(id: number): void {
     this.http.get<Usage>(`/api/usages/${id}/`).subscribe(data => {
       this.usage = data;
       this.usageForm.patchValue({
-        garmentId: data.garmentId,
+        garmentId: data.garment.id,
         notes: data.notes
       });
     });

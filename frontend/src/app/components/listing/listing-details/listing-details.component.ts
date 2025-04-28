@@ -1,16 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-
-interface Listing {
-  id: number;
-  garment: number;
-  description: string;
-  time: string;
-  place: string;
-  price: number;
-  payment_method: number;
-}
+import { Listing } from '../../../interfaces/listing';
 
 @Component({
   selector: 'app-listing-details',

@@ -1,16 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-
-interface Garment {
-  id: number;
-  wardrobe: string;
-  name: string;
-  color: string;
-  size: string;
-  brand: string;
-  category: string;
-}
+import { Garment } from '../../../interfaces/garment';
 
 @Component({
   selector: 'app-garment-details',

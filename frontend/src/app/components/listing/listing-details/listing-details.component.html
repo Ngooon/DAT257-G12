@@ -12,8 +12,24 @@
 
 <div *ngIf="listing">
     <div class="p-3 ps-3 pt-2 mb-3 bg-light rounded">
-        <span class="text-muted small">Garment ID</span>
-        <p class="m-0">{{ listing.garment }}</p>
+        <span class="text-muted small">Garment</span>
+        <p class="m-0">{{ listing.garment.name }}</p>
+    </div>
+    <div class="p-3 ps-3 pt-2 mb-3 bg-light rounded">
+        <span class="text-muted small">Color</span>
+        <p class="m-0">{{ listing.garment.color }}</p>
+    </div>
+    <div class="p-3 ps-3 pt-2 mb-3 bg-light rounded">
+        <span class="text-muted small">Size</span>
+        <p class="m-0">{{ listing.garment.size }}</p>
+    </div>
+    <div class="p-3 ps-3 pt-2 mb-3 bg-light rounded">
+        <span class="text-muted small">Category</span>
+        <p class="m-0">{{ listing.garment.category.name }}</p>
+    </div>
+    <div class="p-3 ps-3 pt-2 mb-3 bg-light rounded">
+        <span class="text-muted small">Wardrobe</span>
+        <p class="m-0">{{ listing.garment.wardrobe }}</p>
     </div>
     <div class="p-3 ps-3 pt-2 mb-3 bg-light rounded">
         <span class="text-muted small">Description</span>
@@ -21,7 +37,7 @@
     </div>
     <div class="p-3 ps-3 pt-2 mb-3 bg-light rounded">
         <span class="text-muted small">Time</span>
-        <p class="m-0">{{ listing.time }}</p>
+        <p class="m-0">{{ listing.time | date:'shortDate' }}</p>
     </div>
     <div class="p-3 ps-3 pt-2 mb-3 bg-light rounded">
         <span class="text-muted small">Place</span>
@@ -34,7 +50,7 @@
     <div class="p-3 ps-3 pt-2 mb-3 bg-light rounded">
         <span class="text-muted small">Payment Method</span>
         <p class="m-0">
-            {{ listing.payment_method === 1 ? 'Swish' : listing.payment_method === 2 ? 'Cash' : 'Unknown' }}
+            {{ listing.payment_method.name }}
         </p>
     </div>
 </div>

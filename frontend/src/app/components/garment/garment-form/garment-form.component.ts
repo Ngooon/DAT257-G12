@@ -3,21 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
-
-interface Garment {
-  id: number;
-  wardrobe: string;
-  name: string;
-  color: string;
-  size: string;
-  brand: string;
-  category: string;
-}
-
-interface Category {
-  id: number;
-  name: string;
-}
+import { Garment } from '../../../interfaces/garment';
+import { Category } from '../../../interfaces/category';
 
 @Component({
   selector: 'app-garment-form',

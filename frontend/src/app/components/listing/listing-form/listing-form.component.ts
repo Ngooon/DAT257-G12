@@ -2,21 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
-
-interface Listing {
-  id: number,
-  garment: number,
-  description: string,
-  time: string,
-  place: string,
-  price: number,
-  payment_method: number
-}
-
-interface PaymentMethod {
-  id : number,
-  name : string
-}
+import { Listing } from '../../../interfaces/listing';
+import { PaymentMethod } from '../../../interfaces/payment_method';
 
 @Component({
   selector: 'app-listing-form',
@@ -56,7 +43,7 @@ export class ListingFormComponent implements OnInit {
   }
 
   loadPaymentMethods(): void {
-    this.http.get<PaymentMethod[]>('/api/payment-methods/').subscribe({
+    this.http.get<PaymentMethod[]>('/api/payment_methods/').subscribe({
       next: data => {
         this.paymentMethods = data;
       },

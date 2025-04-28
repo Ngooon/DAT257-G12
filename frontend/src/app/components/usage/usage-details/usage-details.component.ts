@@ -1,13 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-
-interface Usage {
-  id: number;
-  time: string;
-  garment: number;  
-  notes: string;
-}
+import { Usage } from '../../../interfaces/usage';
+import { generateFriendlyId } from '../../../utils/friendly-id.utils';
 
 @Component({
   selector: 'app-usage-details',
@@ -32,11 +27,18 @@ export class UsageDetailsComponent implements OnInit {
   getUsage() {
     this.http.get<Usage>(`/api/usages/${this.id}/`).subscribe(
       (result) => {
-        this.usage = result; 
+        this.usage = result;
       },
       (error) => {
         console.error('Error fetching usage:', error);
       }
     );
+  }
+
+  getFriendlyGarmentId(): string {
+    if (this.usage?.garment) {
+      return generateFriendlyId(this.usage.garment);
+    }
+    return '';
   }
 }
