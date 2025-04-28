@@ -12,7 +12,7 @@ def flush_wardrobe_data():
 
 def create_example_data():
 
-    superuser = User.objects.filter(is_superuser=True).first()
+    superuser = User.objects.filter(is_superuser=True, username="test_user1").first()
     if not superuser:
         print("Ingen superuser hittades. Skapa en superuser först.")
         return
