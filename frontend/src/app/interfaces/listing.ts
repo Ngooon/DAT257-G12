@@ -1,8 +1,9 @@
+import { Garment } from "./garment";
 import { PaymentMethod } from "./payment_method";
 
-interface Listing {
+export interface Listing {
     id: number;
-    garment: number;
+    garment: Garment;
     description: string;
     time: string;
     place: string;
