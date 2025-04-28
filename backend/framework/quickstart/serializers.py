@@ -21,6 +21,7 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
         model = Group
         fields = ["url", "name"]
 
+
 class CategorySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Category
@@ -29,8 +30,9 @@ class CategorySerializer(serializers.HyperlinkedModelSerializer):
             "name",
         ]
 
+
 class GarmentSerializer(serializers.ModelSerializer):
-    category = CategorySerializer()
+    category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())
     owner_username = serializers.CharField(source="owner.username", read_only=True)
     usage_count = serializers.IntegerField(source="usages.count", read_only=True)
 
@@ -50,6 +52,14 @@ class GarmentSerializer(serializers.ModelSerializer):
         ]
         read_only = ["owner"]
 
+    def to_representation(self, instance):
+        """Customize the output for the 'category' field."""
+        representation = super().to_representation(instance)
+        category_instance = instance.category
+        if category_instance:
+            representation["category"] = CategorySerializer(category_instance).data
+        return representation
+
 
 class WardrobeSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -57,11 +67,8 @@ class WardrobeSerializer(serializers.HyperlinkedModelSerializer):
         fields = ["id", "name"]
 
 
-
-
-
 class UsageSerializer(serializers.ModelSerializer):
-    garment = GarmentSerializer()
+    garment = serializers.PrimaryKeyRelatedField(queryset=Garment.objects.all())
     owner_username = serializers.CharField(source="owner.username", read_only=True)
 
     class Meta:
@@ -75,6 +82,14 @@ class UsageSerializer(serializers.ModelSerializer):
             "owner_username",
         ]
         read_only_fields = ["owner"]
+
+    def to_representation(self, instance):
+        """Customize the output for the 'garment' field."""
+        representation = super().to_representation(instance)
+        garment_instance = instance.garment
+        if garment_instance:
+            representation["garment"] = GarmentSerializer(garment_instance).data
+        return representation
 
 
 class LoginSerializer(serializers.Serializer):
@@ -99,8 +114,10 @@ class PaymentMethodSerializer(serializers.ModelSerializer):
 
 
 class ListingSerializer(serializers.ModelSerializer):
-    garment = GarmentSerializer()
-    payment_method = PaymentMethodSerializer()
+    garment = serializers.PrimaryKeyRelatedField(queryset=Garment.objects.all())
+    payment_method = serializers.PrimaryKeyRelatedField(
+        queryset=PaymentMethod.objects.all()
+    )
 
     class Meta:
         model = Listing
@@ -113,6 +130,24 @@ class ListingSerializer(serializers.ModelSerializer):
             "price",
             "payment_method",
         ]
+
+    def to_representation(self, instance):
+        """Customize the output for the 'garment' and 'payment_method' fields."""
+        representation = super().to_representation(instance)
+
+        # Customize 'garment' field
+        garment_instance = instance.garment
+        if garment_instance:
+            representation["garment"] = GarmentSerializer(garment_instance).data
+
+        # Customize 'payment_method' field
+        payment_method_instance = instance.payment_method
+        if payment_method_instance:
+            representation["payment_method"] = PaymentMethodSerializer(
+                payment_method_instance
+            ).data
+
+        return representation
 
     def validate(self, data):
         # Kontrollera om en listing redan existerar för samma garment
