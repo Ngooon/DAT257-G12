@@ -2,7 +2,6 @@ from django.contrib.auth.models import Group, User
 from rest_framework import serializers
 from framework.quickstart.models import (
     Garment,
-    Wardrobe,
     Usage,
     Category,
     PaymentMethod,
@@ -49,15 +48,6 @@ class GarmentSerializer(serializers.ModelSerializer):
             "usage_count",
         ]
         read_only = ["owner"]
-
-
-class WardrobeSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Wardrobe
-        fields = ["id", "name"]
-
-
-
 
 
 class UsageSerializer(serializers.ModelSerializer):

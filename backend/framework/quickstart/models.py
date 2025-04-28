@@ -6,13 +6,6 @@ from django.utils.timezone import now
 # Create your models here.
 
 
-class Wardrobe(models.Model):
-    name = models.CharField(max_length=100, help_text="Namn på garderoben")
-
-    def __str__(self):
-        return self.name
-
-
 class Category(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)

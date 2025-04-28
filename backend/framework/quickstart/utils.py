@@ -1,11 +1,10 @@
 from django.db import models
-from .models import Wardrobe, Garment, Usage, Category, PaymentMethod, Listing, User
+from .models import  Garment, Usage, Category, PaymentMethod, Listing, User
 from django.utils.timezone import now, timedelta
 
 
 def flush_wardrobe_data():
 
-    Wardrobe.objects.all().delete()
     Garment.objects.all().delete()
     Usage.objects.all().delete()
 
@@ -27,6 +26,7 @@ def create_example_data():
 
     for category_data in example_categories:
         Category.objects.get_or_create(**category_data)
+
 
     example_garments = [
         {
