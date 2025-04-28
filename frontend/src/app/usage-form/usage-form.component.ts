@@ -34,7 +34,6 @@ export class UsageFormComponent implements OnInit {
   ) {
     this.usageForm = this.fb.group({
       garmentId: [null, Validators.required],
-      time: ['', Validators.required],
       notes: ['']
     });
   }
@@ -42,7 +41,7 @@ export class UsageFormComponent implements OnInit {
   ngOnInit(): void {
     // Fetch the list of garments
     this.loadGarments();
-    
+
     // Fetch usage details if we're editing
     this.route.params.subscribe(params => {
       if (params['id']) {
@@ -71,7 +70,6 @@ export class UsageFormComponent implements OnInit {
       this.usage = data;
       this.usageForm.patchValue({
         garmentId: data.garmentId,
-        time: data.time,
         notes: data.notes
       });
     });
@@ -83,7 +81,7 @@ export class UsageFormComponent implements OnInit {
       garment: this.usageForm.value.garmentId, // Use "garment" instead of "garmentId"
       notes: this.usageForm.value.notes        // Include the notes
     };
-  
+
     if (this.usageId) {
       // Update existing usage
       this.http.put(`/api/usages/${this.usageId}/`, usage).subscribe({
