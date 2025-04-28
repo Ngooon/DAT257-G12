@@ -5,21 +5,21 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { WardrobeListComponent } from './wardrobe-list/wardrobe-list.component';
+import { WardrobeListComponent } from './components/garment/wardrobe-list/wardrobe-list.component';
 
 
 import { registerLocaleData } from '@angular/common';
 import localeSv from '@angular/common/locales/sv';
-import { GarmentDetailsComponent } from './garment-details/garment-details.component';
-import { GarmentFormComponent } from './garment-form/garment-form.component';
+import { GarmentDetailsComponent } from './components/garment/garment-details/garment-details.component';
+import { GarmentFormComponent } from './components/garment/garment-form/garment-form.component';
 import { ReactiveFormsModule } from '@angular/forms';
-import { UsageListComponent } from './usage-list/usage-list.component';
-import { UsageDetailsComponent } from './usage-details/usage-details.component';
-import { UsageFormComponent } from './usage-form/usage-form.component';
+import { UsageListComponent } from './components/usage/usage-list/usage-list.component';
+import { UsageDetailsComponent } from './components/usage/usage-details/usage-details.component';
+import { UsageFormComponent } from './components/usage/usage-form/usage-form.component';
 import { AuthInterceptor } from './auth.interceptor';
-import { ListingListComponent } from './listing-list/listing-list.component';
-import { ListingFormComponent } from './listing-form/listing-form.component';
-import { ListingDetailsComponent } from './listing-details/listing-details.component';
+import { ListingListComponent } from './components/listing/listing-list/listing-list.component';
+import { ListingFormComponent } from './components/listing/listing-form/listing-form.component';
+import { ListingDetailsComponent } from './components/listing/listing-details/listing-details.component';
 
 registerLocaleData(localeSv);
 
