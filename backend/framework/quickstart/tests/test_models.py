@@ -3,11 +3,12 @@ from framework.quickstart.models import Garment, Category, Usage, PaymentMethod,
 from django.contrib.auth.models import User
 from django.utils.timezone import now
 from django.db.utils import IntegrityError
+from django.core.exceptions import ValidationError
 
 class SimpleTestCase(TestCase):
     def test_example(self):
         self.assertEqual(1 + 1, 2)
-        
+
 class ModelsTestCase(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(username="testuser", password="password")
@@ -55,12 +56,14 @@ class ModelsTestCase(TestCase):
         )
 
     def test_listing_price_validation(self):
-        with self.assertRaises(IntegrityError):
-            Listing.objects.create(
-                garment=self.garment,
-                description="Invalid price",
-                place="Stockholm",
-                price=-10.00,
-                payment_method=self.payment_method,
-            )
-    
+        listing = Listing(
+            garment=self.garment,
+            description="Invalid price",
+            place="Stockholm",
+            price=-10.00,  # Negativt pris
+            payment_method=self.payment_method,
+        )
+        with self.assertRaises(ValidationError):
+            listing.full_clean()  
+            listing.save()
+        
