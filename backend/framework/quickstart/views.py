@@ -1,4 +1,5 @@
 import django_filters
+from django_filters import rest_framework as filters
 from rest_framework import viewsets
 from rest_framework.response import Response
 from django.db.models import Count
@@ -6,23 +7,35 @@ from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
-from framework.quickstart.models import Garment, Wardrobe, Usage, Category
+from framework.quickstart.models import (
+    Garment,
+    Wardrobe,
+    Usage,
+    Category,
+    PaymentMethod,
+    Listing,
+)
 from framework.quickstart.serializers import (
     GarmentSerializer,
     WardrobeSerializer,
     CategorySerializer,
     UsageSerializer,
+    PaymentMethodSerializer,
+    ListingSerializer,
 )
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.shortcuts import redirect
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.db.models import F
 
 import requests
 from django.http import HttpResponseRedirect, JsonResponse
 from django.conf import settings
 from urllib.parse import urlencode
+from django.contrib.auth.models import User
 
 import jwt
 from datetime import datetime, timedelta
@@ -79,8 +92,12 @@ def facebook_callback(request):
 
     # Optional: Save user to DB, create session, issue JWT, etc.
     # For now, redirect with their name to the frontend
-    token = generate_token(user_data)
-    return redirect(f"http://localhost:4200/?token={token}")
+
+    token_data = generate_token(user_data)
+    access_token = token_data["access"]  # or pass both if needed
+
+    # Redirect to Angular with token
+    return redirect(f"http://localhost:4200/?token={access_token}")
 
 
 def generate_token(user_data):
@@ -90,20 +107,17 @@ def generate_token(user_data):
         "email": user_data.get("email", ""),
         "exp": datetime.utcnow() + timedelta(hours=24),
     }
-    token = jwt.encode(payload, settings.SECRET_KEY, algorithm="HS256")
-    return token
+    user, _ = User.objects.get_or_create(
+        first_name=payload["name"], username=payload["id"], email=payload["email"]
+    )
+    refresh = RefreshToken.for_user(user)
 
+    print(refresh.access_token)
 
-def protected_view(request):
-    auth_header = request.headers.get("Authorization", "")
-    token = auth_header.replace("Bearer ", "")
-    try:
-        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
-        return JsonResponse({"message": f"Welcome {payload['name']}!"})
-    except jwt.ExpiredSignatureError:
-        return JsonResponse({"error": "Token expired"}, status=401)
-    except jwt.InvalidTokenError:
-        return JsonResponse({"error": "Invalid token"}, status=401)
+    return {
+        "access": str(refresh.access_token),
+        "refresh": str(refresh),
+    }
 
 
 class GarmentViewSet(viewsets.ModelViewSet):
@@ -111,17 +125,27 @@ class GarmentViewSet(viewsets.ModelViewSet):
     API endpoint for garments.
     """
 
-    queryset = Garment.objects.all().annotate(usage_count=Count("usages"))
     serializer_class = GarmentSerializer
     filter_backends = [OrderingFilter, DjangoFilterBackend]  # Lägg till OrderingFilter
     ordering_fields = ["size", "color", "category", "usage_count"]
     filterset_fields = ["size", "color", "category"]
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Garment.objects.filter(owner=self.request.user).annotate(
+            usage_count=Count("usages")
+        )
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
 
 
 class GarmentUsageViewSet(viewsets.ViewSet):
     """
     API endpoint for usages related to a specific garment.
     """
+
+    permission_classes = [IsAuthenticated]
 
     @extend_schema(
         parameters=[
@@ -143,7 +167,16 @@ class GarmentUsageViewSet(viewsets.ViewSet):
         """
         List all usages for a specific garment.
         """
-        usages = Usage.objects.filter(garment_id=garment_pk)
+
+        try:
+            garment = Garment.objects.get(pk=garment_pk, owner=request.user)
+        except Garment.DoesNotExist:
+            return Response(
+                {"detail": "Not found or not your garment."},
+                status=status.HTTP_404_NOT_FOUND,
+            )  # tillagd för ägarskap
+
+        usages = Usage.objects.filter(garment=garment)
 
         from_time = request.query_params.get("from_time")
         to_time = request.query_params.get("to_time")
@@ -192,7 +225,74 @@ class UsageViewSet(viewsets.ModelViewSet):
     API endpoint for usages.
     """
 
-    queryset = Usage.objects.all().order_by("-time")
+    permission_classes = [IsAuthenticated]
+
+    # queryset = Usage.objects.all().order_by("-time")
     serializer_class = UsageSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = UsageFilter
+
+    def get_queryset(self):
+        return Usage.objects.filter(owner=self.request.user).order_by("-time")
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
+
+class PaymentMethodViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint for usages.
+    """
+
+    queryset = PaymentMethod.objects.all()
+    serializer_class = PaymentMethodSerializer
+
+
+class ListingFilter(filters.FilterSet):
+    garment_size = filters.CharFilter(
+        field_name="garment__size", lookup_expr="icontains"
+    )
+    garment_color = filters.CharFilter(
+        field_name="garment__color", lookup_expr="icontains"
+    )
+    garment_category = filters.CharFilter(
+        field_name="garment__category__name", lookup_expr="icontains"
+    )
+    min_price = filters.NumberFilter(field_name="price", lookup_expr="gte")
+    max_price = filters.NumberFilter(field_name="price", lookup_expr="lte")
+
+    class Meta:
+        model = Listing
+        fields = [
+            "garment_size",
+            "garment_color",
+            "garment_category",
+            "price",
+            "place",
+            "payment_method",
+            "min_price",
+            "max_price",
+        ]
+
+
+class ListingViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint for usages.
+    """
+
+    queryset = Listing.objects.all().annotate(
+        garment_size=F("garment__size"),
+        garment_color=F("garment__color"),
+        garment_category=F("garment__category"),
+    )
+    serializer_class = ListingSerializer
+    filter_backends = [OrderingFilter, DjangoFilterBackend]
+    ordering_fields = [
+        "garment_size",
+        "garment_color",
+        "garment_category",
+        "price",
+        "place",
+        "payment_method",
+    ]
+    filterset_class = ListingFilter

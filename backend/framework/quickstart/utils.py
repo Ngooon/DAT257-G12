@@ -1,5 +1,5 @@
 from django.db import models
-from .models import Wardrobe, Garment, Usage, Category
+from .models import Wardrobe, Garment, Usage, Category, PaymentMethod, Listing
 from django.utils.timezone import now, timedelta
 
 
@@ -145,3 +145,32 @@ def create_example_data():
 
     for usage_data in example_usages:
         Usage.objects.get_or_create(**usage_data)
+
+    example_payment_methods = [
+        {"name": "Swish"},
+        {"name": "Cash"},
+    ]
+
+    for payment_method_data in example_payment_methods:
+        PaymentMethod.objects.get_or_create(**payment_method_data)
+
+    payment_methods = PaymentMethod.objects.all()
+    example_listings = [
+        {
+            "garment": garments[0],
+            "description": "A comfortable blue T-shirt, perfect for summer.",
+            "place": "Stockholm",
+            "price": 199.99,
+            "payment_method": payment_methods[0],
+        },
+        {
+            "garment": garments[1],
+            "description": "Stylish black jeans, great for casual wear.",
+            "place": "Gothenburg",
+            "price": 499.99,
+            "payment_method": payment_methods[1],
+        },
+    ]
+
+    for listing_data in example_listings:
+        Listing.objects.get_or_create(**listing_data)
