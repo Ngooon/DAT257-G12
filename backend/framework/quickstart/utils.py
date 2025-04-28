@@ -1,5 +1,5 @@
 from django.db import models
-from .models import Wardrobe, Garment, Usage, Category, PaymentMethod, Listing
+from .models import Wardrobe, Garment, Usage, Category, PaymentMethod, Listing, User
 from django.utils.timezone import now, timedelta
 
 
@@ -11,6 +11,11 @@ def flush_wardrobe_data():
 
 
 def create_example_data():
+
+    superuser = User.objects.filter(is_superuser=True).first()
+    if not superuser:
+        print("Ingen superuser hittades. Skapa en superuser först.")
+        return
 
     example_categories = [
         {"name": "Top"},
@@ -107,7 +112,7 @@ def create_example_data():
     ]
 
     for data in example_garments:
-        Garment.objects.get_or_create(**data)
+        Garment.objects.get_or_create( owner = superuser,**data)
 
     garments = Garment.objects.all()
     example_usages = [
@@ -115,31 +120,37 @@ def create_example_data():
             "garment": garments[0],
             "time": now() - timedelta(days=1),
             "notes": "Used for a casual outing.",
+            "owner": superuser,
         },
         {
             "garment": garments[1],
             "time": now() - timedelta(days=2),
             "notes": "Worn to a meeting.",
+            "owner": superuser,
         },
         {
             "garment": garments[2],
             "time": now() - timedelta(days=3),
             "notes": "Perfect for a rainy day.",
+            "owner": superuser,
         },
         {
             "garment": garments[3],
             "time": now() - timedelta(days=4),
             "notes": "Worn during a winter walk.",
+            "owner": superuser,
         },
         {
             "garment": garments[4],
             "time": now() - timedelta(days=5),
             "notes": "Used for a summer picnic.",
+            "owner": superuser,
         },
         {
             "garment": garments[4],
             "time": now() - timedelta(days=6),
             "notes": "Used for a summer walk.",
+            "owner": superuser,
         },
     ]
 
