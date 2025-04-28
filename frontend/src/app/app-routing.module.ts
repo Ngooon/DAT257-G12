@@ -12,7 +12,7 @@ import { ListingFormComponent } from './listing-form/listing-form.component';
 import { ListingDetailsComponent } from './listing-details/listing-details.component';
 
 const routes: Routes = [
-    { path: '', redirectTo: '/wardrobe', pathMatch: 'full' },
+    // { path: '', redirectTo: '/wardrobe', pathMatch: 'full' },
     { path: 'wardrobe', component: WardrobeListComponent },
     { path: 'garments', component: WardrobeListComponent },
     { path: 'test', component: TestComponent },
