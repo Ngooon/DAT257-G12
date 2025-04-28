@@ -38,7 +38,8 @@ class GarmentSerializer(serializers.ModelSerializer):
             "brand",
             "category",
             "owner",
-            "owner_username" "usage_count",
+            "owner_username",
+            "usage_count",
         ]
         read_only = ["owner"]
 
