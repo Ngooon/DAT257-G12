@@ -1,9 +1,22 @@
 from django.test import TestCase
-from framework.quickstart.models import Garment, Category, Usage, PaymentMethod, Listing, Wardrobe
+from framework.quickstart.models import (
+    Garment,
+    Category,
+    Usage,
+    PaymentMethod,
+    Listing,
+    Wardrobe,
+)
 from django.contrib.auth.models import User
 from django.utils.timezone import now
 from django.db.utils import IntegrityError
 from django.core.exceptions import ValidationError
+
+
+class SimpleTestCase(TestCase):
+    def test_example(self):
+        self.assertEqual(1 + 1, 2)
+
 
 class ModelsTestCase(TestCase):
     def setUp(self):
@@ -48,7 +61,8 @@ class ModelsTestCase(TestCase):
             owner=self.user,
         )
         self.assertEqual(
-            str(usage), f"{self.garment.name} used at {usage.time.strftime('%Y-%m-%d %H:%M:%S')}"
+            str(usage),
+            f"{self.garment.name} used at {usage.time.strftime('%Y-%m-%d %H:%M:%S')}",
         )
 
     def test_listing_price_validation(self):
@@ -60,6 +74,5 @@ class ModelsTestCase(TestCase):
             payment_method=self.payment_method,
         )
         with self.assertRaises(ValidationError):
-            listing.full_clean()  
+            listing.full_clean()
             listing.save()
-        
