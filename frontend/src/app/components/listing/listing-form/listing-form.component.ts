@@ -4,6 +4,8 @@ import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { Listing } from '../../../interfaces/listing';
 import { PaymentMethod } from '../../../interfaces/payment_method';
+import { Garment } from '../../../interfaces/garment';
+import { generateFriendlyId } from '../../../utils/friendly-id.utils';
 
 @Component({
   selector: 'app-listing-form',
@@ -16,6 +18,7 @@ export class ListingFormComponent implements OnInit {
   listingId: number | null = null;
   listing: Listing | null = null;
   paymentMethods: PaymentMethod[] = [];
+  garments: Garment[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -34,6 +37,7 @@ export class ListingFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadPaymentMethods();
+    this.loadGarments();
     this.route.params.subscribe(params => {
       if (params['id']) {
         this.listingId = +params['id'];
@@ -55,6 +59,26 @@ export class ListingFormComponent implements OnInit {
         ];
       }
     });
+  }
+
+  loadGarments(): void {
+    this.http.get<Garment[]>('/api/garments/?ordering=usage_count').subscribe({
+      next: (data) => {
+        this.garments = data;
+        console.log('Garments loaded:', this.garments);
+      },
+      error: (err) => {
+        console.error('Error fetching garments', err);
+        alert('Failed to load garments.');
+      }
+    });
+  }
+
+  getFriendlyGarmentId(garment: Garment): string {
+    if (garment) {
+      return generateFriendlyId(garment);
+    }
+    return '';
   }
 
   loadListing(id: number): void {

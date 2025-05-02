@@ -44,7 +44,7 @@ export class UsageFormComponent implements OnInit {
 
   // Method to load garments
   loadGarments(): void {
-    this.http.get<Garment[]>('/api/garments/').subscribe({
+    this.http.get<Garment[]>('/api/garments/?ordering=-usage_count').subscribe({
       next: (data) => {
         this.garments = data;
       },

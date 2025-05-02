@@ -7,8 +7,14 @@
 
 <form [formGroup]="listingForm" (ngSubmit)="onSubmit()">
   <div class="form-group form-floating mb-3">
-    <input id="garment" formControlName="garment" class="form-control" required placeholder="Garment ID" />
-    <label for="garment">Garment ID</label>
+    <select id="garment" formControlName="garment" class="form-control">
+      <option [ngValue]="null">Select a Garment</option>
+      <option *ngFor="let garment of garments" [value]="garment.id">{{ getFriendlyGarmentId(garment) }}
+        - Used {{garment.usage_count}} times</option>
+    </select>
+    <label for="garmentId">Garment</label>
+    <!-- <input id="garment" formControlName="garment" class="form-control" required placeholder="Garment ID" />
+    <label for="garment">Garment ID</label> -->
   </div>
 
   <div class="form-group form-floating mb-3">

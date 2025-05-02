@@ -2,6 +2,8 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { LOCALE_ID, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 //import { FormsModule } from '@angular/forms';
+import { CalendarModule, DateAdapter } from 'angular-calendar';
+import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -20,6 +22,7 @@ import { AuthInterceptor } from './auth.interceptor';
 import { ListingListComponent } from './components/listing/listing-list/listing-list.component';
 import { ListingFormComponent } from './components/listing/listing-form/listing-form.component';
 import { ListingDetailsComponent } from './components/listing/listing-details/listing-details.component';
+import { UsageCalenderComponent } from './components/usage/usage-calender/usage-calender.component';
 
 registerLocaleData(localeSv);
 
@@ -34,13 +37,15 @@ registerLocaleData(localeSv);
         UsageFormComponent,
         ListingListComponent,
         ListingFormComponent,
-        ListingDetailsComponent
+        ListingDetailsComponent,
+        UsageCalenderComponent
     ],
     imports: [
         BrowserModule,
         HttpClientModule,
         AppRoutingModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        CalendarModule.forRoot({ provide: DateAdapter, useFactory: adapterFactory }),
     ],
     providers: [{ provide: LOCALE_ID, useValue: 'sv-SE' }, { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }],
     bootstrap: [AppComponent]

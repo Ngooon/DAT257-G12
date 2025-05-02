@@ -9,6 +9,7 @@ import { UsageFormComponent } from './components/usage/usage-form/usage-form.com
 import { ListingListComponent } from './components/listing/listing-list/listing-list.component';
 import { ListingFormComponent } from './components/listing/listing-form/listing-form.component';
 import { ListingDetailsComponent } from './components/listing/listing-details/listing-details.component';
+import { UsageCalenderComponent } from './components/usage/usage-calender/usage-calender.component';
 
 const routes: Routes = [
     // { path: '', redirectTo: '/wardrobe', pathMatch: 'full' },
@@ -17,7 +18,8 @@ const routes: Routes = [
     { path: 'garments/new', component: GarmentFormComponent },
     { path: 'garments/edit/:id', component: GarmentFormComponent },
     { path: 'garments/:id', component: GarmentDetailsComponent },
-    { path: 'usages', component: UsageListComponent },
+    { path: 'usages', component: UsageCalenderComponent },
+    { path: 'usages/all', component: UsageListComponent },
     { path: 'usages/new', component: UsageFormComponent },
     { path: 'usages/edit/:id', component: UsageFormComponent },
     { path: 'usages/:id', component: UsageDetailsComponent },

@@ -7,5 +7,6 @@ export interface Garment {
     color: string;
     size: string;
     brand: string;
-    category: Category
+    category: Category;
+    usage_count: number;
 }
