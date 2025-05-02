@@ -1,0 +1,11 @@
+<div class="calendar-container">
+    <mwl-calendar-month-view [viewDate]="viewDate" [events]="events" (dayClicked)="onDayClick($event.day)"
+        (eventClicked)="onEventClick($event.event)" [eventTitleTemplate]="customEventTemplate">
+    </mwl-calendar-month-view>
+
+    <ng-template #customEventTemplate let-event="event">
+        <div class="custom-event-title">
+            {{ event.title }}
+        </div>
+    </ng-template>
+</div>

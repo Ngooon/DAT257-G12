@@ -109,6 +109,14 @@
     <path
       d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z" />
   </symbol>
+  <symbol id="plus-circle" viewBox="0 0 16 16">
+    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+  </symbol>
+  <symbol id="store-front" viewBox="0 -960 960 960">
+    <path
+      d="M160-720v-80h640v80H160Zm0 560v-240h-40v-80l40-200h640l40 200v80h-40v240h-80v-240H560v240H160Zm80-80h240v-160H240v160Zm-38-240h556-556Zm0 0h556l-24-120H226l-24 120Z" />
+  </symbol>
 </svg>
 
 <header class="navbar sticky-top bg-dark flex-md-nowrap p-0 shadow" data-bs-theme="dark">
@@ -149,29 +157,71 @@
             aria-label="Close"></button>
         </div>
         <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
+          <h6
+            class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-body-secondary text-uppercase">
+            <span>Wardrobe</span>
+          </h6>
           <ul class="nav flex-column">
             <li class="nav-item">
               <a class="nav-link d-flex align-items-center gap-2 active" aria-current="page" href="/garments">
                 <svg class="bi" aria-hidden="true">
-                  <use xlink:href="#item" />
+                  <use xlink:href="#shelves" />
                 </svg>
-                Wardrobe
+                Garments
               </a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link d-flex align-items-center gap-2 active" aria-current="page" href="/garments/new">
+                <svg class="bi" aria-hidden="true">
+                  <use xlink:href="#plus-circle" />
+                </svg>
+                New garment
+              </a>
+            </li>
+          </ul>
+
+          <h6
+            class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-body-secondary text-uppercase">
+            <span>Usage tracking</span>
+          </h6>
+          <ul class="nav flex-column">
             <li class="nav-item">
               <a class="nav-link d-flex align-items-center gap-2" href="/usages">
                 <svg class="bi" aria-hidden="true">
-                  <use xlink:href="#shelves" />
+                  <use xlink:href="#item" />
                 </svg>
-                Usage
+                Usages
               </a>
             </li>
             <li class="nav-item">
+              <a class="nav-link d-flex align-items-center gap-2" href="/usages/all">
+                <svg class="bi" aria-hidden="true">
+                  <use xlink:href="#item" />
+                </svg>
+                Usage list
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link d-flex align-items-center gap-2" href="/usages/new">
+                <svg class="bi" aria-hidden="true">
+                  <use xlink:href="#plus-circle" />
+                </svg>
+                Log usage
+              </a>
+            </li>
+          </ul>
+
+          <h6
+            class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-body-secondary text-uppercase">
+            <span>Market</span>
+          </h6>
+          <ul class="nav flex-column">
+            <li class="nav-item">
               <a class="nav-link d-flex align-items-center gap-2" href="/market">
                 <svg class="bi" aria-hidden="true">
-                  <use xlink:href="#category" />
+                  <use xlink:href="#store-front" />
                 </svg>
-                Market
+                All listings
               </a>
             </li>
             <li class="nav-item">
@@ -179,7 +229,7 @@
                 <svg class="bi" aria-hidden="true">
                   <use xlink:href="#category" />
                 </svg>
-                My listings
+                Manage listings
               </a>
             </li>
           </ul>

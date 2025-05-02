@@ -2,7 +2,6 @@ from django.contrib.auth.models import Group, User
 from rest_framework import serializers
 from framework.quickstart.models import (
     Garment,
-    Wardrobe,
     Usage,
     Category,
     PaymentMethod,
@@ -22,6 +21,15 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
         fields = ["url", "name"]
 
 
+class CategorySerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Category
+        fields = [
+            "id",
+            "name",
+        ]
+
+
 class GarmentSerializer(serializers.ModelSerializer):
     category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())
     owner_username = serializers.CharField(source="owner.username", read_only=True)
@@ -38,24 +46,18 @@ class GarmentSerializer(serializers.ModelSerializer):
             "brand",
             "category",
             "owner",
-            "owner_username" "usage_count",
+            "owner_username",
+            "usage_count",
         ]
         read_only = ["owner"]
 
-
-class WardrobeSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Wardrobe
-        fields = ["id", "name"]
-
-
-class CategorySerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Category
-        fields = [
-            "id",
-            "name",
-        ]
+    def to_representation(self, instance):
+        """Customize the output for the 'category' field."""
+        representation = super().to_representation(instance)
+        category_instance = instance.category
+        if category_instance:
+            representation["category"] = CategorySerializer(category_instance).data
+        return representation
 
 
 class UsageSerializer(serializers.ModelSerializer):
@@ -73,6 +75,14 @@ class UsageSerializer(serializers.ModelSerializer):
             "owner_username",
         ]
         read_only_fields = ["owner"]
+
+    def to_representation(self, instance):
+        """Customize the output for the 'garment' field."""
+        representation = super().to_representation(instance)
+        garment_instance = instance.garment
+        if garment_instance:
+            representation["garment"] = GarmentSerializer(garment_instance).data
+        return representation
 
 
 class LoginSerializer(serializers.Serializer):
@@ -101,6 +111,7 @@ class ListingSerializer(serializers.ModelSerializer):
     payment_method = serializers.PrimaryKeyRelatedField(
         queryset=PaymentMethod.objects.all()
     )
+    owner_username = serializers.CharField(source="owner.username", read_only=True)
 
     class Meta:
         model = Listing
@@ -112,7 +123,28 @@ class ListingSerializer(serializers.ModelSerializer):
             "place",
             "price",
             "payment_method",
+            "owner",
+            "owner_username",
         ]
+        read_only_fields = ["owner"]
+
+    def to_representation(self, instance):
+        """Customize the output for the 'garment' and 'payment_method' fields."""
+        representation = super().to_representation(instance)
+
+        # Customize 'garment' field
+        garment_instance = instance.garment
+        if garment_instance:
+            representation["garment"] = GarmentSerializer(garment_instance).data
+
+        # Customize 'payment_method' field
+        payment_method_instance = instance.payment_method
+        if payment_method_instance:
+            representation["payment_method"] = PaymentMethodSerializer(
+                payment_method_instance
+            ).data
+
+        return representation
 
     def validate(self, data):
         # Kontrollera om en listing redan existerar för samma garment

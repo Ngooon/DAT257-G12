@@ -9,6 +9,8 @@ from framework.quickstart.views import (
     CategoryViewSet,
     PaymentMethodViewSet,
     ListingViewSet,
+    StatisticsViewSet,
+    MarketListingViewSet,
 )
 from drf_spectacular.views import (
     SpectacularAPIView,
@@ -28,6 +30,9 @@ router.register(r"usages", UsageViewSet, basename="usage")
 router.register(r"Categories", CategoryViewSet, basename="category")
 router.register(r"payment_methods", PaymentMethodViewSet, basename="payment_method")
 router.register(r"listings", ListingViewSet, basename="listing")
+router.register(r"statistics", StatisticsViewSet, basename="statistics")
+router.register(r"wardrobes", WardrobeViewSet, basename="wardrobe")
+router.register(r"market", MarketListingViewSet, basename="market")
 
 # LINUS LA TILL
 # Nested router för usages
