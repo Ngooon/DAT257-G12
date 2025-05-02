@@ -14,11 +14,19 @@ class QuickstartConfig(AppConfig):
             User = apps.get_model("auth", "User")
             
             # Skapa en superuser om den inte redan finns
-            if not User.objects.filter(username="test_user").exists():
+            if not User.objects.filter(username="test_user1").exists():
                 User.objects.create_superuser(
-                    username="test_user",
+                    username="test_user1",
                     email="admin@example.com",
                     password="123abc"
                 )
-                print("Superuser 'test_user' created successfully")
+                print("Superuser 'test_user1' created successfully")
+            # Skapa en superuser om den inte redan finns
+            if not User.objects.filter(username="test_user2").exists():
+                User.objects.create_superuser(
+                    username="test_user2",
+                    email="admin@example.com",
+                    password="123abc"
+                )
+                print("Superuser 'test_user2' created successfully")
 

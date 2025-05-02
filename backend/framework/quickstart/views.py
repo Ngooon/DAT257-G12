@@ -1,15 +1,20 @@
 import django_filters
 from django_filters import rest_framework as filters
 from rest_framework import viewsets
+from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.db.models import Count
+from django.db.models import Count, Avg
+from datetime import datetime, timedelta
+from django.db.models.functions import TruncMonth
 from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
+from rest_framework.decorators import action
+from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
+from drf_spectacular.types import OpenApiTypes
 from framework.quickstart.models import (
     Garment,
-    Wardrobe,
     Usage,
     Category,
     PaymentMethod,
@@ -17,14 +22,12 @@ from framework.quickstart.models import (
 )
 from framework.quickstart.serializers import (
     GarmentSerializer,
-    WardrobeSerializer,
     CategorySerializer,
     UsageSerializer,
     PaymentMethodSerializer,
     ListingSerializer,
 )
-from rest_framework.views import APIView
-from rest_framework.response import Response
+
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.shortcuts import redirect
@@ -139,6 +142,67 @@ class GarmentViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="size",
+                description="Filter garments by size.",
+                required=False,
+                type=OpenApiTypes.STR,
+            ),
+            OpenApiParameter(
+                name="color",
+                description="Filter garments by color.",
+                required=False,
+                type=OpenApiTypes.STR,
+            ),
+            OpenApiParameter(
+                name="category",
+                description="Filter garments by category.",
+                required=False,
+                type=OpenApiTypes.INT,
+            ),
+            OpenApiParameter(
+                name="ordering",
+                description="Order results by a specific field. Use `-` for descending order. Available fields: `size`, `color`, `category`, `usage_count`.",
+                required=False,
+                type=OpenApiTypes.STR,
+            ),
+        ],
+        responses={
+            200: GarmentSerializer(many=True),
+            404: OpenApiTypes.OBJECT,
+        },
+        examples=[
+            OpenApiExample(
+                "Example Response for Filtered Garments",
+                value=[
+                    {
+                        "id": 1,
+                        "size": "M",
+                        "color": "Red",
+                        "category": 3,
+                        "usage_count": 5,
+                    },
+                    {
+                        "id": 2,
+                        "size": "L",
+                        "color": "Blue",
+                        "category": 2,
+                        "usage_count": 3,
+                    },
+                ],
+            ),
+        ],
+    )
+    def list(self, request, *args, **kwargs):
+        """
+        List all garments for the authenticated user, optionally filtered and ordered.
+        """
+        return super().list(request, *args, **kwargs)
+
+    
+
 
 class GarmentUsageViewSet(viewsets.ViewSet):
     """
@@ -197,8 +261,22 @@ class WardrobeViewSet(viewsets.ModelViewSet):
     API endpoint for wardrobes.
     """
 
-    queryset = Wardrobe.objects.all()
-    serializer_class = WardrobeSerializer
+    permission_classes = [IsAuthenticated]
+
+    def list(self, request):
+        """
+        Return a list of unique wardrobes based on the user's garments.
+        """
+        # Hämta alla plagg som tillhör användaren
+        garments = Garment.objects.filter(owner=request.user)
+
+        # Extrahera unika garderobsnamn från plaggens data
+        unique_wardrobes = garments.values_list("wardrobe", flat=True).distinct()
+
+        # Skapa en lista med unika garderober
+        wardrobes = [{"name": wardrobe} for wardrobe in unique_wardrobes if wardrobe]
+
+        return Response(wardrobes)
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -214,10 +292,13 @@ class UsageFilter(django_filters.FilterSet):
     garment_id = django_filters.NumberFilter(field_name="garment__id")
     from_time = django_filters.DateTimeFilter(field_name="time", lookup_expr="gte")
     to_time = django_filters.DateTimeFilter(field_name="time", lookup_expr="lte")
-
+    category = django_filters.NumberFilter(field_name="garment__category__id")
+    wardrobe = django_filters.CharFilter(field_name="garment__wardrobe", lookup_expr="icontains")
+    
+    
     class Meta:
         model = Usage
-        fields = ["garment_id", "from_time", "to_time"]
+        fields = ["garment_id", "from_time", "to_time", "category", "wardrobe"]
 
 
 class UsageViewSet(viewsets.ModelViewSet):
@@ -237,6 +318,75 @@ class UsageViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="garment_id",
+                description="Filter usages by garment ID.",
+                required=False,
+                type=OpenApiTypes.INT,
+            ),
+            OpenApiParameter(
+                name="from_time",
+                description="Filter usages from this time (ISO 8601 format, e.g., 2025-01-01T00:00:00Z).",
+                required=False,
+                type=OpenApiTypes.DATETIME,
+            ),
+            OpenApiParameter(
+                name="to_time",
+                description="Filter usages up to this time (ISO 8601 format, e.g., 2025-04-01T23:59:59Z).",
+                required=False,
+                type=OpenApiTypes.DATETIME,
+            ),
+            OpenApiParameter(
+                name="category",
+                description="Filter usages by category ID.",
+                required=False,
+                type=OpenApiTypes.INT,
+            ),
+            OpenApiParameter(
+                name="wardrobe",
+                description="Filter usages by wardrobe.",
+                required=False,
+                type=OpenApiTypes.STR,
+            ),
+            OpenApiParameter(
+                name="ordering",
+                description="Order results by a specific field. Use `-` for descending order. Available fields: `time`, `garment__id`.",
+                required=False,
+                type=OpenApiTypes.STR,
+            ),
+        ],
+        responses={
+            200: UsageSerializer(many=True),
+            404: OpenApiTypes.OBJECT,
+        },
+        examples=[
+            OpenApiExample(
+                "Example Response for Filtered Usages",
+                value=[
+                    {
+                        "id": 1,
+                        "garment": 16,
+                        "time": "2025-04-28T08:02:03.139734Z",
+                        "description": "Worn at a party.",
+                    },
+                    {
+                        "id": 2,
+                        "garment": 16,
+                        "time": "2025-04-25T10:15:45.123456Z",
+                        "description": "Used for a meeting.",
+                    },
+                ],
+            ),
+        ],
+    )
+    def list(self, request, *args, **kwargs):
+        """
+        List all usages for the authenticated user, optionally filtered and ordered.
+        """
+        return super().list(request, *args, **kwargs)
 
 
 class PaymentMethodViewSet(viewsets.ModelViewSet):
@@ -296,3 +446,320 @@ class ListingViewSet(viewsets.ModelViewSet):
         "payment_method",
     ]
     filterset_class = ListingFilter
+
+
+class StatisticsViewSet(viewsets.ViewSet):
+    """
+    API endpoint for statistics.
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="from_time",
+                description="Filter usages from this time (ISO 8601 format, e.g., 2025-01-01T00:00:00Z). Default is one year ago.",
+                required=False,
+                type=OpenApiTypes.DATETIME,
+            ),
+            OpenApiParameter(
+                name="to_time",
+                description="Filter usages up to this time (ISO 8601 format, e.g., 2025-04-01T23:59:59Z). Default is today's date.",
+                required=False,
+                type=OpenApiTypes.DATETIME,
+            ),
+            OpenApiParameter(
+                name="id",
+                description="Filter statistics for a specific category by its ID. If not provided, statistics for all categories will be returned.",
+                required=False,
+                type=OpenApiTypes.INT,
+            ),
+        ],
+        responses={
+            200: OpenApiTypes.OBJECT,
+            404: OpenApiTypes.OBJECT,
+        },
+        examples=[
+            OpenApiExample(
+                "Example Response for All Categories",
+                value=[
+                    {
+                        "id": 1,
+                        "statistics": {
+                            "mean_usage": 2.5,
+                            "total_usage": 30,
+                            "last_usage": "2025-04-28T08:02:03.139734Z",
+                            "usage_history": {
+                                "2025-04-01T00:00:00.000Z": 2,
+                                "2025-03-01T00:00:00.000Z": 3,
+                                "2025-02-01T00:00:00.000Z": 1,
+                            },
+                        },
+                    },
+                    {
+                        "id": 2,
+                        "statistics": {
+                            "mean_usage": 1.8,
+                            "total_usage": 22,
+                            "last_usage": "2025-04-25T10:15:45.123456Z",
+                            "usage_history": {
+                                "2025-04-01T00:00:00.000Z": 1,
+                                "2025-03-01T00:00:00.000Z": 2,
+                                "2025-02-01T00:00:00.000Z": 2,
+                            },
+                        },
+                    },
+                ],
+            ),
+            OpenApiExample(
+                "Example Response for a Specific Category",
+                value={
+                    "id": 1,
+                    "statistics": {
+                        "mean_usage": 2.5,
+                        "total_usage": 30,
+                        "last_usage": "2025-04-28T08:02:03.139734Z",
+                        "usage_history": {
+                            "2025-04-01T00:00:00.000Z": 2,
+                            "2025-03-01T00:00:00.000Z": 3,
+                            "2025-02-01T00:00:00.000Z": 1,
+                        },
+                    },
+                },
+            ),
+        ],
+    )
+
+    @action(detail=False, methods=["get"], url_path="category")
+    def category(self, request):
+        """
+        Return statistics for categories, including usage history per month.
+        """
+        from datetime import datetime, timedelta
+        from django.db.models.functions import TruncMonth
+
+        # Hämta query-parametrar för tidsintervall
+        from_time = request.query_params.get("from_time")
+        to_time = request.query_params.get("to_time")
+        category_id = request.query_params.get("id")  # Hämta kategori-ID som query-param
+
+        # Standardvärden för tidsintervall (senaste året)
+        if not from_time:
+            from_time = datetime.now() - timedelta(days=365)
+        else:
+            from_time = datetime.fromisoformat(from_time)
+
+        if not to_time:
+            to_time = datetime.now()
+        else:
+            to_time = datetime.fromisoformat(to_time)
+
+        # Om ett kategori-ID skickas, filtrera på det
+        if category_id:
+            try:
+                categories = Category.objects.filter(pk=category_id)
+            except Category.DoesNotExist:
+                return Response({"detail": "Category not found."}, status=404)
+        else:
+            # Annars hämta alla kategorier
+            categories = Category.objects.all()
+
+        # Förbered statistik för varje kategori
+        data = []
+        for category in categories:
+            # Filtrera usages för den aktuella kategorin och användaren
+            usages = Usage.objects.filter(
+                garment__category=category,
+                owner=request.user,
+                time__gte=from_time,
+                time__lte=to_time,
+            )
+
+            # Grupp och räkna usages per månad
+            usages_per_month = (
+                usages.annotate(month=TruncMonth("time"))
+                .values("month")
+                .annotate(count=Count("id"))
+                .order_by("month")
+            )
+
+            # Beräkna total användning och mean usage
+            total_usage = sum(item["count"] for item in usages_per_month)
+            mean_usage = total_usage / 12  # Genomsnitt per månad över hela året
+
+            # Hämta senaste användningen
+            last_usage = usages.order_by("-time").first()
+
+            # Skapa usage history per månad
+            usage_history = {
+                item["month"].strftime("%Y-%m-%dT%H:%M:%S.%fZ"): item["count"]
+                for item in usages_per_month
+            }
+
+            # Lägg till statistik i resultatet
+            data.append({
+                "id": category.id,
+                "statistics": {
+                    "mean_usage": mean_usage,
+                    "total_usage": total_usage,
+                    "last_usage": last_usage.time if last_usage else None,
+                    "usage_history": usage_history,
+                },
+            })
+
+        return Response(data)
+    
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="from_time",
+                description="Filter usages from this time (ISO 8601 format, e.g., 2025-01-01T00:00:00Z). Default is one year ago.",
+                required=False,
+                type=OpenApiTypes.DATETIME,
+            ),
+            OpenApiParameter(
+                name="to_time",
+                description="Filter usages up to this time (ISO 8601 format, e.g., 2025-04-01T23:59:59Z). Default is today's date.",
+                required=False,
+                type=OpenApiTypes.DATETIME,
+            ),
+            OpenApiParameter(
+                name="id",
+                description="Filter statistics for a specific garment by its ID. If not provided, statistics for all garments will be returned.",
+                required=False,
+                type=OpenApiTypes.INT,
+            ),
+        ],
+        responses={
+            200: OpenApiTypes.OBJECT,
+            404: OpenApiTypes.OBJECT,
+        },
+        examples=[
+            OpenApiExample(
+                "Example Response for All Garments",
+                value=[
+                    {
+                        "id": 1,
+                        "statistics": {
+                            "mean_usage": 2.5,
+                            "total_usage": 30,
+                            "last_usage": "2025-04-28T08:02:03.139734Z",
+                            "usage_history": {
+                                "2025-04-01T00:00:00.000Z": 2,
+                                "2025-03-01T00:00:00.000Z": 3,
+                                "2025-02-01T00:00:00.000Z": 1,
+                            },
+                        },
+                    },
+                    {
+                        "id": 2,
+                        "statistics": {
+                            "mean_usage": 1.8,
+                            "total_usage": 22,
+                            "last_usage": "2025-04-25T10:15:45.123456Z",
+                            "usage_history": {
+                                "2025-04-01T00:00:00.000Z": 1,
+                                "2025-03-01T00:00:00.000Z": 2,
+                                "2025-02-01T00:00:00.000Z": 2,
+                            },
+                        },
+                    },
+                ],
+            ),
+            OpenApiExample(
+                "Example Response for a Specific Garment",
+                value={
+                    "id": 1,
+                    "statistics": {
+                        "mean_usage": 2.5,
+                        "total_usage": 30,
+                        "last_usage": "2025-04-28T08:02:03.139734Z",
+                        "usage_history": {
+                            "2025-04-01T00:00:00.000Z": 2,
+                            "2025-03-01T00:00:00.000Z": 3,
+                            "2025-02-01T00:00:00.000Z": 1,
+                        },
+                    },
+                },
+            ),
+        ],
+    )
+    @action(detail=False, methods=["get"], url_path="garment")
+    def garment(self, request):
+        """
+        Return statistics for garments, including usage history per month.
+        """
+        from datetime import datetime, timedelta
+        from django.db.models.functions import TruncMonth
+
+        # Hämta query-parametrar för tidsintervall
+        from_time = request.query_params.get("from_time")
+        to_time = request.query_params.get("to_time")
+        garment_id = request.query_params.get("id")  # Hämta garment-ID som query-param
+
+        # Standardvärden för tidsintervall (senaste året)
+        if not from_time:
+            from_time = datetime.now() - timedelta(days=365)
+        else:
+            from_time = datetime.fromisoformat(from_time)
+
+        if not to_time:
+            to_time = datetime.now()
+        else:
+            to_time = datetime.fromisoformat(to_time)
+
+        # Om ett garment-ID skickas, filtrera på det
+        if garment_id:
+            try:
+                garments = Garment.objects.filter(pk=garment_id, owner=request.user)
+            except Garment.DoesNotExist:
+                return Response({"detail": "Garment not found."}, status=404)
+        else:
+            # Annars hämta alla garments för användaren
+            garments = Garment.objects.filter(owner=request.user)
+
+        # Förbered statistik för varje garment
+        data = []
+        for garment in garments:
+            # Filtrera usages för det aktuella garment och användaren
+            usages = Usage.objects.filter(
+                garment=garment,
+                owner=request.user,
+                time__gte=from_time,
+                time__lte=to_time,
+            )
+
+            # Grupp och räkna usages per månad
+            usages_per_month = (
+                usages.annotate(month=TruncMonth("time"))
+                .values("month")
+                .annotate(count=Count("id"))
+                .order_by("month")
+            )
+
+            # Beräkna total användning och mean usage
+            total_usage = sum(item["count"] for item in usages_per_month)
+            mean_usage = total_usage / 12  # Genomsnitt per månad över hela året
+
+            # Hämta senaste användningen
+            last_usage = usages.order_by("-time").first()
+
+            # Skapa usage history per månad
+            usage_history = {
+                item["month"].strftime("%Y-%m-%dT%H:%M:%S.%fZ"): item["count"]
+                for item in usages_per_month
+            }
+
+            # Lägg till statistik i resultatet
+            data.append({
+                "id": garment.id,
+                "statistics": {
+                    "mean_usage": mean_usage,
+                    "total_usage": total_usage,
+                    "last_usage": last_usage.time if last_usage else None,
+                    "usage_history": usage_history,
+                },
+            })
+
+        return Response(data)
