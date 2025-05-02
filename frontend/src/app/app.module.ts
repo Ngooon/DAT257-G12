@@ -20,6 +20,7 @@ import { AuthInterceptor } from './auth.interceptor';
 import { ListingListComponent } from './components/listing/listing-list/listing-list.component';
 import { ListingFormComponent } from './components/listing/listing-form/listing-form.component';
 import { ListingDetailsComponent } from './components/listing/listing-details/listing-details.component';
+import { MarketListComponent } from './components/listing/market-list/market-list.component';
 
 registerLocaleData(localeSv);
 
@@ -34,7 +35,8 @@ registerLocaleData(localeSv);
         UsageFormComponent,
         ListingListComponent,
         ListingFormComponent,
-        ListingDetailsComponent
+        ListingDetailsComponent,
+        MarketListComponent
     ],
     imports: [
         BrowserModule,

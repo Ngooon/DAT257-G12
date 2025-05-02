@@ -9,6 +9,7 @@ import { UsageFormComponent } from './components/usage/usage-form/usage-form.com
 import { ListingListComponent } from './components/listing/listing-list/listing-list.component';
 import { ListingFormComponent } from './components/listing/listing-form/listing-form.component';
 import { ListingDetailsComponent } from './components/listing/listing-details/listing-details.component';
+import { MarketListComponent } from './components/listing/market-list/market-list.component';
 
 const routes: Routes = [
     // { path: '', redirectTo: '/wardrobe', pathMatch: 'full' },
@@ -25,6 +26,7 @@ const routes: Routes = [
     { path: 'listings/new', component: ListingFormComponent },
     { path: 'listings/edit/:id', component: ListingFormComponent },
     { path: 'listings/:id', component: ListingDetailsComponent },
+    { path: 'market', component: MarketListComponent },
 
 
 ];
