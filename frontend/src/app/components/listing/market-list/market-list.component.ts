@@ -68,7 +68,7 @@ export class MarketListComponent implements OnInit {
     if (filters.place) params = params.set("place", filters.place);
     if (filters.price) params = params.set("price", filters.price);
 
-    this.http.get<Listing[]>('/api/listings/', { params }).subscribe({
+    this.http.get<Listing[]>('/api/market/', { params }).subscribe({
       next: data => this.listings = data,
       error: error => console.error('Failed to load listings', error)
     });
