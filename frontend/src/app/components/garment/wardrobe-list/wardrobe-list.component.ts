@@ -103,6 +103,6 @@ export class WardrobeListComponent implements OnInit {
   }
 
   generateExampleData() {
-    generateExampleData();
+    generateExampleData(this.http);
   }
 }
