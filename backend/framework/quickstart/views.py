@@ -279,12 +279,18 @@ class ListingViewSet(viewsets.ModelViewSet):
     """
     API endpoint for usages.
     """
+    permission_classes = [IsAuthenticated]
 
-    queryset = Listing.objects.all().annotate(
-        garment_size=F("garment__size"),
-        garment_color=F("garment__color"),
-        garment_category=F("garment__category"),
+    def get_queryset(self):
+        return Listing.objects.filter(owner=self.request.user).annotate(
+            garment_size=F("garment__size"),
+            garment_color=F("garment__color"),
+            garment_category=F("garment__category"),
     )
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
     serializer_class = ListingSerializer
     filter_backends = [OrderingFilter, DjangoFilterBackend]
     ordering_fields = [
@@ -296,3 +302,26 @@ class ListingViewSet(viewsets.ModelViewSet):
         "payment_method",
     ]
     filterset_class = ListingFilter
+
+
+class MarketListingViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    API endpoint for the public market: shows all listings from all users.
+    """
+    queryset = Listing.objects.all().annotate(
+        garment_size=F("garment__size"),
+        garment_color=F("garment__color"),
+        garment_category=F("garment__category__name"),
+    )
+    serializer_class = ListingSerializer
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_class = ListingFilter
+    ordering_fields = [
+        "garment_size",
+        "garment_color",
+        "garment_category",
+        "price",
+        "place",
+        "payment_method",
+    ]
+    permission_classes = []

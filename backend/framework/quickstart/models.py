@@ -79,6 +79,9 @@ class Listing(models.Model):
     garment = models.ForeignKey(
         Garment, on_delete=models.CASCADE, unique=True, related_name="listings"
     )
+    owner = models.ForeignKey(
+        User, on_delete=models.CASCADE, null=True, related_name="listing"
+    )
     description = models.TextField(
         null=True, blank=True, help_text="Describe the garment"
     )
