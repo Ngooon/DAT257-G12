@@ -201,8 +201,6 @@ class GarmentViewSet(viewsets.ModelViewSet):
         """
         return super().list(request, *args, **kwargs)
 
-    
-
 
 class GarmentUsageViewSet(viewsets.ViewSet):
     """
@@ -293,9 +291,10 @@ class UsageFilter(django_filters.FilterSet):
     from_time = django_filters.DateTimeFilter(field_name="time", lookup_expr="gte")
     to_time = django_filters.DateTimeFilter(field_name="time", lookup_expr="lte")
     category = django_filters.NumberFilter(field_name="garment__category__id")
-    wardrobe = django_filters.CharFilter(field_name="garment__wardrobe", lookup_expr="icontains")
-    
-    
+    wardrobe = django_filters.CharFilter(
+        field_name="garment__wardrobe", lookup_expr="icontains"
+    )
+
     class Meta:
         model = Usage
         fields = ["garment_id", "from_time", "to_time", "category", "wardrobe"]
@@ -430,11 +429,18 @@ class ListingViewSet(viewsets.ModelViewSet):
     API endpoint for usages.
     """
 
-    queryset = Listing.objects.all().annotate(
-        garment_size=F("garment__size"),
-        garment_color=F("garment__color"),
-        garment_category=F("garment__category"),
-    )
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Listing.objects.filter(owner=self.request.user).annotate(
+            garment_size=F("garment__size"),
+            garment_color=F("garment__color"),
+            garment_category=F("garment__category"),
+        )
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
     serializer_class = ListingSerializer
     filter_backends = [OrderingFilter, DjangoFilterBackend]
     ordering_fields = [
@@ -530,7 +536,6 @@ class StatisticsViewSet(viewsets.ViewSet):
             ),
         ],
     )
-
     @action(detail=False, methods=["get"], url_path="category")
     def category(self, request):
         """
@@ -542,7 +547,9 @@ class StatisticsViewSet(viewsets.ViewSet):
         # Hämta query-parametrar för tidsintervall
         from_time = request.query_params.get("from_time")
         to_time = request.query_params.get("to_time")
-        category_id = request.query_params.get("id")  # Hämta kategori-ID som query-param
+        category_id = request.query_params.get(
+            "id"
+        )  # Hämta kategori-ID som query-param
 
         # Standardvärden för tidsintervall (senaste året)
         if not from_time:
@@ -598,18 +605,20 @@ class StatisticsViewSet(viewsets.ViewSet):
             }
 
             # Lägg till statistik i resultatet
-            data.append({
-                "id": category.id,
-                "statistics": {
-                    "mean_usage": mean_usage,
-                    "total_usage": total_usage,
-                    "last_usage": last_usage.time if last_usage else None,
-                    "usage_history": usage_history,
-                },
-            })
+            data.append(
+                {
+                    "id": category.id,
+                    "statistics": {
+                        "mean_usage": mean_usage,
+                        "total_usage": total_usage,
+                        "last_usage": last_usage.time if last_usage else None,
+                        "usage_history": usage_history,
+                    },
+                }
+            )
 
         return Response(data)
-    
+
     @extend_schema(
         parameters=[
             OpenApiParameter(
@@ -752,14 +761,40 @@ class StatisticsViewSet(viewsets.ViewSet):
             }
 
             # Lägg till statistik i resultatet
-            data.append({
-                "id": garment.id,
-                "statistics": {
-                    "mean_usage": mean_usage,
-                    "total_usage": total_usage,
-                    "last_usage": last_usage.time if last_usage else None,
-                    "usage_history": usage_history,
-                },
-            })
+            data.append(
+                {
+                    "id": garment.id,
+                    "statistics": {
+                        "mean_usage": mean_usage,
+                        "total_usage": total_usage,
+                        "last_usage": last_usage.time if last_usage else None,
+                        "usage_history": usage_history,
+                    },
+                }
+            )
 
         return Response(data)
+
+
+class MarketListingViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    API endpoint for the public market: shows all listings from all users.
+    """
+
+    queryset = Listing.objects.all().annotate(
+        garment_size=F("garment__size"),
+        garment_color=F("garment__color"),
+        garment_category=F("garment__category__name"),
+    )
+    serializer_class = ListingSerializer
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_class = ListingFilter
+    ordering_fields = [
+        "garment_size",
+        "garment_color",
+        "garment_category",
+        "price",
+        "place",
+        "payment_method",
+    ]
+    permission_classes = []

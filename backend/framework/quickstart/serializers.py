@@ -111,6 +111,7 @@ class ListingSerializer(serializers.ModelSerializer):
     payment_method = serializers.PrimaryKeyRelatedField(
         queryset=PaymentMethod.objects.all()
     )
+    owner_username = serializers.CharField(source="owner.username", read_only=True)
 
     class Meta:
         model = Listing
@@ -122,7 +123,10 @@ class ListingSerializer(serializers.ModelSerializer):
             "place",
             "price",
             "payment_method",
+            "owner",
+            "owner_username",
         ]
+        read_only_fields = ["owner"]
 
     def to_representation(self, instance):
         """Customize the output for the 'garment' and 'payment_method' fields."""
