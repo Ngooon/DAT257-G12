@@ -23,6 +23,7 @@ import { ListingListComponent } from './components/listing/listing-list/listing-
 import { ListingFormComponent } from './components/listing/listing-form/listing-form.component';
 import { ListingDetailsComponent } from './components/listing/listing-details/listing-details.component';
 import { UsageCalenderComponent } from './components/usage/usage-calender/usage-calender.component';
+import { MarketListComponent } from './components/listing/market-list/market-list.component';
 
 registerLocaleData(localeSv);
 
@@ -38,7 +39,8 @@ registerLocaleData(localeSv);
         ListingListComponent,
         ListingFormComponent,
         ListingDetailsComponent,
-        UsageCalenderComponent
+        UsageCalenderComponent,
+        MarketListComponent
     ],
     imports: [
         BrowserModule,
