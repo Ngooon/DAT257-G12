@@ -542,7 +542,9 @@ class StatisticsViewSet(viewsets.ViewSet):
         Return statistics for categories, including usage history per month.
         """
         from datetime import datetime, timedelta
-        from django.db.models.functions import TruncMonth
+
+        # from django.db.models.functions import TruncMonth
+        from django.db.models.functions import TruncWeek
 
         # Hämta query-parametrar för tidsintervall
         from_time = request.query_params.get("from_time")
@@ -584,15 +586,49 @@ class StatisticsViewSet(viewsets.ViewSet):
             )
 
             # Grupp och räkna usages per månad
-            usages_per_month = (
-                usages.annotate(month=TruncMonth("time"))
-                .values("month")
+            usages_per_week = (
+                usages.annotate(week=TruncWeek("time"))
+                .values("week")
                 .annotate(count=Count("id"))
-                .order_by("month")
+                .order_by("week")
             )
 
+            # Calculate mean usages per garment and per week
+            total_garments = Garment.objects.filter(
+                owner=request.user, category=category
+            ).count()
+            usages_per_week_per_garment = []
+
+            for garment in Garment.objects.filter(
+                owner=request.user, category=category
+            ):
+                garment_usages_per_week = (
+                    Usage.objects.filter(
+                        garment=garment, time__gte=from_time, time__lte=to_time
+                    )
+                    .annotate(week=TruncWeek("time"))
+                    .values("week")
+                    .annotate(count=Count("id"))
+                    .order_by("week")
+                )
+                usages_per_week_per_garment.append(garment_usages_per_week)
+
+            mean_usages_per_week = {}
+            for week_data in usages_per_week_per_garment:
+                for entry in week_data:
+                    week = entry["week"]
+                    count = entry["count"]
+                    if week not in mean_usages_per_week:
+                        mean_usages_per_week[week] = []
+                    mean_usages_per_week[week].append(count)
+
+            mean_usages_per_week = {
+                week.strftime("%Y-%m-%dT%H:%M:%S.%fZ"): sum(counts) / len(counts)
+                for week, counts in mean_usages_per_week.items()
+            }
+
             # Beräkna total användning och mean usage
-            total_usage = sum(item["count"] for item in usages_per_month)
+            total_usage = sum(item["count"] for item in usages_per_week)
             mean_usage = total_usage / 12  # Genomsnitt per månad över hela året
 
             # Hämta senaste användningen
@@ -600,8 +636,8 @@ class StatisticsViewSet(viewsets.ViewSet):
 
             # Skapa usage history per månad
             usage_history = {
-                item["month"].strftime("%Y-%m-%dT%H:%M:%S.%fZ"): item["count"]
-                for item in usages_per_month
+                item["week"].strftime("%Y-%m-%dT%H:%M:%S.%fZ"): item["count"]
+                for item in usages_per_week
             }
 
             # Lägg till statistik i resultatet
@@ -613,6 +649,7 @@ class StatisticsViewSet(viewsets.ViewSet):
                         "total_usage": total_usage,
                         "last_usage": last_usage.time if last_usage else None,
                         "usage_history": usage_history,
+                        "mean_usages_per_week": mean_usages_per_week,  # Add mean_usages_per_week to the response
                     },
                 }
             )
@@ -700,7 +737,9 @@ class StatisticsViewSet(viewsets.ViewSet):
         Return statistics for garments, including usage history per month.
         """
         from datetime import datetime, timedelta
-        from django.db.models.functions import TruncMonth
+
+        # from django.db.models.functions import TruncMonth
+        from django.db.models.functions import TruncWeek
 
         # Hämta query-parametrar för tidsintervall
         from_time = request.query_params.get("from_time")
@@ -739,16 +778,16 @@ class StatisticsViewSet(viewsets.ViewSet):
                 time__lte=to_time,
             )
 
-            # Grupp och räkna usages per månad
-            usages_per_month = (
-                usages.annotate(month=TruncMonth("time"))
-                .values("month")
+            # Grupp och räkna usages per vecka
+            usages_per_week = (
+                usages.annotate(week=TruncWeek("time"))
+                .values("week")
                 .annotate(count=Count("id"))
-                .order_by("month")
+                .order_by("week")
             )
 
             # Beräkna total användning och mean usage
-            total_usage = sum(item["count"] for item in usages_per_month)
+            total_usage = sum(item["count"] for item in usages_per_week)
             mean_usage = total_usage / 12  # Genomsnitt per månad över hela året
 
             # Hämta senaste användningen
@@ -756,8 +795,8 @@ class StatisticsViewSet(viewsets.ViewSet):
 
             # Skapa usage history per månad
             usage_history = {
-                item["month"].strftime("%Y-%m-%dT%H:%M:%S.%fZ"): item["count"]
-                for item in usages_per_month
+                item["week"].strftime("%Y-%m-%dT%H:%M:%S.%fZ"): item["count"]
+                for item in usages_per_week
             }
 
             # Lägg till statistik i resultatet
