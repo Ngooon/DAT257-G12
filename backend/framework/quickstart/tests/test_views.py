@@ -5,6 +5,9 @@ from rest_framework import status
 from framework.quickstart.models import Garment, Category, Listing, PaymentMethod, Usage
 from django.contrib.auth.models import User
 from datetime import timedelta
+from datetime import datetime
+from django.utils.timezone import make_aware
+
 from django.utils.timezone import now
 
 
@@ -58,6 +61,7 @@ class ViewsTestCase(TestCase):
             description="A comfortable blue T-shirt, perfect for summer.",
             place="Stockholm",
             price=199.99,
+            owner=self.user,
             payment_method=self.payment_method_swish,
         )
         self.listing_jeans = Listing.objects.create(
@@ -73,24 +77,26 @@ class ViewsTestCase(TestCase):
             description="Stylish black jeans, great for casual wear.",
             place="Gothenburg",
             price=299.99,
+            owner=self.user,
             payment_method=self.payment_method_card,
         )
-
+        
+        now_time = now()
         Usage.objects.create(
             garment=self.garment_tshirt,
-            time=now() - timedelta(days=1),
+            time=now_time - timedelta(days=1),
             notes="Used for a casual outing.",
             owner=self.user,  # Koppla till den autentiserade användaren
         )
         Usage.objects.create(
             garment=self.garment_sweater,
-            time=now() - timedelta(days=2),
+            time=now_time - timedelta(days=2),
             notes="Worn to a meeting.",
             owner=self.user,  # Koppla till den autentiserade användaren
         )
         Usage.objects.create(
             garment=self.garment_jacket,
-            time=now() - timedelta(days=3),
+            time=now_time - timedelta(days=3),
             notes="Perfect for a rainy day.",
             owner=self.user,  # Koppla till den autentiserade användaren
 )
@@ -190,3 +196,59 @@ class ViewsTestCase(TestCase):
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("price", response.data)
+    
+    def test_statistics_all_categories(self):
+        url = reverse("statistics-category")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 5)  # Fem kategorier ska returneras, även de utan usages
+
+        for category in response.data:
+            self.assertIn("id", category)
+            self.assertIn("statistics", category)
+            self.assertIn("mean_usage", category["statistics"])
+            self.assertIn("total_usage", category["statistics"])
+            self.assertIn("last_usage", category["statistics"])
+            self.assertIn("usage_history", category["statistics"])
+
+    def test_statistics_specific_category(self):
+        url = reverse("statistics-category") + f"?id={self.category_top.id}"
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)  # Endast en kategori ska returneras
+        category = response.data[0]
+        self.assertEqual(category["id"], self.category_top.id)
+        self.assertIn("statistics", category)
+        self.assertIn("mean_usage", category["statistics"])
+        self.assertIn("total_usage", category["statistics"])
+        self.assertIn("last_usage", category["statistics"])
+        self.assertIn("usage_history", category["statistics"])
+
+    def test_statistics_category_date_filter(self):
+        from_time = (now() - timedelta(days=2)).strftime("%Y-%m-%dT%H:%M:%S") 
+        to_time = now().strftime("%Y-%m-%dT%H:%M:%S") 
+        url = reverse("statistics-category") + f"?from_time={from_time}&to_time={to_time}"
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+            
+        for category in response.data:
+            self.assertIn("id", category)
+            self.assertIn("statistics", category)
+            self.assertIn("mean_usage", category["statistics"])
+            self.assertIn("total_usage", category["statistics"])
+            self.assertIn("last_usage", category["statistics"])
+            self.assertIn("usage_history", category["statistics"])
+
+    def test_statistics_no_usages(self):
+        # Skapa en kategori utan användningar
+        category_empty = Category.objects.create(name="Empty Category")
+        url = reverse("statistics-category") + f"?id={category_empty.id}"
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        category = response.data[0]
+        self.assertEqual(category["id"], category_empty.id)
+        self.assertEqual(category["statistics"]["total_usage"], 0)
+        self.assertEqual(category["statistics"]["mean_usage"], 0)
+        self.assertIsNone(category["statistics"]["last_usage"])
+        self.assertEqual(len(category["statistics"]["usage_history"]), 0)

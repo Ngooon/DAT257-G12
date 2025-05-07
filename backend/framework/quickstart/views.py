@@ -1,4 +1,6 @@
 import django_filters
+from django.utils.timezone import make_aware
+from datetime import datetime, timedelta
 from django_filters import rest_framework as filters
 from rest_framework import viewsets
 from rest_framework.views import APIView
@@ -547,20 +549,21 @@ class StatisticsViewSet(viewsets.ViewSet):
         # Hämta query-parametrar för tidsintervall
         from_time = request.query_params.get("from_time")
         to_time = request.query_params.get("to_time")
+
         category_id = request.query_params.get(
             "id"
         )  # Hämta kategori-ID som query-param
 
         # Standardvärden för tidsintervall (senaste året)
         if not from_time:
-            from_time = datetime.now() - timedelta(days=365)
+            from_time = make_aware(datetime.now() - timedelta(days=365))
         else:
-            from_time = datetime.fromisoformat(from_time)
+            from_time = make_aware(datetime.fromisoformat(from_time))
 
         if not to_time:
-            to_time = datetime.now()
+            to_time = make_aware(datetime.now())
         else:
-            to_time = datetime.fromisoformat(to_time)
+            to_time = make_aware(datetime.fromisoformat(to_time))
 
         # Om ett kategori-ID skickas, filtrera på det
         if category_id:
@@ -772,7 +775,6 @@ class StatisticsViewSet(viewsets.ViewSet):
                     },
                 }
             )
-
         return Response(data)
 
 
