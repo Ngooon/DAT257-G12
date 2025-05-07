@@ -450,6 +450,7 @@ class ListingViewSet(viewsets.ModelViewSet):
         "price",
         "place",
         "payment_method",
+        "time"
     ]
     filterset_class = ListingFilter
 
