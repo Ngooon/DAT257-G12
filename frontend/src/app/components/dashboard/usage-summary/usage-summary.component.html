@@ -1,17 +1,26 @@
 <h2>Top 10 Most Used Garments</h2>
+
+<!-- Dropdown för att välja kategori -->
+<div class="mb-3">
+  <label for="categoryFilter" class="form-label">Filter by Category:</label>
+  <select id="categoryFilter" class="form-select" [(ngModel)]="selectedCategory" (change)="filterByCategory()">
+    <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</option>
+  </select>
+</div>
+
 <div class="table-responsive">
-    <table class="table table-hover text-start">
-        <thead>
-            <tr>
-                <th scope="col">Garment</th>
-                <th scope="col">Usage Count</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let garment of garments" (click)="onRowClick(garment.id)">
-                <td>{{ getFriendlyGarmentId(garment) }}</td>
-                <td>{{ garment.usage_count}}</td>
-            </tr>
-        </tbody>
-    </table>
+  <table class="table table-hover text-start">
+    <thead>
+      <tr>
+        <th scope="col">Garment</th>
+        <th scope="col">Usage Count</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let garment of garments" (click)="onRowClick(garment.id)">
+        <td>{{ getFriendlyGarmentId(garment) }}</td>
+        <td>{{ garment.usage_count }}</td>
+      </tr>
+    </tbody>
+  </table>
 </div>

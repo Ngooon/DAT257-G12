@@ -14,7 +14,7 @@ import { registerLocaleData } from '@angular/common';
 import localeSv from '@angular/common/locales/sv';
 import { GarmentDetailsComponent } from './components/garment/garment-details/garment-details.component';
 import { GarmentFormComponent } from './components/garment/garment-form/garment-form.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UsageListComponent } from './components/usage/usage-list/usage-list.component';
 import { UsageDetailsComponent } from './components/usage/usage-details/usage-details.component';
 import { UsageFormComponent } from './components/usage/usage-form/usage-form.component';
@@ -53,6 +53,7 @@ registerLocaleData(localeSv);
         HttpClientModule,
         AppRoutingModule,
         ReactiveFormsModule,
+        FormsModule,
         CalendarModule.forRoot({ provide: DateAdapter, useFactory: adapterFactory }),
     ],
     providers: [{ provide: LOCALE_ID, useValue: 'sv-SE' }, { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }],
