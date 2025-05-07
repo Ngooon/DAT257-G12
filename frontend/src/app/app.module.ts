@@ -25,6 +25,13 @@ import { ListingDetailsComponent } from './components/listing/listing-details/li
 import { UsageCalenderComponent } from './components/usage/usage-calender/usage-calender.component';
 import { MarketListComponent } from './components/listing/market-list/market-list.component';
 
+
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { providePrimeNG } from 'primeng/config';
+import Material from '@primeng/themes/aura';
+import Aura from '@primeng/themes/aura';
+import { ChartModule } from 'primeng/chart';
+
 registerLocaleData(localeSv);
 
 @NgModule({
@@ -48,8 +55,23 @@ registerLocaleData(localeSv);
         AppRoutingModule,
         ReactiveFormsModule,
         CalendarModule.forRoot({ provide: DateAdapter, useFactory: adapterFactory }),
+        ChartModule,
     ],
-    providers: [{ provide: LOCALE_ID, useValue: 'sv-SE' }, { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }],
+    providers: [{ provide: LOCALE_ID, useValue: 'sv-SE' },
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    provideAnimationsAsync(),
+    providePrimeNG({
+        theme: {
+            // preset: Material,
+            preset: Aura,
+            options: {
+                prefix: 'p',
+                darkModeSelector: '(prefers-color-scheme: dark)',
+                cssLayer: false
+            }
+        }
+    })
+    ],
     bootstrap: [AppComponent]
 })
 
