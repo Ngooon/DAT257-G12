@@ -1,7 +1,17 @@
-<p>usage-summary works!</p>
-
-<ul>
-    <li *ngFor="let usage of usages">
-        <p>Usage ID: {{ usage }}</p>
-    </li>
-</ul>
+<h2>Top 10 Most Used Garments</h2>
+<div class="table-responsive">
+    <table class="table table-hover text-start">
+        <thead>
+            <tr>
+                <th scope="col">Garment</th>
+                <th scope="col">Usage Count</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let garment of garments" (click)="onRowClick(garment.id)">
+                <td>{{ getFriendlyGarmentId(garment) }}</td>
+                <td>{{ garment.usage_count}}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
