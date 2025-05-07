@@ -22,6 +22,7 @@
                             <option value="size">Size</option>
                             <option value="category">Category</option>
                             <option value="wardrobe">Wardrobe</option>
+                            <option value="-usage_count">Usage</option>
                         </select>
                     </th>
                     <th>
@@ -48,6 +49,7 @@
                     <th scope="col">Description</th>
                     <th scope="col">Color</th>
                     <th scope="col">Size</th>
+                    <th scope="col">Usage</th>
                     <th scope="col">Category</th>
                     <th scope="col">Wardrobe</th>
                     <th scope="col"></th>
@@ -59,6 +61,7 @@
                     <td>{{ garment.name }}</td>
                     <td>{{ garment.color }}</td>
                     <td>{{ garment.size }}</td>
+                    <td>{{ garment.usage_count }}</td>
                     <td>{{ garment.category.name }}</td>
                     <td>{{ garment.wardrobe }}</td>
                     <td>
