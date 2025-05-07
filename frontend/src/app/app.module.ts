@@ -26,6 +26,7 @@ import { UsageCalenderComponent } from './components/usage/usage-calender/usage-
 import { MarketListComponent } from './components/listing/market-list/market-list.component';
 import { DashboardComponent } from './components/dashboard/dashboard/dashboard.component';
 import { UsageSummaryComponent } from './components/dashboard/usage-summary/usage-summary.component';
+import { ListingSummaryComponent } from './components/dashboard/listing-summary/listing-summary.component';
 
 registerLocaleData(localeSv);
 
@@ -44,7 +45,8 @@ registerLocaleData(localeSv);
         UsageCalenderComponent,
         MarketListComponent,
         DashboardComponent,
-        UsageSummaryComponent
+        UsageSummaryComponent,
+        ListingSummaryComponent
     ],
     imports: [
         BrowserModule,
