@@ -24,24 +24,6 @@ export class GarmentDetailsComponent implements OnInit {
       fontSize: 32,
       position: 'top',
     },
-    // scales: {
-    //   x: {
-    //     ticks: {
-    //       color: '#495057',
-    //     },
-    //     grid: {
-    //       color: '#ebedef',
-    //     },
-    //   },
-    //   y: {
-    //     ticks: {
-    //       color: '#495057',
-    //     },
-    //     grid: {
-    //       color: '#ebedef',
-    //     },
-    //   },
-    // },
   };
 
   constructor(private route: ActivatedRoute, private http: HttpClient) { }
