@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Listing } from '../../../interfaces/listing';
 import { Router } from '@angular/router';
 import { Garment } from '../../../interfaces/garment';
+import { User } from '../../../interfaces/User';
 
 @Component({
   selector: 'app-dashboard',
@@ -13,18 +14,24 @@ import { Garment } from '../../../interfaces/garment';
 export class DashboardComponent implements OnInit {
   public topUsages: Garment[] = [];
   listings: Listing[] = [];
+  loggedIn: boolean = false; // Flagga för att kontrollera inloggning
+  user: User | null = null; // Användardata
 
   constructor(private router: Router, private http: HttpClient) {}
 
   ngOnInit() {
+    if (localStorage.getItem('auth_token')) {
+      this.loggedIn = true; 
+    }
     this.getListings();
     this.fetchUsages();
+    this.getUser(); // Hämta användardata vid initiering
   }
 
   getListings() {
-    this.http.get<Listing[]>('/api/listings').subscribe({
+    this.http.get<Listing[]>('/api/listings/?ordering=-time').subscribe({
       next: data => {
-        this.listings = data.slice(0, 10); // Begränsa till de 10 första resultaten
+        this.listings = data.slice(0, 5); // Begränsa till de 10 första resultaten
       },
       error: error => {
         console.error('Failed to load listings', error);
@@ -45,6 +52,24 @@ export class DashboardComponent implements OnInit {
       },
       error: (error) => {
         console.error('Failed to load top usages from API.', error);
+      }
+    });
+  }
+
+  getUser(): void {
+    this.http.get<User>('/api/users/me').subscribe({
+      next: (data) => {
+        this.user = data;
+        console.log('User fetched:', this.user);
+      },
+      error: (error) => {
+        console.error('Failed to load user from API.', error);
+        // mock
+        this.user = {
+          id: 1,
+          username: 'mockuser'
+        };
+        console.log('Mock user:', this.user);
       }
     });
   }
