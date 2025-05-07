@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { Garment } from '../../../interfaces/garment';
+import { generateExampleData } from '../../../utils/data-generator.utils';
 
 @Component({
   selector: 'app-wardrobe-list',
@@ -99,5 +100,9 @@ export class WardrobeListComponent implements OnInit {
 
   onEdit(garmentId: number) {
     this.router.navigate(['/garments/edit', garmentId]);
+  }
+
+  generateExampleData() {
+    generateExampleData(this.http);
   }
 }
