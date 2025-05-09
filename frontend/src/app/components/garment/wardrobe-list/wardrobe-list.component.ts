@@ -180,7 +180,7 @@ export class WardrobeListComponent implements OnInit {
     this.router.navigate(['/garments/edit', garmentId]);
   }
 
-  generateExampleData() {
-    generateExampleData(this.http);
+  generateExampleData(last_number_of_days: number) {
+    generateExampleData(this.http, last_number_of_days);
   }
 }

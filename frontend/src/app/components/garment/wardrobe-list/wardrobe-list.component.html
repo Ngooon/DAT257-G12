@@ -3,8 +3,10 @@
     <div class="btn-toolbar mb-2 mb-md-0">
         <div class="btn-group me-2">
             <button routerLink="/garments/new" type="button" class="btn btn-sm btn-outline-primary">Add new</button>
-            <button type="button" class="btn btn-sm btn-outline-primary" (click)="generateExampleData()">Add example
-                data</button>
+            <button type="button" class="btn btn-sm btn-outline-primary" (click)="generateExampleData(30)">Add example
+                data (last month)</button>
+            <button type="button" class="btn btn-sm btn-outline-primary" (click)="generateExampleData(365)">Add example
+                data (last year)</button>
         </div>
     </div>
 </div>

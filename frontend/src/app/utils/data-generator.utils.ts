@@ -5,7 +5,7 @@ import { PaymentMethod } from "../interfaces/payment_method";
 import { Category } from "../interfaces/category";
 import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http';
 
-export async function generateExampleData(http: HttpClient) {
+export async function generateExampleData(http: HttpClient, last_number_of_days: number) {
     try {
         const categories = await http.get<Category[]>('/api/Categories/').toPromise() || [];
         console.log('Categories fetched successfully', categories);
@@ -44,7 +44,7 @@ export async function generateExampleData(http: HttpClient) {
 
         const usages: UsagePost[] = [];
         const now = new Date();
-        for (let i = 0; i < 365; i++) {
+        for (let i = 0; i < last_number_of_days; i++) {
             const pastDay = new Date(now);
             pastDay.setDate(now.getDate() - i);
 
