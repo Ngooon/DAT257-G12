@@ -11,9 +11,11 @@ import { ListingFormComponent } from './components/listing/listing-form/listing-
 import { ListingDetailsComponent } from './components/listing/listing-details/listing-details.component';
 import { UsageCalenderComponent } from './components/usage/usage-calender/usage-calender.component';
 import { MarketListComponent } from './components/listing/market-list/market-list.component';
+import { DashboardComponent } from './components/dashboard/dashboard/dashboard.component';
 
 const routes: Routes = [
     // { path: '', redirectTo: '/wardrobe', pathMatch: 'full' },
+    { path: '', component: DashboardComponent },
     { path: 'wardrobe', component: WardrobeListComponent },
     { path: 'garments', component: WardrobeListComponent },
     { path: 'garments/new', component: GarmentFormComponent },

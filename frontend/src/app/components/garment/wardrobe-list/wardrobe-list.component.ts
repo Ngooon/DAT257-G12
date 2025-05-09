@@ -19,6 +19,54 @@ export class WardrobeListComponent implements OnInit {
   filteredGarments: Garment[] = [];
   categories: { id: number; name: string }[] = [];
 
+  graphData: any = {};
+  graphOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: false,
+      },
+      tooltip: {
+        enabled: false,
+      },
+    },
+    elements: {
+      line: {
+        tension: 0.4,
+      },
+      point: {
+        radius: 0,
+      },
+    },
+    scales: {
+      x: {
+        display: true,
+        ticks: {
+          display: false,
+        },
+        title: {
+          display: false,
+        },
+        grid: {
+          display: false,
+        },
+      },
+      y: {
+        display: true,
+        ticks: {
+          display: false,
+        },
+        title: {
+          display: false,
+        },
+        grid: {
+          display: false,
+        },
+      },
+    },
+  };
+
   constructor(private router: Router, private http: HttpClient, private fb: FormBuilder) {
     this.filterForm = this.fb.group({});
   }
@@ -35,6 +83,36 @@ export class WardrobeListComponent implements OnInit {
 
     this.getCategories();
     this.getGarments();
+    this.getGarmentGraphData();
+  }
+
+  getGarmentGraphData() {
+    this.http.get<any[]>('/api/statistics/garment/').subscribe({
+      next: (result) => {
+        const graphDataDict: { [key: number]: any } = {};
+        result.forEach((garment) => {
+          const labels = Object.keys(garment.statistics.usage_history);
+          const data = Object.values(garment.statistics.usage_history);
+          graphDataDict[garment.id] = {
+            labels: labels,
+            datasets: [
+              {
+                label: 'Usage',
+                data: data,
+                fill: false,
+                borderColor: '#42A5F5',
+                tension: 0.1
+              }
+            ]
+          };
+        });
+        this.graphData = graphDataDict;
+        console.log('Garment graph data:', this.graphData);
+      },
+      error: (error) => {
+        console.error('Failed to load garment graph data', error);
+      }
+    });
   }
 
   getCategories() {

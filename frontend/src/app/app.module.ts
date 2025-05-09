@@ -24,6 +24,16 @@ import { ListingFormComponent } from './components/listing/listing-form/listing-
 import { ListingDetailsComponent } from './components/listing/listing-details/listing-details.component';
 import { UsageCalenderComponent } from './components/usage/usage-calender/usage-calender.component';
 import { MarketListComponent } from './components/listing/market-list/market-list.component';
+import { DashboardComponent } from './components/dashboard/dashboard/dashboard.component';
+import { UsageSummaryComponent } from './components/dashboard/usage-summary/usage-summary.component';
+import { ListingSummaryComponent } from './components/dashboard/listing-summary/listing-summary.component';
+
+
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { providePrimeNG } from 'primeng/config';
+import Material from '@primeng/themes/aura';
+import Aura from '@primeng/themes/aura';
+import { ChartModule } from 'primeng/chart';
 
 registerLocaleData(localeSv);
 
@@ -40,7 +50,10 @@ registerLocaleData(localeSv);
         ListingFormComponent,
         ListingDetailsComponent,
         UsageCalenderComponent,
-        MarketListComponent
+        MarketListComponent,
+        DashboardComponent,
+        UsageSummaryComponent,
+        ListingSummaryComponent
     ],
     imports: [
         BrowserModule,
@@ -48,8 +61,23 @@ registerLocaleData(localeSv);
         AppRoutingModule,
         ReactiveFormsModule,
         CalendarModule.forRoot({ provide: DateAdapter, useFactory: adapterFactory }),
+        ChartModule,
     ],
-    providers: [{ provide: LOCALE_ID, useValue: 'sv-SE' }, { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }],
+    providers: [{ provide: LOCALE_ID, useValue: 'sv-SE' },
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    provideAnimationsAsync(),
+    providePrimeNG({
+        theme: {
+            // preset: Material,
+            preset: Aura,
+            options: {
+                prefix: 'p',
+                darkModeSelector: '(prefers-color-scheme: dark)',
+                cssLayer: false
+            }
+        }
+    })
+    ],
     bootstrap: [AppComponent]
 })
 
