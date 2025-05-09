@@ -70,4 +70,6 @@ urlpatterns = [
     path("auth/", include("social_django.urls", namespace="social")),
     path("auth/facebook", views.facebook_login, name="facebook_login"),
     path("auth/facebook/callback", views.facebook_callback, name="facebook_callback"),
+    path("auth/guest", views.guest_login, name="guest_login"),
+    
 ]

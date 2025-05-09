@@ -38,5 +38,9 @@ export class AppComponent {
   logout() {
     localStorage.clear();
   }
+
+  guestlogin(){
+    window.location.href = 'http://localhost:8000/auth/guest';
+  }
 }
 

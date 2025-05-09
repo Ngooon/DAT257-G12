@@ -3,6 +3,7 @@ from django_filters import rest_framework as filters
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
 from django.db.models import Count, Avg
 from datetime import datetime, timedelta
 from django.db.models.functions import TruncMonth
@@ -19,6 +20,8 @@ from framework.quickstart.models import (
     Category,
     PaymentMethod,
     Listing,
+    Rating,
+    UserProfile
 )
 from framework.quickstart.serializers import (
     GarmentSerializer,
@@ -26,6 +29,7 @@ from framework.quickstart.serializers import (
     UsageSerializer,
     PaymentMethodSerializer,
     ListingSerializer,
+    UserSerializer,
 )
 
 from rest_framework import status
@@ -61,6 +65,16 @@ def facebook_login(request):
         "scope": "email,public_profile",
     }
     return HttpResponseRedirect(f"{fb_auth_url}?{urlencode(params)}")
+
+def guest_login(request):
+    
+    data={'id':111, 'name': 'Guest', 'email': 'guest@test.net'}
+    token_data=generate_token(data)
+    access_token = token_data["access"]  # or pass both if needed
+
+    # Redirect to Angular with token
+    return redirect(f"http://localhost:4200/?token={access_token}")
+    
 
 
 # Step 2: Handle Facebook's callback
@@ -115,6 +129,8 @@ def generate_token(user_data):
     )
     refresh = RefreshToken.for_user(user)
 
+    UserProfile.objects.get_or_create(user=user)
+    
     print(refresh.access_token)
 
     return {
@@ -123,6 +139,60 @@ def generate_token(user_data):
     }
 
 
+class RatingViewSet(viewsets.ViewSet):
+    permission_classes = [IsAuthenticated]
+
+    @action(detail=False, methods=["post"])
+    def rate_user(self, request):
+        rated_user_id = request.data.get("rated_user")
+        score = request.data.get("score")
+
+        if not rated_user_id or score is None:
+            return Response({"detail": "Missing rated_user or score"}, status=400)
+
+        try:
+            score = int(score)
+            if not (1 <= score <= 5):
+                raise ValueError()
+        except ValueError:
+            return Response({"detail": "Score must be an integer between 1 and 5."}, status=400)
+
+        rated_user = get_object_or_404(User, id=rated_user_id)
+
+        if rated_user == request.user:
+            return Response({"detail": "You cannot rate yourself."}, status=400)
+
+        # Create or update the rating
+        rating, created = Rating.objects.update_or_create(
+            rater=request.user,
+            rated_user=rated_user,
+            defaults={"score": score},
+        )
+
+        profile = rated_user.profile  # Via related_name on UserProfile
+
+        if created:
+            # New rating
+            total_score = profile.average_rating * profile.rating_count
+            profile.rating_count += 1
+            profile.average_rating = (total_score + score) / profile.rating_count
+        else:
+            # Update: recalculate all ratings for this user
+            profile.average_rating = Rating.objects.filter(
+                rated_user=rated_user
+            ).aggregate(avg=Avg("score"))["avg"]
+
+        profile.save()
+
+        return Response(
+            {
+                "message": "Rating submitted successfully.",
+                "average_rating": profile.average_rating,
+                "rating_count": profile.rating_count,
+            },
+            status=status.HTTP_201_CREATED,
+        )
+        
 class GarmentViewSet(viewsets.ModelViewSet):
     """
     API endpoint for garments.
@@ -298,7 +368,6 @@ class UsageFilter(django_filters.FilterSet):
     class Meta:
         model = Usage
         fields = ["garment_id", "from_time", "to_time", "category", "wardrobe"]
-
 
 class UsageViewSet(viewsets.ModelViewSet):
     """
