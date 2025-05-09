@@ -24,6 +24,7 @@ import { ListingFormComponent } from './components/listing/listing-form/listing-
 import { ListingDetailsComponent } from './components/listing/listing-details/listing-details.component';
 import { UsageCalenderComponent } from './components/usage/usage-calender/usage-calender.component';
 import { MarketListComponent } from './components/listing/market-list/market-list.component';
+import { SoldPopUpComponent } from './components/listing/sold-pop-up/sold-pop-up.component';
 
 registerLocaleData(localeSv);
 
@@ -40,7 +41,8 @@ registerLocaleData(localeSv);
         ListingFormComponent,
         ListingDetailsComponent,
         UsageCalenderComponent,
-        MarketListComponent
+        MarketListComponent,
+        SoldPopUpComponent
     ],
     imports: [
         BrowserModule,
