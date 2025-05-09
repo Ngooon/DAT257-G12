@@ -1,0 +1,18 @@
+<h5>Top 10 Most Used Garments</h5>
+<div class="table-responsive">
+    <table class="table table-hover text-start">
+        <thead>
+            <tr>
+                <th scope="col">Garment</th>
+                <th scope="col">Usage Count</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let garment of garments" (click)="onRowClick(garment.id)">
+                <td>{{ getFriendlyGarmentId(garment) }}</td>
+                <td>{{ garment.usage_count}}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<p *ngIf="garments?.length === 0"><em>No garments found.</em></p>

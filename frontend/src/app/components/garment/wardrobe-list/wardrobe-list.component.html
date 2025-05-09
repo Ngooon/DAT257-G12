@@ -3,8 +3,10 @@
     <div class="btn-toolbar mb-2 mb-md-0">
         <div class="btn-group me-2">
             <button routerLink="/garments/new" type="button" class="btn btn-sm btn-outline-primary">Add new</button>
-            <button type="button" class="btn btn-sm btn-outline-primary" (click)="generateExampleData()">Add example
-                data</button>
+            <button type="button" class="btn btn-sm btn-outline-primary" (click)="generateExampleData(30)">Add example
+                data (last month)</button>
+            <button type="button" class="btn btn-sm btn-outline-primary" (click)="generateExampleData(365)">Add example
+                data (last year)</button>
         </div>
     </div>
 </div>
@@ -22,6 +24,7 @@
                             <option value="size">Size</option>
                             <option value="category">Category</option>
                             <option value="wardrobe">Wardrobe</option>
+                            <option value="-usage_count">Usage</option>
                         </select>
                     </th>
                     <th>
@@ -42,38 +45,38 @@
                         <button type="button" class="btn btn-primary btn-sm" (click)="onApplyFilters()">Apply</button>
                     </th>
                     <th></th>
-                </tr>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Description</th>
-                    <th scope="col">Color</th>
-                    <th scope="col">Size</th>
-                    <th scope="col">Category</th>
-                    <th scope="col">Wardrobe</th>
-                    <th scope="col"></th>
+                    <th></th>
                 </tr>
             </thead>
-            <tbody>
-                <tr *ngFor="let garment of garments" (click)="onRowClick(garment.id)">
-                    <td>{{ garment.id }}</td>
-                    <td>{{ garment.name }}</td>
-                    <td>{{ garment.color }}</td>
-                    <td>{{ garment.size }}</td>
-                    <td>{{ garment.category.name }}</td>
-                    <td>{{ garment.wardrobe }}</td>
-                    <td>
-                        <div class="btn-group">
-                            <button (click)="onDelete(garment.id); $event.stopPropagation()"
-                                class="btn btn-outline-danger btn-sm">Delete</button>
-                            <button (click)="onEdit(garment.id); $event.stopPropagation()"
-                                class="btn btn-outline-primary btn-sm">Edit</button>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
         </table>
     </form>
 </div>
+
+<div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 g-3">
+    <div class="col" *ngFor="let garment of garments">
+        <div class="card shadow-sm">
+            <p-chart type="line" [data]="graphData[garment.id]" [options]="graphOptions"
+                class="bd-placeholder-img card-img-top" height="225"></p-chart>
+            <div class="card-body">
+                <h5 class="card-title">{{ garment.name }}</h5>
+                <p class="card-text text-muted">{{ garment.category.name }}</p>
+                <p class="card-text"><strong>Color:</strong> {{ garment.color }}</p>
+                <p class="card-text"><strong>Size:</strong> {{ garment.size }}</p>
+                <p class="card-text"><strong>Used in the last year:</strong> {{ garment.usage_count }}</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-sm btn-outline-danger"
+                            (click)="onDelete(garment.id)">Delete</button>
+                        <button type="button" class="btn btn-sm btn-outline-primary"
+                            (click)="onEdit(garment.id)">Edit</button>
+                    </div>
+                    <small class="text-body-secondary">#{{ garment.id }}</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <p *ngIf="!garments"><em>Loading...</em></p>
 <p *ngIf="garments?.length === 0"><em>No garments found.</em></p>

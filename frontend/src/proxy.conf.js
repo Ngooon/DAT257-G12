@@ -6,7 +6,8 @@ const target = 'http://127.0.0.1:8000';
 const PROXY_CONFIG = [
     {
         context: [
-            "/api"
+            "/api",
+            "/auth",
         ],
         target,
         secure: false
