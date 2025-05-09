@@ -11,6 +11,7 @@ from framework.quickstart.views import (
     ListingViewSet,
     StatisticsViewSet,
     MarketListingViewSet,
+    UserViewSet
 )
 from drf_spectacular.views import (
     SpectacularAPIView,
@@ -33,7 +34,7 @@ router.register(r"listings", ListingViewSet, basename="listing")
 router.register(r"statistics", StatisticsViewSet, basename="statistics")
 router.register(r"wardrobes", WardrobeViewSet, basename="wardrobe")
 router.register(r"market", MarketListingViewSet, basename="market")
-
+router.register(r'users', UserViewSet, basename='user')
 # LINUS LA TILL
 # Nested router för usages
 garments_router = NestedSimpleRouter(router, r"garments", lookup="garment")

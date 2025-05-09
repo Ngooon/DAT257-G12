@@ -193,6 +193,27 @@ class RatingViewSet(viewsets.ViewSet):
             status=status.HTTP_201_CREATED,
         )
         
+    @action(detail=False, methods=["get"], url_path="get-rating")
+    def get_rating(self, request):
+        user_id = request.query_params.get("user_id")
+
+        if not user_id:
+            return Response({"detail": "Missing user_id parameter."}, status=400)
+
+        user = get_object_or_404(User, id=user_id)
+        profile = user.profile
+
+        return Response({
+            "user_id": user.id,
+            "average_rating": profile.average_rating,
+            "rating_count": profile.rating_count,
+        })
+        
+class UserViewSet(viewsets.ReadOnlyModelViewSet):  # Read-only to prevent updates
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
 class GarmentViewSet(viewsets.ModelViewSet):
     """
     API endpoint for garments.
