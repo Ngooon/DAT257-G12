@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Listing } from '../../../interfaces/listing';
 import { Router } from '@angular/router';
 import { Garment } from '../../../interfaces/garment';
-import { User } from '../../../interfaces/User';
+import { User } from '../../../interfaces/user';
 
 @Component({
   selector: 'app-dashboard',

@@ -27,6 +27,8 @@ import { MarketListComponent } from './components/listing/market-list/market-lis
 import { DashboardComponent } from './components/dashboard/dashboard/dashboard.component';
 import { UsageSummaryComponent } from './components/dashboard/usage-summary/usage-summary.component';
 import { ListingSummaryComponent } from './components/dashboard/listing-summary/listing-summary.component';
+import { UserComponent } from './components/user/user/user.component';
+import { UsersListComponent } from './components/user/users-list/users-list.component';
 
 registerLocaleData(localeSv);
 
@@ -46,7 +48,9 @@ registerLocaleData(localeSv);
         MarketListComponent,
         DashboardComponent,
         UsageSummaryComponent,
-        ListingSummaryComponent
+        ListingSummaryComponent,
+        UserComponent,
+        UsersListComponent
     ],
     imports: [
         BrowserModule,
