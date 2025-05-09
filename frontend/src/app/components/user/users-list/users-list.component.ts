@@ -13,7 +13,7 @@ import { User } from '../../../interfaces/user';
 })
 export class UsersListComponent implements OnInit {
 
-  users: User[] = [];
+  users: any[] = [];
 
   constructor(private router: Router, private http: HttpClient) {}
 

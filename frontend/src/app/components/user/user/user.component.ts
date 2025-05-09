@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Listing } from '../../../interfaces/listing';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
+import { User } from '../../../interfaces/user';
 
 @Component({
   selector: 'app-user',
@@ -12,6 +13,7 @@ import { ActivatedRoute } from '@angular/router';
 export class UserComponent implements OnInit {
   listings: Listing[] = [];
   public id: number = 1;
+  user: any; // Användardata
   
   constructor(private route: ActivatedRoute, private http: HttpClient) { }
 
@@ -21,6 +23,7 @@ export class UserComponent implements OnInit {
       this.id = parseInt(idString, 10);
     }
     this.getListings();
+    this.getUser();
   }
   getListings() {
     this.http.get<Listing[]>(`/api/market/?ordering=-time&user_id=${this.id}`).subscribe({
@@ -29,6 +32,17 @@ export class UserComponent implements OnInit {
       },
       error: error => {
         console.error('Failed to load listings', error);
+      }
+    });
+  }
+
+  getUser() {
+    this.http.get(`/api/users/${this.id}`).subscribe({
+      next: data => {
+        this.user = data;
+      },
+      error: error => {
+        console.error('Failed to load user data', error);
       }
     });
   }
