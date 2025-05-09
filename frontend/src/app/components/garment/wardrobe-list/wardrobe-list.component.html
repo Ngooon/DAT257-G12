@@ -53,8 +53,8 @@
 <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 g-3">
     <div class="col" *ngFor="let garment of garments">
         <div class="card shadow-sm">
-            <p-chart type="line" [data]="graphData" [options]="graphOptions" class="bd-placeholder-img card-img-top"
-                height="225"></p-chart>
+            <p-chart type="line" [data]="graphData[garment.id]" [options]="graphOptions"
+                class="bd-placeholder-img card-img-top" height="225"></p-chart>
             <div class="card-body">
                 <h5 class="card-title">{{ garment.name }}</h5>
                 <p class="card-text text-muted">{{ garment.category.name }}</p>

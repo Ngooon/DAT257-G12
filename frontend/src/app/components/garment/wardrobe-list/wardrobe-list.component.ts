@@ -83,21 +83,36 @@ export class WardrobeListComponent implements OnInit {
 
     this.getCategories();
     this.getGarments();
+    this.getGarmentGraphData();
+  }
 
-    // Mock graphData för att visa hur det kan se ut
-    this.graphData = {
-      labels: Array.from({ length: 52 }, (_, i) => `${i + 1}`),
-      datasets: [
-        {
-          label: 'Usage',
-          data: Array.from({ length: 52 }, () => Math.floor(Math.random() * 100)),
-          fill: false,
-          borderColor: '#42A5F5',
-          tension: 0.1
-        }
-      ]
-    };
-
+  getGarmentGraphData() {
+    this.http.get<any[]>('/api/statistics/garment/').subscribe({
+      next: (result) => {
+        const graphDataDict: { [key: number]: any } = {};
+        result.forEach((garment) => {
+          const labels = Object.keys(garment.statistics.usage_history);
+          const data = Object.values(garment.statistics.usage_history);
+          graphDataDict[garment.id] = {
+            labels: labels,
+            datasets: [
+              {
+                label: 'Usage',
+                data: data,
+                fill: false,
+                borderColor: '#42A5F5',
+                tension: 0.1
+              }
+            ]
+          };
+        });
+        this.graphData = graphDataDict;
+        console.log('Garment graph data:', this.graphData);
+      },
+      error: (error) => {
+        console.error('Failed to load garment graph data', error);
+      }
+    });
   }
 
   getCategories() {
