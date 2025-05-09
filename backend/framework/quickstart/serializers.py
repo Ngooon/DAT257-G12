@@ -154,6 +154,7 @@ class ListingSerializer(serializers.ModelSerializer):
             ).data
 
         return representation
+    
 
     def validate(self, data):
         # Kontrollera om en listing redan existerar för samma garment
@@ -174,3 +175,5 @@ class ListingSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"price": "Price cannot be negative."})
 
         return data
+
+

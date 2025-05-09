@@ -29,6 +29,7 @@ const routes: Routes = [
     { path: 'listings/edit/:id', component: ListingFormComponent },
     { path: 'listings/:id', component: ListingDetailsComponent },
     { path: 'market', component: MarketListComponent },
+    
 
 
 ];
