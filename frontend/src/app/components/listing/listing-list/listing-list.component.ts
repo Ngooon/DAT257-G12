@@ -106,4 +106,22 @@ export class ListingListComponent implements OnInit {
   onEdit(garmentId: number) {
     this.router.navigate(['/listings/edit', garmentId]);
   }
+
+  onSold(garmentId: number) {
+    const isConfirmed = window.confirm('Are you sure you want to mark this item as sold?');
+  
+    if (isConfirmed) {
+      this.http.delete(`/api/listings/${garmentId}/`).subscribe(
+        () => {
+          this.listings = this.listings.filter(garment => garment.id !== garmentId);
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+    } else {
+      console.log('Action canceled');
+    }
+  }
+
 }
