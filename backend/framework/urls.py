@@ -11,6 +11,8 @@ from framework.quickstart.views import (
     ListingViewSet,
     StatisticsViewSet,
     MarketListingViewSet,
+    RatingViewSet,
+    UserViewSet
 )
 from drf_spectacular.views import (
     SpectacularAPIView,
@@ -33,7 +35,8 @@ router.register(r"listings", ListingViewSet, basename="listing")
 router.register(r"statistics", StatisticsViewSet, basename="statistics")
 router.register(r"wardrobes", WardrobeViewSet, basename="wardrobe")
 router.register(r"market", MarketListingViewSet, basename="market")
-
+router.register(r"rating", RatingViewSet, basename="rating")
+router.register(r'users', UserViewSet, basename='user')
 # LINUS LA TILL
 # Nested router för usages
 garments_router = NestedSimpleRouter(router, r"garments", lookup="garment")
@@ -70,4 +73,6 @@ urlpatterns = [
     path("auth/", include("social_django.urls", namespace="social")),
     path("auth/facebook", views.facebook_login, name="facebook_login"),
     path("auth/facebook/callback", views.facebook_callback, name="facebook_callback"),
+    path("auth/guest", views.guest_login, name="guest_login"),
+    
 ]

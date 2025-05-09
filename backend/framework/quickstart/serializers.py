@@ -6,13 +6,22 @@ from framework.quickstart.models import (
     Category,
     PaymentMethod,
     Listing,
+    Rating
+
 )
 
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+class RatingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rating
+        fields = ['id', 'rater', 'rated_user', 'score', 'timestamp']
+        read_only_fields = ['rater', 'timestamp']
+
+class UserSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = User
-        fields = ["url", "username", "email", "groups"]
+        fields = ["id", "username", "email", "groups"]
 
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):
@@ -145,6 +154,7 @@ class ListingSerializer(serializers.ModelSerializer):
             ).data
 
         return representation
+    
 
     def validate(self, data):
         # Kontrollera om en listing redan existerar för samma garment
@@ -165,3 +175,5 @@ class ListingSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"price": "Price cannot be negative."})
 
         return data
+
+
