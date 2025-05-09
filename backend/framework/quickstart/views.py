@@ -213,6 +213,16 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):  # Read-only to prevent update
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
+    
+    @action(detail=False, methods=["get"], url_path="me")
+    def get_user(self,request):
+        user=self.request.user
+        
+        return Response({
+            "name": user.first_name,
+            "mail": user.email,
+            "id": user.id
+        })
 
 class GarmentViewSet(viewsets.ModelViewSet):
     """
