@@ -499,6 +499,7 @@ class ListingFilter(filters.FilterSet):
     )
     min_price = filters.NumberFilter(field_name="price", lookup_expr="gte")
     max_price = filters.NumberFilter(field_name="price", lookup_expr="lte")
+    user_id = filters.NumberFilter(field_name="owner__id")
 
     class Meta:
         model = Listing
@@ -511,6 +512,7 @@ class ListingFilter(filters.FilterSet):
             "payment_method",
             "min_price",
             "max_price",
+            "user_id",
         ]
 
 
@@ -926,5 +928,6 @@ class MarketListingViewSet(viewsets.ReadOnlyModelViewSet):
         "price",
         "place",
         "payment_method",
+        "time",
     ]
     permission_classes = []
