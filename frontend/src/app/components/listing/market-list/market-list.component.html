@@ -61,6 +61,7 @@
                     <th scope="col">Place</th>
                     <th scope="col">Price</th>
                     <th scope="col">Payment by</th>
+                    <th scope="col">Contact</th> <!-- New Header -->
                 </tr>
             </thead>
             <tbody>
@@ -74,6 +75,12 @@
                     <td>{{ listing.place }}</td>
                     <td>{{ listing.price }}</td>
                     <td>{{ listing.payment_method.name }}</td>
+                    <td>
+                        <div class="btn-group">
+                            <button (click)="onContact(listing.id); $event.stopPropagation()"
+                                class="btn btn-outline-secondary btn-sm">Contact seller</button>
+                        </div>
+                    </td>                    
                 </tr>
             </tbody>
         </table>

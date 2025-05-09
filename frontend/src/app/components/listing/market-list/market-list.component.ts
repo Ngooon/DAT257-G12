@@ -77,4 +77,10 @@ export class MarketListComponent implements OnInit {
   onRowClick(garmentId: number) {
     this.router.navigate(['/listings', garmentId]);
   }
+
+  onContact(garmentId: number): void {
+    const PlaceholderUrl = 'https://www.nyan.cat/';
+    window.open(PlaceholderUrl, '_blank');
+  }
+  
 }
