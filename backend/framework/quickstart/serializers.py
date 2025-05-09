@@ -33,7 +33,11 @@ class CategorySerializer(serializers.HyperlinkedModelSerializer):
 class GarmentSerializer(serializers.ModelSerializer):
     category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())
     owner_username = serializers.CharField(source="owner.username", read_only=True)
-    usage_count = serializers.IntegerField(source="usages.count", read_only=True)
+    usage_count = serializers.SerializerMethodField()
+
+    def get_usage_count(self, obj):
+        # Använder annoterat värde om det finns, annars räknar alla
+        return getattr(obj, "usage_count", obj.usages.count())
 
     class Meta:
         model = Garment

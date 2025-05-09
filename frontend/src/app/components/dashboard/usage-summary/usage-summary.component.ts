@@ -13,11 +13,13 @@ export class UsageSummaryComponent implements OnInit {
   @Input() garments: Garment[] = []; // Tar emot top 10 usages från DashboardComponent
   categories: { id: number; name: string }[] = []; // Lista över kategorier
   selectedCategory = -1;  // Vald kategori
+  selectedPeriod: 'all'|'week'|'month'|'year' = 'all';
 
   constructor(private http: HttpClient, private router: Router) {}
 
   ngOnInit(): void {
     this.fetchCategories(); // Hämta kategorier vid initiering
+    this.filterGarments(); // Hämta plagg baserat på vald kategori
   }
 
   // Hämta kategorier från backend
@@ -34,29 +36,30 @@ export class UsageSummaryComponent implements OnInit {
   }
 
   // Hämta plagg baserat på vald kategori
-  filterByCategory(): void {
-    // Bas-URL utan kategori-param
+  filterGarments(): void {
     let url = `/api/garments/?ordering=-usage_count`;
   
-    // Lägg bara till &category= om ett riktigt kategori-id valts (> 0)
+    // Lägg till kategori som filter om det inte är "All"
     if (this.selectedCategory > 0) {
       url += `&category=${this.selectedCategory}`;
     }
   
+    // Lägg till tidsintervall som filter
+    if (this.selectedPeriod && this.selectedPeriod !== 'all') {
+      url += `&period=${this.selectedPeriod}`;
+    }
+  
     this.http.get<Garment[]>(url).subscribe({
-      next: data => {
-        // Vill du visa TOP 10 när en specifik kategori är vald?
-        if (this.selectedCategory > 0) {
-          this.garments = data.slice(0, 10);
-        } else {
-          // All valt → visa alla plagg
-          this.garments = data;
-        }
+      next: (data) => {
+        this.garments = data.slice(0, 10); // Begränsa till de 10 första resultaten
+        console.log('Filtered garments:', this.garments); // Logga filtrerade plagg
       },
-      error: err => console.error(err)
+      error: (error) => {
+        console.error('Failed to filter garments', error);
+      }
     });
   }
-  
+
 
   getFriendlyGarmentId(garment: Garment): string {
     return garment.name; // Anpassa om du vill använda en vänlig ID-generator

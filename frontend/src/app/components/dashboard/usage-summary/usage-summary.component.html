@@ -6,13 +6,27 @@
   <select id="categoryFilter"
           class="form-select"
           [(ngModel)]="selectedCategory"
-          (ngModelChange)="filterByCategory()">
+          (ngModelChange)="filterGarments()">
     <option *ngFor="let category of categories"
             [ngValue]="category.id">
       {{ category.name }}
     </option>
   </select>
 </div>
+
+<!-- Period-filter -->
+<div class="mb-3">
+   <label for="periodFilter" class="form-label">Filter by Period:</label>
+   <select id="periodFilter"
+           class="form-select"
+           [(ngModel)]="selectedPeriod"
+           (ngModelChange)="filterGarments()">
+     <option [ngValue]="'all'">All time</option>
+     <option [ngValue]="'week'">Last Week</option>
+     <option [ngValue]="'month'">Last Month</option>
+     <option [ngValue]="'year'">Last Year</option>
+   </select>
+ </div>
 
 
 <div class="table-responsive">
