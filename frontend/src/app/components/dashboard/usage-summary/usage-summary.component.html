@@ -3,10 +3,17 @@
 <!-- Dropdown för att välja kategori -->
 <div class="mb-3">
   <label for="categoryFilter" class="form-label">Filter by Category:</label>
-  <select id="categoryFilter" class="form-select" [(ngModel)]="selectedCategory" (change)="filterByCategory()">
-    <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</option>
+  <select id="categoryFilter"
+          class="form-select"
+          [(ngModel)]="selectedCategory"
+          (ngModelChange)="filterByCategory()">
+    <option *ngFor="let category of categories"
+            [ngValue]="category.id">
+      {{ category.name }}
+    </option>
   </select>
 </div>
+
 
 <div class="table-responsive">
   <table class="table table-hover text-start">

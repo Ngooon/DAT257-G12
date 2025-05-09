@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
 export class UsageSummaryComponent implements OnInit {
   @Input() garments: Garment[] = []; // Tar emot top 10 usages från DashboardComponent
   categories: { id: number; name: string }[] = []; // Lista över kategorier
-  selectedCategory: number | 'All' = 'All'; // Vald kategori
+  selectedCategory = -1;  // Vald kategori
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -35,23 +35,28 @@ export class UsageSummaryComponent implements OnInit {
 
   // Hämta plagg baserat på vald kategori
   filterByCategory(): void {
+    // Bas-URL utan kategori-param
     let url = `/api/garments/?ordering=-usage_count`;
   
-    // Kontrollera om "All" är valt och skicka ingen kategori
-    if (this.selectedCategory !== 'All' && this.selectedCategory !== -1) {
+    // Lägg bara till &category= om ett riktigt kategori-id valts (> 0)
+    if (this.selectedCategory > 0) {
       url += `&category=${this.selectedCategory}`;
     }
   
     this.http.get<Garment[]>(url).subscribe({
-      next: (data) => {
-        this.garments = data.slice(0, 10); // Begränsa till de 10 första resultaten
-        console.log('Filtered garments:', this.garments); // Logga filtrerade plagg
+      next: data => {
+        // Vill du visa TOP 10 när en specifik kategori är vald?
+        if (this.selectedCategory > 0) {
+          this.garments = data.slice(0, 10);
+        } else {
+          // All valt → visa alla plagg
+          this.garments = data;
+        }
       },
-      error: (error) => {
-        console.error('Failed to filter garments by category', error);
-      }
+      error: err => console.error(err)
     });
   }
+  
 
   getFriendlyGarmentId(garment: Garment): string {
     return garment.name; // Anpassa om du vill använda en vänlig ID-generator
