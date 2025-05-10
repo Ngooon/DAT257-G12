@@ -30,10 +30,19 @@ export class UsageFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Fetch the list of garments
+    // 1) Hämta alla plagg
     this.loadGarments();
 
-    // Fetch usage details if we're editing
+    // 2) Prefill med garmentId från query-param (om det finns)
+    this.route.queryParams.subscribe(params => {
+      if (params['garmentId']) {
+        this.usageForm.patchValue({
+          garmentId: +params['garmentId']
+        });
+      }
+    });
+
+    // 3) Om vi är i edit-läge (id i path), hämta existerande usage
     this.route.params.subscribe(params => {
       if (params['id']) {
         this.usageId = +params['id'];

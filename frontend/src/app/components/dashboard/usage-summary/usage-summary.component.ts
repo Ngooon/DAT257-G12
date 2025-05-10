@@ -60,7 +60,17 @@ export class UsageSummaryComponent implements OnInit {
     });
   }
 
-
+    /**
+   * Navigerar till log-usage-formuläret och prefyller
+   * dropdown:en med det här garment-id:t som query-param.
+   */
+  logUsage(garmentId: number): void {
+    this.router.navigate(
+      ['/usages', 'new'],
+      { queryParams: { garmentId } }
+    );
+  }
+  
   getFriendlyGarmentId(garment: Garment): string {
     return garment.name; // Anpassa om du vill använda en vänlig ID-generator
   }

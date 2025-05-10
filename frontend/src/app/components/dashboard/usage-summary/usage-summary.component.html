@@ -35,12 +35,23 @@
       <tr>
         <th scope="col">Garment</th>
         <th scope="col">Usage Count</th>
+        <th scope="col">Actions</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let garment of garments" (click)="onRowClick(garment.id)">
         <td>{{ getFriendlyGarmentId(garment) }}</td>
         <td>{{ garment.usage_count }}</td>
+        <td>
+          <div class="btn-group me-2">
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-primary"
+              (click)="logUsage(garment.id); $event.stopPropagation()">
+              Log Usage
+            </button>
+          </div>
+        </td>
       </tr>
     </tbody>
   </table>
