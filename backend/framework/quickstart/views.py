@@ -220,7 +220,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):  # Read-only to prevent update
         
         return Response({
             "name": user.first_name,
-            "mail": user.email,
+            "mail": user.get_email_field_name(),
             "id": user.id
         })
 

@@ -6,13 +6,13 @@
         <table class="table table-hover text-start">
             <thead>
                 <tr>
-                    <th scope="col">Username</th>
+                    <th scope="col">Name</th>
                     <th scope="col"></th>
                 </tr>
             </thead>
             <tbody>
                 <tr *ngFor="let user of users" (click)="onRowClick(user.id)">
-                    <td>{{ user?.username }}</td>
+                    <td>{{ user?.first_name }}</td>
                 </tr>
             </tbody>
         </table>

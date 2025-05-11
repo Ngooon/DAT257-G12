@@ -26,6 +26,7 @@ export class UsersListComponent implements OnInit {
     this.http.get<User[]>('/api/users/').subscribe({
       next: data => {
         this.users = data;
+        console.log('Users fetched:', this.users);
       },
       error: error => {
         console.error('Failed to load users', error);
