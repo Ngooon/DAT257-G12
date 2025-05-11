@@ -16,7 +16,7 @@ export class DashboardComponent implements OnInit {
   public topUsages: Garment[] = [];
   listings: Listing[] = [];
   loggedIn: boolean = false; // Flagga för att kontrollera inloggning
-  user: User | null = null; // Användardata
+  user: any; // Användardata
 
   public graphData: any = {};
   public graphOptions = {
@@ -103,7 +103,7 @@ export class DashboardComponent implements OnInit {
     return `Week ${weekNumber}`;
   }
   getUser(): void {
-    this.http.get<User>('/api/users/me').subscribe({
+    this.http.get<any>('/api/users/me').subscribe({
       next: (data) => {
         this.user = data;
         console.log('User fetched:', this.user);

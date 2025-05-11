@@ -1,24 +1,24 @@
-<h1>Welcome {{user?.username}}!</h1>
-<p class="lead text-muted">
-    UserID: {{user?.id}}
+<h1 *ngIf="loggedIn === true">Welcome {{user?.name}}!</h1>
+<p *ngIf="loggedIn === true" class="lead text-muted">
+  UserID: {{user?.id}}
 </p>
 
 <div class="dashboard-container" *ngIf="loggedIn === true">
-    <app-listing-summary [listings]="listings"></app-listing-summary>
-    <app-usage-summary [garments]="topUsages"></app-usage-summary>
-    <p-chart type="line" [data]="graphData" [options]="graphOptions" />
+  <app-listing-summary [listings]="listings"></app-listing-summary>
+  <app-usage-summary [garments]="topUsages"></app-usage-summary>
+  <p-chart type="line" [data]="graphData" [options]="graphOptions" />
 </div>
 
 <div class="position-relative p-5 text-center text-muted bg-body border border-dashed rounded-5"
-    *ngIf="loggedIn === false">
-    <svg class="bi mt-5 mb-3" width="48" height="48" aria-hidden="true">
-        <use xlink:href="#check2-circle"></use>
-    </svg>
-    <h1 class="text-body-emphasis">Log in</h1>
-    <p class="col-lg-6 mx-auto mb-4">
-        Login to your account to see your dashboard.
-    </p>
-    <a class="btn btn-primary px-5 mb-5" type="button" href="/auth/facebook">
-        Login with Facebook
-    </a>
+  *ngIf="loggedIn === false">
+  <svg class="bi mt-5 mb-3" width="48" height="48" aria-hidden="true">
+    <use xlink:href="#check2-circle"></use>
+  </svg>
+  <h1 class="text-body-emphasis">Log in</h1>
+  <p class="col-lg-6 mx-auto mb-4">
+    Login to your account to see your dashboard.
+  </p>
+  <a class="btn btn-primary px-5 mb-5" type="button" href="/auth/facebook">
+    Login with Facebook
+  </a>
 </div>

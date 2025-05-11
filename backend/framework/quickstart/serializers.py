@@ -21,7 +21,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ["id", "username", "email", "groups"]
+        fields = ["id", "username","first_name", "email", "groups"]
 
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):

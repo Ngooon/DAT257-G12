@@ -13,7 +13,7 @@ import { User } from '../../../interfaces/user';
 })
 export class UsersListComponent implements OnInit {
 
-  users: User[] = [];
+  users: any[] = [];
 
   constructor(private router: Router, private http: HttpClient) {}
 
@@ -26,6 +26,7 @@ export class UsersListComponent implements OnInit {
     this.http.get<User[]>('/api/users/').subscribe({
       next: data => {
         this.users = data;
+        console.log('Users fetched:', this.users);
       },
       error: error => {
         console.error('Failed to load users', error);

@@ -1,4 +1,6 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">User 1</h1>
+    <h1 class="h2">{{user?.first_name}}</h1>
+    <h5> Rating: {{rating.average_rating}}/5 ({{rating.rating_count}})</h5>
 </div>
+
 <app-listing-summary [listings]="listings"></app-listing-summary>
