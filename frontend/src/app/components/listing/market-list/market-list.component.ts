@@ -68,6 +68,8 @@ export class MarketListComponent implements OnInit {
     if (filters.place) params = params.set("place", filters.place);
     if (filters.price) params = params.set("price", filters.price);
 
+    interface MarketListing 
+
     this.http.get<Listing[]>('/api/market/', { params }).subscribe({
       next: data => this.listings = data,
       error: error => console.error('Failed to load listings', error)
@@ -82,5 +84,5 @@ export class MarketListComponent implements OnInit {
     const PlaceholderUrl = 'https://www.nyan.cat/';
     window.open(PlaceholderUrl, '_blank');
   }
-  
+
 }

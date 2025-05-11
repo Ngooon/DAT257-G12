@@ -91,15 +91,15 @@ export class ListingListComponent implements OnInit {
     this.router.navigate(['/listings', garmentId]);
   }
 
-  onSold(garmentId: number) {
+  onSold(garmentId: number, listingId: number) {
     const dialogRef = this.dialog.open(SoldPopUpComponent, {
       width: '400px',
       data: { garmentId: garmentId }
     });
-  
+
     dialogRef.afterClosed().subscribe(result => {
       if (result === 'complete') {
-        this.http.delete(`/api/listings/${garmentId}/`).subscribe(
+        this.http.delete(`/api/listings/${listingId}/`).subscribe(
           () => {
             this.listings = this.listings.filter(garment => garment.id !== garmentId);
           },
@@ -107,16 +107,17 @@ export class ListingListComponent implements OnInit {
             console.error(error);
           }
         );
+        alert('Garment sold successfully!');
       } else {
         console.log('Action canceled');
       }
     });
-  }  
+  }
 
   onEdit(garmentId: number) {
     this.router.navigate(['/listings/edit', garmentId]);
   }
-  
+
 
   onDelete(garmentId: number) {
     this.http.delete(`/api/listings/${garmentId}/`).subscribe(
