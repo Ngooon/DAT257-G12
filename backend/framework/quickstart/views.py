@@ -2,6 +2,7 @@ import django_filters
 from django.utils import timezone
 from django.db.models import Q, Count
 from datetime import timedelta
+from django.utils.timezone import make_aware
 from django_filters import rest_framework as filters
 from rest_framework import viewsets
 from rest_framework.views import APIView
@@ -24,7 +25,7 @@ from framework.quickstart.models import (
     PaymentMethod,
     Listing,
     Rating,
-    UserProfile
+    UserProfile,
 )
 from framework.quickstart.serializers import (
     GarmentSerializer,
@@ -69,15 +70,15 @@ def facebook_login(request):
     }
     return HttpResponseRedirect(f"{fb_auth_url}?{urlencode(params)}")
 
+
 def guest_login(request):
-    
-    data={'id':111, 'name': 'Guest', 'email': 'guest@test.net'}
-    token_data=generate_token(data)
+
+    data = {"id": 111, "name": "Guest", "email": "guest@test.net"}
+    token_data = generate_token(data)
     access_token = token_data["access"]  # or pass both if needed
 
     # Redirect to Angular with token
     return redirect(f"http://localhost:4200/?token={access_token}")
-    
 
 
 # Step 2: Handle Facebook's callback
@@ -133,7 +134,7 @@ def generate_token(user_data):
     refresh = RefreshToken.for_user(user)
 
     UserProfile.objects.get_or_create(user=user)
-    
+
     print(refresh.access_token)
 
     return {
@@ -158,7 +159,9 @@ class RatingViewSet(viewsets.ViewSet):
             if not (1 <= score <= 5):
                 raise ValueError()
         except ValueError:
-            return Response({"detail": "Score must be an integer between 1 and 5."}, status=400)
+            return Response(
+                {"detail": "Score must be an integer between 1 and 5."}, status=400
+            )
 
         rated_user = get_object_or_404(User, id=rated_user_id)
 
@@ -195,7 +198,7 @@ class RatingViewSet(viewsets.ViewSet):
             },
             status=status.HTTP_201_CREATED,
         )
-        
+
     @action(detail=False, methods=["get"], url_path="get-rating")
     def get_rating(self, request):
         user_id = request.query_params.get("user_id")
@@ -206,26 +209,32 @@ class RatingViewSet(viewsets.ViewSet):
         user = get_object_or_404(User, id=user_id)
         profile = user.profile
 
-        return Response({
-            "user_id": user.id,
-            "average_rating": profile.average_rating,
-            "rating_count": profile.rating_count,
-        })
-        
+        return Response(
+            {
+                "user_id": user.id,
+                "average_rating": profile.average_rating,
+                "rating_count": profile.rating_count,
+            }
+        )
+
+
 class UserViewSet(viewsets.ReadOnlyModelViewSet):  # Read-only to prevent updates
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
-    
+
     @action(detail=False, methods=["get"], url_path="me")
-    def get_user(self,request):
-        user=self.request.user
-        
-        return Response({
-            "name": user.first_name,
-            "mail": user.get_email_field_name(),
-            "id": user.id
-        })
+    def get_user(self, request):
+        user = self.request.user
+
+        return Response(
+            {
+                "name": user.first_name,
+                "mail": user.get_email_field_name(),
+                "id": user.id,
+            }
+        )
+
 
 class GarmentViewSet(viewsets.ModelViewSet):
     """
@@ -241,7 +250,7 @@ class GarmentViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         qs = Garment.objects.filter(owner=self.request.user)
         period = self.request.query_params.get("period", "all")
-        now    = timezone.now()
+        now = timezone.now()
 
         if period == "week":
             cutoff = now - timedelta(days=7)
@@ -263,7 +272,7 @@ class GarmentViewSet(viewsets.ModelViewSet):
 
         # Se till att allt är sorterat före slice i frontenden
         return qs
-    
+
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
@@ -424,6 +433,7 @@ class UsageFilter(django_filters.FilterSet):
         model = Usage
         fields = ["garment_id", "from_time", "to_time", "category", "wardrobe"]
 
+
 class UsageViewSet(viewsets.ModelViewSet):
     """
     API endpoint for usages.
@@ -576,7 +586,7 @@ class ListingViewSet(viewsets.ModelViewSet):
         "price",
         "place",
         "payment_method",
-        "time"
+        "time",
     ]
     filterset_class = ListingFilter
 
@@ -676,20 +686,21 @@ class StatisticsViewSet(viewsets.ViewSet):
         # Hämta query-parametrar för tidsintervall
         from_time = request.query_params.get("from_time")
         to_time = request.query_params.get("to_time")
+
         category_id = request.query_params.get(
             "id"
         )  # Hämta kategori-ID som query-param
 
         # Standardvärden för tidsintervall (senaste året)
         if not from_time:
-            from_time = datetime.now() - timedelta(days=365)
+            from_time = make_aware(datetime.now() - timedelta(days=365))
         else:
-            from_time = datetime.fromisoformat(from_time)
+            from_time = make_aware(datetime.fromisoformat(from_time))
 
         if not to_time:
-            to_time = datetime.now()
+            to_time = make_aware(datetime.now())
         else:
-            to_time = datetime.fromisoformat(to_time)
+            to_time = make_aware(datetime.fromisoformat(to_time))
 
         # Om ett kategori-ID skickas, filtrera på det
         if category_id:
@@ -938,7 +949,6 @@ class StatisticsViewSet(viewsets.ViewSet):
                     },
                 }
             )
-
         return Response(data)
 
 
