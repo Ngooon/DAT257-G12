@@ -1,4 +1,7 @@
 import django_filters
+from django.utils import timezone
+from django.db.models import Q, Count
+from datetime import timedelta
 from django_filters import rest_framework as filters
 from rest_framework import viewsets
 from rest_framework.views import APIView
@@ -236,10 +239,31 @@ class GarmentViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Garment.objects.filter(owner=self.request.user).annotate(
-            usage_count=Count("usages")
-        )
+        qs = Garment.objects.filter(owner=self.request.user)
+        period = self.request.query_params.get("period", "all")
+        now    = timezone.now()
 
+        if period == "week":
+            cutoff = now - timedelta(days=7)
+            qs = qs.annotate(
+                usage_count=Count("usages", filter=Q(usages__time__gte=cutoff))
+            )
+        elif period == "month":
+            cutoff = now - timedelta(days=30)
+            qs = qs.annotate(
+                usage_count=Count("usages", filter=Q(usages__time__gte=cutoff))
+            )
+        elif period == "year":
+            cutoff = now - timedelta(days=365)
+            qs = qs.annotate(
+                usage_count=Count("usages", filter=Q(usages__time__gte=cutoff))
+            )
+        else:
+            qs = qs.annotate(usage_count=Count("usages"))
+
+        # Se till att allt är sorterat före slice i frontenden
+        return qs
+    
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
