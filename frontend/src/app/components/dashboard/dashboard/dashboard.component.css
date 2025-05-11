@@ -1,9 +1,12 @@
 .dashboard-container {
-    display: flex;
-    gap: 20px; /* Mellanrum mellan komponenterna */
-  }
-  
-  app-listing-summary,
-  app-usage-summary {
-    flex: 1; /* Gör så att komponenterna delar lika på utrymmet */
-  }
+  display: flex;
+  gap: 20px;
+  /* Mellanrum mellan komponenterna */
+}
+
+app-listing-summary,
+app-usage-summary,
+p-chart {
+  flex: 1;
+  /* Gör så att komponenterna delar lika på utrymmet */
+}
