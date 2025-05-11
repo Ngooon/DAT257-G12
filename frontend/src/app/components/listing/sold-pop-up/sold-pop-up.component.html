@@ -15,15 +15,8 @@
     <div class="star-rating">
       <label for="rating">Seller Rating:</label>
       <div class="stars">
-        <img
-          *ngFor="let star of stars; let i = index"
-          (click)="setRating(i + 1)"
-          (mouseover)="hoverRating = i + 1"
-          (mouseleave)="hoverRating = 0"
-          [src]="getStarImage(i + 1)"
-          alt="star"
-          class="star"
-        />
+        <img *ngFor="let star of stars; let i = index" (click)="setRating(i + 1)" (mouseover)="hoverRating = i + 1"
+          (mouseleave)="hoverRating = 0" [src]="getStarImage(i + 1)" alt="star" class="star" />
         <span>{{ purchaseForm.get('rating')?.value }} Stars</span>
       </div>
     </div>
@@ -31,6 +24,7 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <button mat-button (click)="onCancel()">Cancel</button>
-  <button mat-raised-button color="primary" (click)="completePurchase()">Complete Purchase</button>
+  <button mat-button class="btn btn-sm btn-outline-danger" (click)="onCancel()">Cancel</button>
+  <button mat-raised-button class="btn btn-sm btn-outline-primary" (click)="completePurchase()">Complete
+    Purchase</button>
 </mat-dialog-actions>
