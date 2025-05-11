@@ -1,0 +1,35 @@
+.full-width {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.error-message {
+  color: red;
+  margin-bottom: 10px;
+}
+
+.star-rating {
+  margin-top: 16px;
+}
+
+.stars {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.star {
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  transition: transform 0.2s ease-in-out;
+}
+
+.star:hover {
+  transform: scale(1.2);
+}
+
+.star.active {
+  transform: scale(1.2);
+}
