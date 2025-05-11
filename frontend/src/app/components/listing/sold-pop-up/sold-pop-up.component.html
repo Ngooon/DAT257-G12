@@ -1,0 +1,36 @@
+<h2 mat-dialog-title>Complete Purchase</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="purchaseForm">
+    <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Buyer ID</mat-label>
+      <input matInput type="number" formControlName="buyerId" placeholder="Enter buyer's ID" />
+      <mat-error *ngIf="purchaseForm.get('buyerId')?.invalid && purchaseForm.get('buyerId')?.touched">
+        Buyer ID is required
+      </mat-error>
+    </mat-form-field>
+
+    <div class="star-rating">
+      <label for="rating">Seller Rating:</label>
+      <div class="stars">
+        <img
+          *ngFor="let star of stars; let i = index"
+          (click)="setRating(i + 1)"
+          (mouseover)="hoverRating = i + 1"
+          (mouseleave)="hoverRating = 0"
+          [src]="getStarImage(i + 1)"
+          alt="star"
+          class="star"
+        />
+        <span>{{ purchaseForm.get('rating')?.value }} Stars</span>
+      </div>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-raised-button color="primary" (click)="completePurchase()">Complete Purchase</button>
+</mat-dialog-actions>

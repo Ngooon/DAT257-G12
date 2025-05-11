@@ -14,7 +14,7 @@ import { registerLocaleData } from '@angular/common';
 import localeSv from '@angular/common/locales/sv';
 import { GarmentDetailsComponent } from './components/garment/garment-details/garment-details.component';
 import { GarmentFormComponent } from './components/garment/garment-form/garment-form.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { UsageListComponent } from './components/usage/usage-list/usage-list.component';
 import { UsageDetailsComponent } from './components/usage/usage-details/usage-details.component';
 import { UsageFormComponent } from './components/usage/usage-form/usage-form.component';
@@ -24,11 +24,18 @@ import { ListingFormComponent } from './components/listing/listing-form/listing-
 import { ListingDetailsComponent } from './components/listing/listing-details/listing-details.component';
 import { UsageCalenderComponent } from './components/usage/usage-calender/usage-calender.component';
 import { MarketListComponent } from './components/listing/market-list/market-list.component';
+import { SoldPopUpComponent } from './components/listing/sold-pop-up/sold-pop-up.component';
 import { DashboardComponent } from './components/dashboard/dashboard/dashboard.component';
 import { UsageSummaryComponent } from './components/dashboard/usage-summary/usage-summary.component';
 import { ListingSummaryComponent } from './components/dashboard/listing-summary/listing-summary.component';
 import { UserComponent } from './components/user/user/user.component';
 import { UsersListComponent } from './components/user/users-list/users-list.component';
+
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSliderModule } from '@angular/material/slider';
+
 
 
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
@@ -53,11 +60,14 @@ registerLocaleData(localeSv);
         ListingDetailsComponent,
         UsageCalenderComponent,
         MarketListComponent,
+        SoldPopUpComponent,
         DashboardComponent,
         UsageSummaryComponent,
         ListingSummaryComponent,
         UserComponent,
-        UsersListComponent
+        UsersListComponent,
+        SoldPopUpComponent,
+        
     ],
     imports: [
         BrowserModule,
@@ -66,6 +76,11 @@ registerLocaleData(localeSv);
         ReactiveFormsModule,
         CalendarModule.forRoot({ provide: DateAdapter, useFactory: adapterFactory }),
         ChartModule,
+        FormsModule,
+        MatDialogModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatSliderModule
     ],
     providers: [{ provide: LOCALE_ID, useValue: 'sv-SE' },
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },

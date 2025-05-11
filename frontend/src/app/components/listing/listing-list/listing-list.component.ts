@@ -1,20 +1,20 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormGroup, FormBuilder } from '@angular/forms';
-import { Listing } from '../../../interfaces/listing';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { MatDialog } from '@angular/material/dialog';
+import { SoldPopUpComponent } from '../sold-pop-up/sold-pop-up.component'; // Adjust path
 
 @Component({
   selector: 'app-listing-list',
   standalone: false,
   templateUrl: './listing-list.component.html',
-  styleUrl: './listing-list.component.css'
+  styleUrls: ['./listing-list.component.css']
 })
 
 export class ListingListComponent implements OnInit {
   filterForm: FormGroup;
-
-  listings: Listing[] = [];
+  listings: any[] = [];
   categories: { id: number; name: string }[] = [];
 
   paymentMethods: { id: number; name: string }[] = [
@@ -22,12 +22,16 @@ export class ListingListComponent implements OnInit {
     { id: 2, name: 'Cash' }
   ];
 
-  constructor(private router: Router, private http: HttpClient, private fb: FormBuilder) {
+  constructor(
+    private router: Router,
+    private http: HttpClient,
+    private fb: FormBuilder,
+    private dialog: MatDialog // Inject MatDialog service
+  ) {
     this.filterForm = this.fb.group({});
   }
 
   ngOnInit() {
-    // Initiera formuläret
     this.filterForm = this.fb.group({
       category: [''],
       color: [''],
@@ -73,8 +77,7 @@ export class ListingListComponent implements OnInit {
     if (filters.place) params = params.set("place", filters.place);
     if (filters.price) params = params.set("price", filters.price);
 
-
-    this.http.get<Listing[]>('/api/listings/', { params }).subscribe({
+    this.http.get<any[]>('/api/listings/', { params }).subscribe({
       next: data => {
         this.listings = data;
       },
@@ -88,9 +91,32 @@ export class ListingListComponent implements OnInit {
     this.router.navigate(['/listings', garmentId]);
   }
 
-  onFilterChange() {
-    this.getListings();
+  onSold(garmentId: number) {
+    const dialogRef = this.dialog.open(SoldPopUpComponent, {
+      width: '400px',
+      data: { garmentId: garmentId }
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === 'complete') {
+        this.http.delete(`/api/listings/${garmentId}/`).subscribe(
+          () => {
+            this.listings = this.listings.filter(garment => garment.id !== garmentId);
+          },
+          (error) => {
+            console.error(error);
+          }
+        );
+      } else {
+        console.log('Action canceled');
+      }
+    });
+  }  
+
+  onEdit(garmentId: number) {
+    this.router.navigate(['/listings/edit', garmentId]);
   }
+  
 
   onDelete(garmentId: number) {
     this.http.delete(`/api/listings/${garmentId}/`).subscribe(
@@ -101,9 +127,5 @@ export class ListingListComponent implements OnInit {
         console.error(error);
       }
     );
-  }
-
-  onEdit(garmentId: number) {
-    this.router.navigate(['/listings/edit', garmentId]);
   }
 }
