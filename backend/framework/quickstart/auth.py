@@ -24,12 +24,6 @@ class FacebookIDAuthentication(BaseAuthentication):
     def authenticate(self, request):
         token = request.headers.get('Authorization', '').replace('Bearer ', '')
         
-        # Om inget token finns, använd en hårdkodad användare för utveckling
-        if not token:
-            # Hårdkodad användare för testning
-            user, _ = User.objects.get_or_create(username="testuser")
-            return (user, None)
-        
         try:
             payload = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
             fb_id = payload.get("id")
