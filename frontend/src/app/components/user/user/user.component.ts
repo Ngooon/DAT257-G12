@@ -3,6 +3,8 @@ import { Listing } from '../../../interfaces/listing';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { User } from '../../../interfaces/user';
+import { RatingPopUpComponent } from '../rating-pop-up/rating-pop-up.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-user',
@@ -14,9 +16,10 @@ export class UserComponent implements OnInit {
   listings: Listing[] = [];
   public id: number = 1;
   user: any; // Användardata
-  rating: any; 
+  rating: any;
   
-  constructor(private route: ActivatedRoute, private http: HttpClient) { }
+  
+  constructor(private route: ActivatedRoute, private dialog: MatDialog, private http: HttpClient) { }
 
   ngOnInit(): void {
     const idString = this.route.snapshot.paramMap.get('id');
@@ -60,5 +63,12 @@ export class UserComponent implements OnInit {
       }
     });
   }
+
+  onRate() {
+    const dialogRef = this.dialog.open(RatingPopUpComponent, {
+      width: '400px',
+      data: { userId: this.id }
+      });
+    }
 
 }

@@ -42,6 +42,7 @@ import { providePrimeNG } from 'primeng/config';
 import Material from '@primeng/themes/aura';
 import Aura from '@primeng/themes/aura';
 import { ChartModule } from 'primeng/chart';
+import { RatingPopUpComponent } from './components/user/rating-pop-up/rating-pop-up.component';
 
 registerLocaleData(localeSv);
 
@@ -66,6 +67,7 @@ registerLocaleData(localeSv);
         UserComponent,
         UsersListComponent,
         SoldPopUpComponent,
+        RatingPopUpComponent,
 
     ],
     imports: [
