@@ -1,12 +1,16 @@
 .dashboard-container {
   display: flex;
-  gap: 20px;
-  /* Mellanrum mellan komponenterna */
+  flex-direction: row; /* Gör att vänster och höger sida ligger bredvid varandra */
+  gap: 20px; /* Mellanrum mellan vänster och höger sida */
 }
 
-app-listing-summary,
-app-usage-summary,
-p-chart {
-  flex: 1;
-  /* Gör så att komponenterna delar lika på utrymmet */
+.left-container {
+  display: flex;
+  flex-direction: column; /* Gör att Listing Summary och Chart ligger ovanpå varandra */
+  flex: 1; /* Vänstra sidan tar upp mer utrymme */
+  gap: 20px; /* Mellanrum mellan Listing Summary och Chart */
+}
+
+.right-container {
+  flex: 1; /* Högra sidan tar upp mindre utrymme */
 }

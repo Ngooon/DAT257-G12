@@ -4,9 +4,16 @@
 </p>
 
 <div class="dashboard-container" *ngIf="loggedIn === true">
-  <app-listing-summary [listings]="listings"></app-listing-summary>
-  <app-usage-summary [garments]="topUsages"></app-usage-summary>
-  <p-chart type="line" [data]="graphData" [options]="graphOptions" />
+  <!-- Vänstra sidan -->
+  <div class="left-container">
+    <app-listing-summary [listings]="listings"></app-listing-summary>
+    <p-chart type="line" [data]="graphData" [options]="graphOptions"></p-chart>
+  </div>
+
+  <!-- Högra sidan -->
+  <div class="right-container">
+    <app-usage-summary [garments]="topUsages"></app-usage-summary>
+  </div>
 </div>
 
 <div class="position-relative p-5 text-center text-muted bg-body border border-dashed rounded-5"
