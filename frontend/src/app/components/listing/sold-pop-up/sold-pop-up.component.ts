@@ -43,7 +43,6 @@ export class SoldPopUpComponent {
   }
 
   completePurchase() {
-    // alert("Här!");
     if (this.purchaseForm.invalid) {
       this.errorMessage = 'Please fill out the required fields.';
       return;
@@ -54,7 +53,6 @@ export class SoldPopUpComponent {
     this.http.get(`/api/garments/${this.garmentId}/`).subscribe({
       next: (garment: any) => {
         console.log('Fetched garment:', garment);
-        // alert(garment);
         const garmentUpdate = {
           ...garment,
           owner: buyerId,
@@ -62,23 +60,10 @@ export class SoldPopUpComponent {
         };
 
         const garmentUrl = `/api/garments/${this.garmentId}/`;
-        // const listingUrl = `/api/listings/${this.garmentId}/`;
-        const ratingUrl = `/api/rating/rate_user/`;
 
         this.http.put(garmentUrl, garmentUpdate).subscribe({
           next: () => {
-            const ratingPayload = { rated_user: buyerId, rating: rating };
-            console.log('Rating payload:', ratingPayload);
-            this.http.post(ratingUrl, ratingPayload).subscribe({
-              next: () => {
-                alert('Purchase completed.');
-                this.dialogRef.close('complete');
-              },
-              error: err => {
-                console.error('Error submitting rating', err);
-                this.errorMessage = 'Error submitting rating';
-              }
-            });
+            this.dialogRef.close('complete');
           },
           error: err => {
             console.error('Error updating garment', err);
@@ -91,40 +76,6 @@ export class SoldPopUpComponent {
         this.errorMessage = 'Error fetching garment';
       }
     });
-
-
-
-    // const garmentUrl = `/api/garments/${this.garmentId}/`;
-    // const listingUrl = `/api/listings/${this.garmentId}/`;
-    // const ratingUrl = `/api/rating/rate_user/`;
-
-    // this.http.put(garmentUrl, garmentUpdate).subscribe({
-    //   next: () => {
-    //     this.http.delete(listingUrl).subscribe({
-    //       next: () => {
-    //         const ratingPayload = { user_id: buyerId, rating: rating };
-    //         this.http.post(ratingUrl, ratingPayload).subscribe({
-    //           next: () => {
-    //             alert('Purchase completed.');
-    //             this.dialogRef.close('complete');
-    //           },
-    //           error: err => {
-    //             console.error('Error submitting rating', err);
-    //             this.errorMessage = 'Error submitting rating';
-    //           }
-    //         });
-    //       },
-    //       error: err => {
-    //         console.error('Error deleting listing', err);
-    //         this.errorMessage = 'Error deleting listing';
-    //       }
-    //     });
-    //   },
-    //   error: err => {
-    //     console.error('Error updating garment', err);
-    //     this.errorMessage = 'Error updating garment';
-    //   }
-    // });
   }
 
   onCancel() {

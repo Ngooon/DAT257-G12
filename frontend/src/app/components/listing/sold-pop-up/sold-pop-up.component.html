@@ -11,15 +11,6 @@
         Buyer ID is required
       </mat-error>
     </mat-form-field>
-
-    <div class="star-rating">
-      <label for="rating">Seller Rating:</label>
-      <div class="stars">
-        <img *ngFor="let star of stars; let i = index" (click)="setRating(i + 1)" (mouseover)="hoverRating = i + 1"
-          (mouseleave)="hoverRating = 0" [src]="getStarImage(i + 1)" alt="star" class="star" />
-        <span>{{ purchaseForm.get('rating')?.value }} Stars</span>
-      </div>
-    </div>
   </form>
 </mat-dialog-content>
 
