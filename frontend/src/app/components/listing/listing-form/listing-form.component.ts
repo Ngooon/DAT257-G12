@@ -87,7 +87,6 @@ export class ListingFormComponent implements OnInit {
       this.listingForm.patchValue({
         garment: data.garment,
         description: data.description,
-        time: data.time,
         place: data.place,
         price: data.price,
         payment_method: data.payment_method

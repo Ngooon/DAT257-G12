@@ -56,7 +56,7 @@ FACEBOOK_APP_ID = settings.SOCIAL_AUTH_FACEBOOK_KEY
 FACEBOOK_APP_SECRET = settings.SOCIAL_AUTH_FACEBOOK_SECRET
 REDIRECT_URI = "http://localhost:8000/auth/facebook/callback"
 FRONTEND_REDIRECT = (
-    "http://localhost:4200/wardrobe"  # Where Angular should land after login
+    "http://127.0.0.1:4200/wardrobe"  # Where Angular should land after login
 )
 
 
@@ -78,7 +78,7 @@ def guest_login(request):
     access_token = token_data["access"]  # or pass both if needed
 
     # Redirect to Angular with token
-    return redirect(f"http://localhost:4200/?token={access_token}")
+    return redirect(f"http://127.0.0.1:4200/?token={access_token}")
 
 
 # Step 2: Handle Facebook's callback
@@ -118,7 +118,7 @@ def facebook_callback(request):
     access_token = token_data["access"]  # or pass both if needed
 
     # Redirect to Angular with token
-    return redirect(f"http://localhost:4200/?token={access_token}")
+    return redirect(f"http://127.0.0.1:4200/?token={access_token}")
 
 
 def generate_token(user_data):

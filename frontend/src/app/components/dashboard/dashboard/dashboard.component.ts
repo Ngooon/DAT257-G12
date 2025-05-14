@@ -72,22 +72,39 @@ export class DashboardComponent implements OnInit {
   plotStats() {
     this.http.get<any>(`/api/statistics/category/`).subscribe({
       next: (result) => {
-        const labels = result.length > 0 ? Object.keys(result[0].statistics.usage_history) : [];
-        const datasets = result.map((category: any) => ({
-          label: category.name,
-          data: Object.values(category.statistics.usage_history),
-          fill: false,
-          // borderColor: '#000000', // Fixed color
-          tension: 0.1
-        }));
+        const labels = result.length > 0 ? Object.keys(result[0].statistics.usage_history).map(date => this.getWeekNumber(new Date(date))) : [];
 
-        this.graphData = {
-          labels: labels,
-          datasets: datasets
-        };
+        let categoryMap: Record<string, string> = {};
 
-        // Force the graph to update
-        this.graphData = { ...this.graphData };
+        this.http.get<any[]>('/api/Categories/').subscribe({
+          next: (categories) => {
+            categoryMap = categories.reduce((map, category) => {
+              map[category.id] = category.name;
+              return map;
+            }, {} as Record<string, string>);
+            console.log('Category map:', categoryMap);
+            const datasets = result.map((category: any) => ({
+              label: categoryMap[category.id],
+              data: Object.values(category.statistics.usage_history),
+              fill: false,
+              // borderColor: '#000000', // Fixed color
+              tension: 0.1
+            }));
+
+            this.graphData = {
+              labels: labels,
+              datasets: datasets
+            };
+
+            // Force the graph to update
+            this.graphData = { ...this.graphData };
+          },
+          error: (error) => {
+            console.error('Error fetching categories:', error);
+          }
+        });
+        console.log('Category map:', categoryMap);
+
       },
       error: (error) => {
         console.error('Error fetching category statistics:', error);

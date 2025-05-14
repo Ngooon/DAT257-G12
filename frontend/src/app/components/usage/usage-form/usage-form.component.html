@@ -1,7 +1,7 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
   <h1 class="h2">
     <span *ngIf="usage">Edit usage #{{ usage.id }}</span>
-    <span *ngIf="!usage">Add new listing</span>
+    <span *ngIf="!usage">Log usage</span>
   </h1>
 </div>
 
@@ -12,6 +12,11 @@
       <option *ngFor="let garment of garments" [value]="garment.id">{{ getFriendlyGarmentId(garment) }}</option>
     </select>
     <label for="garmentId">Garment</label>
+  </div>
+
+  <div class="form-group form-floating mb-3">
+    <input id="time" type="datetime-local" formControlName="time" class="form-control" placeholder="Time" />
+    <label for="time">Time</label>
   </div>
 
   <div class="form-group form-floating mb-3">
