@@ -52,7 +52,7 @@
                     </th>
                 </tr>
                 <tr>
-                    <th scope="col">#</th>
+                    <th scope="col">Seller</th>
                     <th scope="col">Description</th>
                     <th scope="col">Color</th>
                     <th scope="col">Size</th>
@@ -66,7 +66,7 @@
             </thead>
             <tbody>
                 <tr *ngFor="let listing of listings" (click)="onRowClick(listing.id)">
-                    <td>{{ listing.id }}</td>
+                    <td>{{ listing.owner.first_name }}</td>
                     <td>{{ listing.description }}</td>
                     <td>{{ listing.garment.color }}</td>
                     <td>{{ listing.garment.size }}</td>

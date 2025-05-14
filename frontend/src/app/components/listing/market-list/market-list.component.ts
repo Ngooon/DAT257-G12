@@ -14,7 +14,7 @@ import { Listing } from '../../../interfaces/listing';
 export class MarketListComponent implements OnInit {
   filterForm: FormGroup;
 
-  listings: Listing[] = [];
+  listings: any[] = [];
   categories: { id: number; name: string }[] = [];
 
   paymentMethods: { id: number; name: string }[] = [
@@ -79,8 +79,10 @@ export class MarketListComponent implements OnInit {
   }
 
   onContact(garmentId: number): void {
-    const PlaceholderUrl = 'https://www.nyan.cat/';
-    window.open(PlaceholderUrl, '_blank');
+    const listing = this.listings.find(listing => listing.id === garmentId);
+    const email = listing.owner.email;
+    const mailtoUrl = `mailto:${email}`;
+    window.open(mailtoUrl, '_blank');
   }
 
 }

@@ -15,6 +15,7 @@ import { DashboardComponent } from './components/dashboard/dashboard/dashboard.c
 import { UserComponent } from './components/user/user/user.component';
 import { UsersListComponent } from './components/user/users-list/users-list.component';
 import { SoldPopUpComponent } from './components/listing/sold-pop-up/sold-pop-up.component';
+import { LoginPageComponent } from './components/login-page/login-page.component';
 
 const routes: Routes = [
     // { path: '', redirectTo: '/wardrobe', pathMatch: 'full' },
@@ -36,6 +37,7 @@ const routes: Routes = [
     { path: 'market', component: MarketListComponent },
     { path: 'users', component: UsersListComponent},
     { path: 'users/:id', component: UserComponent},
+    { path: 'login', component: LoginPageComponent},
 
 
 ];

@@ -31,6 +31,7 @@ export class DashboardComponent implements OnInit {
   constructor(private router: Router, private http: HttpClient) { }
 
   ngOnInit() {
+    console.log(localStorage);
     if (localStorage.getItem('auth_token')) {
       this.loggedIn = true;
     }

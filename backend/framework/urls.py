@@ -1,4 +1,5 @@
 from django.urls import path, include
+from django.contrib import admin
 from django.http import FileResponse
 from rest_framework.routers import DefaultRouter
 from framework.quickstart.views import (
@@ -74,5 +75,6 @@ urlpatterns = [
     path("auth/facebook", views.facebook_login, name="facebook_login"),
     path("auth/facebook/callback", views.facebook_callback, name="facebook_callback"),
     path("auth/guest", views.guest_login, name="guest_login"),
+    path("admin/", admin.site.urls)
     
 ]

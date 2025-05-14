@@ -219,7 +219,7 @@ class RatingViewSet(viewsets.ViewSet):
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):  # Read-only to prevent updates
-    queryset = User.objects.all()
+    queryset = User.objects.filter(is_superuser=False)
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 

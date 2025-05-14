@@ -124,7 +124,8 @@ class ListingSerializer(serializers.ModelSerializer):
     payment_method = serializers.PrimaryKeyRelatedField(
         queryset=PaymentMethod.objects.all()
     )
-    owner_username = serializers.CharField(source="owner.username", read_only=True)
+    #owner_username = serializers.CharField(source="owner.username", read_only=True)
+    owner = UserSerializer(read_only=True)
 
     class Meta:
         model = Listing
@@ -137,7 +138,6 @@ class ListingSerializer(serializers.ModelSerializer):
             "price",
             "payment_method",
             "owner",
-            "owner_username",
         ]
         read_only_fields = ["owner"]
 
