@@ -97,5 +97,6 @@ export class UsageCalenderComponent implements OnInit {
 
   onEventClick(event: CalendarEvent) {
     console.log('Event clicked:', event.meta);
+    this.router.navigate(['/usages', event.meta.id]);
   }
 }
