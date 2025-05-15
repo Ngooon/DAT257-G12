@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "angular-calendar": "^0.31.1",
+    "date-fns": "^4.1.0"
+  }
+}

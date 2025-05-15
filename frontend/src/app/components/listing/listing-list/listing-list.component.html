@@ -88,6 +88,8 @@
                                 class="btn btn-outline-danger btn-sm">Delete</button>
                             <button (click)="onEdit(listing.id); $event.stopPropagation()"
                                 class="btn btn-outline-primary btn-sm">Edit</button>
+                            <button (click)="onSold(listing.garment.id, listing); $event.stopPropagation()"
+                                class="btn btn-outline-primary btn-sm">Sold</button>
                         </div>
                     </td>
                 </tr>

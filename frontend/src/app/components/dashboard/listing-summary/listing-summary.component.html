@@ -1,0 +1,24 @@
+<h5>My most recent listings</h5>
+
+<div class="table-responsive">
+    <table class="table table-hover text-start">
+        <thead>
+                <tr>
+                    <th scope="col">Garment</th>
+                    <th scope="col">Days on market</th>
+                    <th scope="col">Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let listing of listings" (click)="onRowClick(listing.id)">
+                    <td>{{ listing.garment.name }}</td>
+                    <td>{{ calculateDaysSince(listing.time) }} days</td>
+                    <td>{{ listing.price }}</td>
+
+                </tr>
+            </tbody>
+    </table>
+</div>
+
+<p *ngIf="!listings"><em>Loading...</em></p>
+<p *ngIf="listings?.length === 0"><em>No listings found.</em></p>

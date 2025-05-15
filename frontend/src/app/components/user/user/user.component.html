@@ -1,0 +1,11 @@
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">{{user?.first_name}}</h1>
+    <div>
+        <button (click)="onRate(); $event.stopPropagation()"
+                                class="btn btn-outline-primary btn-sm">Rate</button>
+        <h5> Rating: {{rating.average_rating}}/5 ({{rating.rating_count}})</h5>
+    </div>
+    
+</div>
+
+<app-listing-summary [listings]="listings"></app-listing-summary>

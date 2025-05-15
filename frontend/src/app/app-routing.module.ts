@@ -11,9 +11,15 @@ import { ListingFormComponent } from './components/listing/listing-form/listing-
 import { ListingDetailsComponent } from './components/listing/listing-details/listing-details.component';
 import { UsageCalenderComponent } from './components/usage/usage-calender/usage-calender.component';
 import { MarketListComponent } from './components/listing/market-list/market-list.component';
+import { DashboardComponent } from './components/dashboard/dashboard/dashboard.component';
+import { UserComponent } from './components/user/user/user.component';
+import { UsersListComponent } from './components/user/users-list/users-list.component';
+import { SoldPopUpComponent } from './components/listing/sold-pop-up/sold-pop-up.component';
+import { LoginPageComponent } from './components/login-page/login-page.component';
 
 const routes: Routes = [
     // { path: '', redirectTo: '/wardrobe', pathMatch: 'full' },
+    { path: '', component: DashboardComponent },
     { path: 'wardrobe', component: WardrobeListComponent },
     { path: 'garments', component: WardrobeListComponent },
     { path: 'garments/new', component: GarmentFormComponent },
@@ -29,6 +35,9 @@ const routes: Routes = [
     { path: 'listings/edit/:id', component: ListingFormComponent },
     { path: 'listings/:id', component: ListingDetailsComponent },
     { path: 'market', component: MarketListComponent },
+    { path: 'users', component: UsersListComponent},
+    { path: 'users/:id', component: UserComponent},
+    { path: 'login', component: LoginPageComponent},
 
 
 ];

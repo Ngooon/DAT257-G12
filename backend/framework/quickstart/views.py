@@ -1,8 +1,13 @@
 import django_filters
+from django.utils import timezone
+from django.db.models import Q, Count
+from datetime import timedelta
+from django.utils.timezone import make_aware
 from django_filters import rest_framework as filters
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
 from django.db.models import Count, Avg
 from datetime import datetime, timedelta
 from django.db.models.functions import TruncMonth
@@ -19,6 +24,8 @@ from framework.quickstart.models import (
     Category,
     PaymentMethod,
     Listing,
+    Rating,
+    UserProfile,
 )
 from framework.quickstart.serializers import (
     GarmentSerializer,
@@ -26,6 +33,7 @@ from framework.quickstart.serializers import (
     UsageSerializer,
     PaymentMethodSerializer,
     ListingSerializer,
+    UserSerializer,
 )
 
 from rest_framework import status
@@ -61,6 +69,16 @@ def facebook_login(request):
         "scope": "email,public_profile",
     }
     return HttpResponseRedirect(f"{fb_auth_url}?{urlencode(params)}")
+
+
+def guest_login(request):
+
+    data = {"id": 111, "name": "Guest", "email": "guest@test.net"}
+    token_data = generate_token(data)
+    access_token = token_data["access"]  # or pass both if needed
+
+    # Redirect to Angular with token
+    return redirect(f"http://localhost:4200/?token={access_token}")
 
 
 # Step 2: Handle Facebook's callback
@@ -115,12 +133,107 @@ def generate_token(user_data):
     )
     refresh = RefreshToken.for_user(user)
 
+    UserProfile.objects.get_or_create(user=user)
+
     print(refresh.access_token)
 
     return {
         "access": str(refresh.access_token),
         "refresh": str(refresh),
     }
+
+
+class RatingViewSet(viewsets.ViewSet):
+    permission_classes = [IsAuthenticated]
+
+    @action(detail=False, methods=["post"])
+    def rate_user(self, request):
+        rated_user_id = request.data.get("rated_user")
+        score = request.data.get("score")
+
+        if not rated_user_id or score is None:
+            return Response({"detail": "Missing rated_user or score"}, status=400)
+
+        try:
+            score = int(score)
+            if not (1 <= score <= 5):
+                raise ValueError()
+        except ValueError:
+            return Response(
+                {"detail": "Score must be an integer between 1 and 5."}, status=400
+            )
+
+        rated_user = get_object_or_404(User, id=rated_user_id)
+
+        if rated_user == request.user:
+            return Response({"detail": "You cannot rate yourself."}, status=400)
+
+        # Create or update the rating
+        rating, created = Rating.objects.update_or_create(
+            rater=request.user,
+            rated_user=rated_user,
+            defaults={"score": score},
+        )
+
+        profile = rated_user.profile  # Via related_name on UserProfile
+
+        if created:
+            # New rating
+            total_score = profile.average_rating * profile.rating_count
+            profile.rating_count += 1
+            profile.average_rating = (total_score + score) / profile.rating_count
+        else:
+            # Update: recalculate all ratings for this user
+            profile.average_rating = Rating.objects.filter(
+                rated_user=rated_user
+            ).aggregate(avg=Avg("score"))["avg"]
+
+        profile.save()
+
+        return Response(
+            {
+                "message": "Rating submitted successfully.",
+                "average_rating": profile.average_rating,
+                "rating_count": profile.rating_count,
+            },
+            status=status.HTTP_201_CREATED,
+        )
+
+    @action(detail=False, methods=["get"], url_path="get-rating")
+    def get_rating(self, request):
+        user_id = request.query_params.get("user_id")
+
+        if not user_id:
+            return Response({"detail": "Missing user_id parameter."}, status=400)
+
+        user = get_object_or_404(User, id=user_id)
+        profile = user.profile
+
+        return Response(
+            {
+                "user_id": user.id,
+                "average_rating": profile.average_rating,
+                "rating_count": profile.rating_count,
+            }
+        )
+
+
+class UserViewSet(viewsets.ReadOnlyModelViewSet):  # Read-only to prevent updates
+    queryset = User.objects.filter(is_superuser=False)
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
+    @action(detail=False, methods=["get"], url_path="me")
+    def get_user(self, request):
+        user = self.request.user
+
+        return Response(
+            {
+                "name": user.first_name,
+                "mail": user.get_email_field_name(),
+                "id": user.id,
+            }
+        )
 
 
 class GarmentViewSet(viewsets.ModelViewSet):
@@ -135,9 +248,30 @@ class GarmentViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Garment.objects.filter(owner=self.request.user).annotate(
-            usage_count=Count("usages")
-        )
+        qs = Garment.objects.filter(owner=self.request.user)
+        period = self.request.query_params.get("period", "all")
+        now = timezone.now()
+
+        if period == "week":
+            cutoff = now - timedelta(days=7)
+            qs = qs.annotate(
+                usage_count=Count("usages", filter=Q(usages__time__gte=cutoff))
+            )
+        elif period == "month":
+            cutoff = now - timedelta(days=30)
+            qs = qs.annotate(
+                usage_count=Count("usages", filter=Q(usages__time__gte=cutoff))
+            )
+        elif period == "year":
+            cutoff = now - timedelta(days=365)
+            qs = qs.annotate(
+                usage_count=Count("usages", filter=Q(usages__time__gte=cutoff))
+            )
+        else:
+            qs = qs.annotate(usage_count=Count("usages"))
+
+        # Se till att allt är sorterat före slice i frontenden
+        return qs
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
@@ -409,6 +543,7 @@ class ListingFilter(filters.FilterSet):
     )
     min_price = filters.NumberFilter(field_name="price", lookup_expr="gte")
     max_price = filters.NumberFilter(field_name="price", lookup_expr="lte")
+    user_id = filters.NumberFilter(field_name="owner__id")
 
     class Meta:
         model = Listing
@@ -421,6 +556,7 @@ class ListingFilter(filters.FilterSet):
             "payment_method",
             "min_price",
             "max_price",
+            "user_id",
         ]
 
 
@@ -450,6 +586,7 @@ class ListingViewSet(viewsets.ModelViewSet):
         "price",
         "place",
         "payment_method",
+        "time",
     ]
     filterset_class = ListingFilter
 
@@ -542,25 +679,28 @@ class StatisticsViewSet(viewsets.ViewSet):
         Return statistics for categories, including usage history per month.
         """
         from datetime import datetime, timedelta
-        from django.db.models.functions import TruncMonth
+
+        # from django.db.models.functions import TruncMonth
+        from django.db.models.functions import TruncWeek
 
         # Hämta query-parametrar för tidsintervall
         from_time = request.query_params.get("from_time")
         to_time = request.query_params.get("to_time")
+
         category_id = request.query_params.get(
             "id"
         )  # Hämta kategori-ID som query-param
 
         # Standardvärden för tidsintervall (senaste året)
         if not from_time:
-            from_time = datetime.now() - timedelta(days=365)
+            from_time = make_aware(datetime.now() - timedelta(days=365))
         else:
-            from_time = datetime.fromisoformat(from_time)
+            from_time = make_aware(datetime.fromisoformat(from_time))
 
         if not to_time:
-            to_time = datetime.now()
+            to_time = make_aware(datetime.now())
         else:
-            to_time = datetime.fromisoformat(to_time)
+            to_time = make_aware(datetime.fromisoformat(to_time))
 
         # Om ett kategori-ID skickas, filtrera på det
         if category_id:
@@ -584,15 +724,49 @@ class StatisticsViewSet(viewsets.ViewSet):
             )
 
             # Grupp och räkna usages per månad
-            usages_per_month = (
-                usages.annotate(month=TruncMonth("time"))
-                .values("month")
+            usages_per_week = (
+                usages.annotate(week=TruncWeek("time"))
+                .values("week")
                 .annotate(count=Count("id"))
-                .order_by("month")
+                .order_by("week")
             )
 
+            # Calculate mean usages per garment and per week
+            total_garments = Garment.objects.filter(
+                owner=request.user, category=category
+            ).count()
+            usages_per_week_per_garment = []
+
+            for garment in Garment.objects.filter(
+                owner=request.user, category=category
+            ):
+                garment_usages_per_week = (
+                    Usage.objects.filter(
+                        garment=garment, time__gte=from_time, time__lte=to_time
+                    )
+                    .annotate(week=TruncWeek("time"))
+                    .values("week")
+                    .annotate(count=Count("id"))
+                    .order_by("week")
+                )
+                usages_per_week_per_garment.append(garment_usages_per_week)
+
+            mean_usages_per_week = {}
+            for week_data in usages_per_week_per_garment:
+                for entry in week_data:
+                    week = entry["week"]
+                    count = entry["count"]
+                    if week not in mean_usages_per_week:
+                        mean_usages_per_week[week] = []
+                    mean_usages_per_week[week].append(count)
+
+            mean_usages_per_week = {
+                week.strftime("%Y-%m-%dT%H:%M:%S.%fZ"): sum(counts) / len(counts)
+                for week, counts in mean_usages_per_week.items()
+            }
+
             # Beräkna total användning och mean usage
-            total_usage = sum(item["count"] for item in usages_per_month)
+            total_usage = sum(item["count"] for item in usages_per_week)
             mean_usage = total_usage / 12  # Genomsnitt per månad över hela året
 
             # Hämta senaste användningen
@@ -600,8 +774,8 @@ class StatisticsViewSet(viewsets.ViewSet):
 
             # Skapa usage history per månad
             usage_history = {
-                item["month"].strftime("%Y-%m-%dT%H:%M:%S.%fZ"): item["count"]
-                for item in usages_per_month
+                item["week"].strftime("%Y-%m-%dT%H:%M:%S.%fZ"): item["count"]
+                for item in usages_per_week
             }
 
             # Lägg till statistik i resultatet
@@ -613,6 +787,7 @@ class StatisticsViewSet(viewsets.ViewSet):
                         "total_usage": total_usage,
                         "last_usage": last_usage.time if last_usage else None,
                         "usage_history": usage_history,
+                        "mean_usages_per_week": mean_usages_per_week,  # Add mean_usages_per_week to the response
                     },
                 }
             )
@@ -700,7 +875,9 @@ class StatisticsViewSet(viewsets.ViewSet):
         Return statistics for garments, including usage history per month.
         """
         from datetime import datetime, timedelta
-        from django.db.models.functions import TruncMonth
+
+        # from django.db.models.functions import TruncMonth
+        from django.db.models.functions import TruncWeek
 
         # Hämta query-parametrar för tidsintervall
         from_time = request.query_params.get("from_time")
@@ -739,16 +916,16 @@ class StatisticsViewSet(viewsets.ViewSet):
                 time__lte=to_time,
             )
 
-            # Grupp och räkna usages per månad
-            usages_per_month = (
-                usages.annotate(month=TruncMonth("time"))
-                .values("month")
+            # Grupp och räkna usages per vecka
+            usages_per_week = (
+                usages.annotate(week=TruncWeek("time"))
+                .values("week")
                 .annotate(count=Count("id"))
-                .order_by("month")
+                .order_by("week")
             )
 
             # Beräkna total användning och mean usage
-            total_usage = sum(item["count"] for item in usages_per_month)
+            total_usage = sum(item["count"] for item in usages_per_week)
             mean_usage = total_usage / 12  # Genomsnitt per månad över hela året
 
             # Hämta senaste användningen
@@ -756,8 +933,8 @@ class StatisticsViewSet(viewsets.ViewSet):
 
             # Skapa usage history per månad
             usage_history = {
-                item["month"].strftime("%Y-%m-%dT%H:%M:%S.%fZ"): item["count"]
-                for item in usages_per_month
+                item["week"].strftime("%Y-%m-%dT%H:%M:%S.%fZ"): item["count"]
+                for item in usages_per_week
             }
 
             # Lägg till statistik i resultatet
@@ -772,7 +949,6 @@ class StatisticsViewSet(viewsets.ViewSet):
                     },
                 }
             )
-
         return Response(data)
 
 
@@ -796,5 +972,6 @@ class MarketListingViewSet(viewsets.ReadOnlyModelViewSet):
         "price",
         "place",
         "payment_method",
+        "time",
     ]
     permission_classes = []

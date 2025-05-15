@@ -6,13 +6,22 @@ from framework.quickstart.models import (
     Category,
     PaymentMethod,
     Listing,
+    Rating
+
 )
 
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+class RatingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rating
+        fields = ['id', 'rater', 'rated_user', 'score', 'timestamp']
+        read_only_fields = ['rater', 'timestamp']
+
+class UserSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = User
-        fields = ["url", "username", "email", "groups"]
+        fields = ["id", "username","first_name", "email", "groups"]
 
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):
@@ -33,7 +42,11 @@ class CategorySerializer(serializers.HyperlinkedModelSerializer):
 class GarmentSerializer(serializers.ModelSerializer):
     category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())
     owner_username = serializers.CharField(source="owner.username", read_only=True)
-    usage_count = serializers.IntegerField(source="usages.count", read_only=True)
+    usage_count = serializers.SerializerMethodField()
+
+    def get_usage_count(self, obj):
+        # Använder annoterat värde om det finns, annars räknar alla
+        return getattr(obj, "usage_count", obj.usages.count())
 
     class Meta:
         model = Garment
@@ -111,7 +124,8 @@ class ListingSerializer(serializers.ModelSerializer):
     payment_method = serializers.PrimaryKeyRelatedField(
         queryset=PaymentMethod.objects.all()
     )
-    owner_username = serializers.CharField(source="owner.username", read_only=True)
+    #owner_username = serializers.CharField(source="owner.username", read_only=True)
+    owner = UserSerializer(read_only=True)
 
     class Meta:
         model = Listing
@@ -124,7 +138,6 @@ class ListingSerializer(serializers.ModelSerializer):
             "price",
             "payment_method",
             "owner",
-            "owner_username",
         ]
         read_only_fields = ["owner"]
 
@@ -145,6 +158,7 @@ class ListingSerializer(serializers.ModelSerializer):
             ).data
 
         return representation
+    
 
     def validate(self, data):
         # Kontrollera om en listing redan existerar för samma garment
@@ -165,3 +179,5 @@ class ListingSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"price": "Price cannot be negative."})
 
         return data
+
+

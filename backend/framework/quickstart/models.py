@@ -1,12 +1,31 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.timezone import now
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 
 # Create your models here.
 
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
+    average_rating = models.FloatField(default=0.0)
+    rating_count = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return f"Profile of {self.user.username}"
+
+class Rating(models.Model):
+    rater = models.ForeignKey(User, on_delete=models.CASCADE, related_name="given_ratings")
+    rated_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="received_ratings")
+    score = models.PositiveSmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('rater', 'rated_user')  # Each user can rate another only once
+
+    def __str__(self):
+        return f"{self.rater.username} rated {self.rated_user.username}: {self.score}"
 
 class Category(models.Model):
     id = models.AutoField(primary_key=True)

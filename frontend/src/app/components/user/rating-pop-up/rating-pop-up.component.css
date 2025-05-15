@@ -1,0 +1,6 @@
+.star {
+    width: 24px; /* Set the width of the star */
+    height: 24px; /* Set the height of the star */
+    cursor: pointer; /* Change cursor to pointer for better UX */
+    margin-right: 4px; /* Add spacing between stars */
+  }
