@@ -25,6 +25,7 @@ export class UsageFormComponent implements OnInit {
   ) {
     this.usageForm = this.fb.group({
       garmentId: [null, Validators.required],
+      time: [new Date().toISOString().slice(0, 16), Validators.required], // Set current time as default
       notes: ['']
     });
   }
@@ -77,6 +78,7 @@ export class UsageFormComponent implements OnInit {
       this.usage = data;
       this.usageForm.patchValue({
         garmentId: data.garment.id,
+        time: data.time,
         notes: data.notes
       });
     });
@@ -86,6 +88,7 @@ export class UsageFormComponent implements OnInit {
     // Map the form value to the format expected by the API
     const usage = {
       garment: this.usageForm.value.garmentId, // Use "garment" instead of "garmentId"
+      time: this.usageForm.value.time,
       notes: this.usageForm.value.notes        // Include the notes
     };
 
